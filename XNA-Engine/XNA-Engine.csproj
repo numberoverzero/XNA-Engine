@@ -92,6 +92,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Rendering\ColorScheme.cs" />
+    <Compile Include="Rendering\RenderEnums.cs" />
+    <Compile Include="Rendering\Effects\BloomEffect.cs" />
+    <Compile Include="Rendering\Effects\BlurEffect.cs" />
+    <Compile Include="Rendering\Effects\RepeaterEffect.cs" />
+    <Compile Include="Rendering\Pipeline\IRenderEffect.cs" />
+    <Compile Include="Rendering\Pipeline\RenderEffect.cs" />
+    <Compile Include="Rendering\Pipeline\RenderPipeline.cs" />
     <Compile Include="Input\Enums.cs" />
     <Compile Include="Input\InputBindings.cs" />
     <Compile Include="Input\InputManager.cs" />
