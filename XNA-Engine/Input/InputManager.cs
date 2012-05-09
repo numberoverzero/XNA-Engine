@@ -24,10 +24,7 @@ namespace Engine.Input
         private MouseState CurrentMouseState;
 
         private Dictionary<String, InputBinding> keybindings;
-    
-
-        public float ThumbstickThreshold = 0;
-        public float TriggerThreshold = 0;
+        public InputSettings Settings;
 
         #endregion
 
@@ -35,6 +32,7 @@ namespace Engine.Input
 
         public InputManager()
         {
+            Settings = new InputSettings(0,0);
             keybindings = new Dictionary<string, InputBinding>();
         }
         public InputManager(InputManager input)
@@ -48,8 +46,7 @@ namespace Engine.Input
             LastMouseState = input.LastMouseState;
             CurrentMouseState = input.CurrentMouseState;
 
-            TriggerThreshold = input.TriggerThreshold;
-            ThumbstickThreshold = input.ThumbstickThreshold;
+            Settings = new InputSettings(input.Settings.TriggerThreshold, input.Settings.ThumbstickThreshold);
 
             keybindings = new Dictionary<string, InputBinding>(input.keybindings);
 
@@ -89,38 +86,32 @@ namespace Engine.Input
         }
         public void AddKeyBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = new InputBinding();
-            inputBinding.SetBinding(thumbstickDirection, thumbstick, modifiers);
+            InputBinding inputBinding = InputBinding.CreateBinding(thumbstickDirection, thumbstick, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, MouseButton mouseButton, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = new InputBinding();
-            inputBinding.SetBinding(mouseButton, modifiers);
+            InputBinding inputBinding = InputBinding.CreateBinding(mouseButton, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Thumbstick thumbstick, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = new InputBinding();
-            inputBinding.SetBinding(thumbstick, modifiers);
+            InputBinding inputBinding = InputBinding.CreateBinding(thumbstick, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Trigger trigger, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = new InputBinding();
-            inputBinding.SetBinding(trigger, modifiers);
+            InputBinding inputBinding = InputBinding.CreateBinding(trigger, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Buttons button, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = new InputBinding();
-            inputBinding.SetBinding(button, modifiers);
+            InputBinding inputBinding = InputBinding.CreateBinding(button, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Keys key, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = new InputBinding();
-            inputBinding.SetBinding(key, modifiers);
+            InputBinding inputBinding = InputBinding.CreateBinding(key, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
 
@@ -160,7 +151,9 @@ namespace Engine.Input
         /// <returns></returns>
         public bool IsKeyBindingActive(string key, FrameState state = FrameState.Current)
         {
-            return HasKeyBinding(key) && keybindings[key].IsActive(state, this);
+            if (HasKeyBinding(key))
+                return keybindings[key].IsActive(state, this);
+            return false;
         }
 
         /// <summary>
@@ -260,197 +253,7 @@ namespace Engine.Input
 
         #endregion
 
-        /// <summary>
-        /// A single binding, wrapper for Thumbsticks, keys, Buttons, etc
-        /// </summary>
-        private class InputBinding
-        {
-            #region Fields
-
-            /// <summary>
-            /// The type of binding (Key, Trigger, Thumbstick, etc) for this input association
-            /// </summary>
-            public BindingType BindingType { get; private set; }
-
-            public ThumbstickDirection ThumbstickDirection { get; private set; }
-            public MouseButton MouseButton { get; private set; }
-            public Thumbstick Thumbstick { get; private set; }
-            public Trigger Trigger { get; private set; }
-            public Buttons Button { get; private set; }
-            public Keys Key { get; private set; }
-
-            public Modifier[] Modifiers { get; private set; }
-
-            #endregion
-
-            #region Initialiation
-
-            /// <summary>
-            /// Initialize an InputBinding with no BindingType
-            /// </summary>
-            public InputBinding() : this(BindingType.None) { }
-            /// <summary>
-            /// Initialize an InputBinding with the given BindingType and an optional list of required modifiers
-            /// </summary>
-            /// <param name="type">Type of binding (Key, Trigger, Thumbstick, etc)</param>
-            /// <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
-            /// 
-            public InputBinding(BindingType type, params Modifier[] modifiers)
-            {
-                this.BindingType = type;
-                ThumbstickDirection = ThumbstickDirection.None;
-                MouseButton = MouseButton.None;
-                Thumbstick = Thumbstick.None;
-                Trigger = Trigger.None;
-                Key = Keys.None;
-                Button = Buttons.BigButton;
-
-                SetModifiers(modifiers);
-            }
-
-            #endregion
-
-            #region SetBinding Methods
-
-            public void SetBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
-            {
-                ClearBindings();
-                this.ThumbstickDirection = thumbstickDirection;
-                this.Thumbstick = thumbstick;
-                this.BindingType = BindingType.ThumbstickDirection;
-                SetModifiers(modifiers);
-            }
-            public void SetBinding(MouseButton mouseButton, params Modifier[] modifiers)
-            {
-                ClearBindings();
-                this.MouseButton = mouseButton;
-                this.BindingType = BindingType.MouseButton;
-                SetModifiers(modifiers);
-            }
-            public void SetBinding(Thumbstick thumbstick, params Modifier[] modifiers)
-            {
-                ClearBindings();
-                this.Thumbstick = thumbstick;
-                this.BindingType = BindingType.Thumbstick;
-                SetModifiers(modifiers);
-            }
-            public void SetBinding(Trigger trigger, params Modifier[] modifiers)
-            {
-                ClearBindings();
-                this.Trigger = trigger;
-                this.BindingType = BindingType.Trigger;
-                SetModifiers(modifiers);
-            }
-            public void SetBinding(Buttons button, params Modifier[] modifiers)
-            {
-                ClearBindings();
-                this.Button = button;
-                this.BindingType = BindingType.Button;
-                SetModifiers(modifiers);
-            }
-            public void SetBinding(Keys key, params Modifier[] modifiers)
-            {
-                ClearBindings();
-                this.Key = key;
-                this.BindingType = BindingType.Key;
-                SetModifiers(modifiers);
-            }
-
-            #endregion
-
-            public bool IsActive(FrameState state, InputManager inputManager)
-            {
-                KeyboardState keyState = state == FrameState.Current ? inputManager.CurrentKeyboardState : inputManager.LastKeyboardState;
-                GamePadState gamepadState = state == FrameState.Current ? inputManager.CurrentGamePadState : inputManager.LastGamePadState;
-                MouseState mouseState = state == FrameState.Current ? inputManager.CurrentMouseState : inputManager.LastMouseState;
-                bool isActive = false;
-                switch (BindingType)
-                {
-                    case BindingType.ThumbstickDirection:
-                        Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
-                        switch (ThumbstickDirection){
-                            case ThumbstickDirection.Up:
-                                isActive = (gamepadThumbstick.Y >= inputManager.ThumbstickThreshold);
-                                break;
-                            case ThumbstickDirection.Down:
-                                isActive = (gamepadThumbstick.Y <= -inputManager.ThumbstickThreshold);
-                                break;
-                            case ThumbstickDirection.Left:
-                                isActive = (gamepadThumbstick.X <= -inputManager.ThumbstickThreshold);
-                                break;
-                            case ThumbstickDirection.Right:
-                                isActive = (gamepadThumbstick.X >= inputManager.ThumbstickThreshold);
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                    case BindingType.MouseButton:
-                        ButtonState buttonState;
-                        switch(MouseButton){
-                            case MouseButton.Left:
-                                buttonState = mouseState.LeftButton;
-                                break;
-                            case MouseButton.Right:
-                                buttonState = mouseState.RightButton;
-                                break;
-                            case MouseButton.Middle:
-                                buttonState = mouseState.MiddleButton;
-                                break;
-                            default:
-                                buttonState = ButtonState.Released;
-                                break;
-                        }
-                        isActive = buttonState == ButtonState.Pressed;
-                        break;
-                    case BindingType.Thumbstick:
-                        Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
-                        isActive = gamepadThumbstickMag.Length() >= inputManager.ThumbstickThreshold;
-                        break;
-                    case BindingType.Button:
-                        isActive = gamepadState.IsButtonDown(Button);
-                        break;
-                    case BindingType.Key:
-                        isActive = keyState.IsKeyDown(Key);
-                        break;
-                    case BindingType.Trigger:
-                        float triggerMag = Trigger == Trigger.Left ? gamepadState.Triggers.Left : gamepadState.Triggers.Right;
-                        isActive = triggerMag >= inputManager.TriggerThreshold;
-                        break;
-                    case BindingType.None:
-                    default:
-                        break;
-                }
-                return isActive && ModifiersMatch(keyState);
-            }
-
-            #region Private Helpers
-
-            private void ClearBindings()
-            {
-                BindingType = BindingType.None;
-            }
-            private void SetModifiers(params Modifier[] modifiers)
-            {
-                Modifiers = new Modifier[modifiers.Length];
-                Array.Copy(modifiers, Modifiers, modifiers.Length);
-            }
-
-            /// <summary>
-            /// Checks if the modifiers that this binding requires 
-            /// match the active state of the modifiers in the given KeyboardState
-            /// </summary>
-            /// <param name="keyState">The KeyboardState to check modifiers against</param>
-            /// <returns>True if only all required modifiers are active</returns>
-            private bool ModifiersMatch(KeyboardState keyState)
-            {
-                return (Modifier.Alt.IsActive(keyState) == Modifiers.Contains(Modifier.Alt) &&
-                        Modifier.Ctrl.IsActive(keyState) == Modifiers.Contains(Modifier.Ctrl) &&
-                        Modifier.Shift.IsActive(keyState) == Modifiers.Contains(Modifier.Shift));
-            }
-
-            #endregion
-        }
+        
         
     }
 }

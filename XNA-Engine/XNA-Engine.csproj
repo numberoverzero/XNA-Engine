@@ -93,7 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Input\Enums.cs" />
+    <Compile Include="Input\InputBindings.cs" />
     <Compile Include="Input\InputManager.cs" />
+    <Compile Include="Input\InputSettings.cs" />
     <Compile Include="Input\Modifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
