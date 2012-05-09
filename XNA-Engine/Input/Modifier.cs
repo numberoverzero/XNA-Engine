@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
+    /// <summary>
+    /// Provides singleton modifiers representing Ctrl, Alt, Shift
+    /// </summary>
     public class Modifier
     {
         Keys key1, key2;

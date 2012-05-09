@@ -28,18 +28,25 @@ namespace Engine.Input
 
             #endregion
 
+            #region IsActive Methods
+
             /// <summary>
             /// True if the InputBinding is active in the given FrameState of the given InputManager
             /// </summary>
             /// <param name="state">Current or Previous frame</param>
             /// <param name="manager">The manager keeping track of current/previous input states</param>
+            /// <remarks>
+            /// At first I wasn't comfortable with passing the entire InputManager around, but on the plus side,
+            /// we can now easily mock up input.  Woohoo!
+            /// </remarks>
             /// <returns></returns>
-            public bool IsActive(FrameState state, InputManager manager)
+            public bool IsActive(InputManager manager, FrameState state)
             {
                 KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.LastKeyboardState;
                 GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadState : manager.LastGamePadState;
                 MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.LastMouseState;
                 return IsRawBindingActive(keyState, gamepadState, mouseState, manager.Settings) && AreExactModifiersActive(keyState);
+
             }
 
             protected virtual bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
@@ -51,6 +58,10 @@ namespace Engine.Input
             /// Checks if the modifiers that this binding requires 
             /// match the active state of the modifiers in the given KeyboardState
             /// </summary>
+            /// <remarks>
+            /// I suspect it should be possible to streamline this in someway while still keeping the system easily extendable.
+            /// We're O(n) and we can reasonably assume n is smaller than 10, but even still, it looks ugly.
+            /// </remarks>
             /// <param name="keyState">The KeyboardState to check modifiers against</param>
             /// <returns>True if only all required modifiers are active</returns>
             private bool AreExactModifiersActive(KeyboardState keyState)
@@ -59,6 +70,8 @@ namespace Engine.Input
                         Modifier.Ctrl.IsActive(keyState) == Modifiers.Contains(Modifier.Ctrl) &&
                         Modifier.Shift.IsActive(keyState) == Modifiers.Contains(Modifier.Shift));
             }
+
+            #endregion
 
             #region Factory
 
@@ -229,7 +242,5 @@ namespace Engine.Input
 
             #endregion
         }
-
-        
     }
 }

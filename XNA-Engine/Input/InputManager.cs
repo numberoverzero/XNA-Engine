@@ -24,7 +24,7 @@ namespace Engine.Input
         private MouseState CurrentMouseState;
 
         private Dictionary<String, InputBinding> keybindings;
-        public InputSettings Settings;
+        public InputSettings Settings { get; private set; }
 
         #endregion
 
@@ -53,28 +53,6 @@ namespace Engine.Input
         }
 
         #endregion
-
-        /// <summary>
-        /// Reads the latest state of the keyboard and gamepad.
-        /// </summary>
-        /// <remarks>
-        /// This should be called at the beginning of your update loop, so that game logic
-        /// uses latest values.
-        /// Calling update at the end of update loop will have those keys processed
-        /// in the next frame.
-        /// </remarks>
-        public void Update()
-        {
-            LastKeyboardState = CurrentKeyboardState;
-            LastGamePadState = CurrentGamePadState;
-            LastMouseState = CurrentMouseState;
-
-            CurrentKeyboardState = Keyboard.GetState();
-            CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
-            CurrentMouseState = Mouse.GetState();
-        }
-
-        #region Add/Remove/Has KeyBindings
 
         #region AddKeyBinding Methods
 
@@ -118,9 +96,29 @@ namespace Engine.Input
         #endregion
 
         /// <summary>
-        /// Removes the binding associated with the specified key
+        /// Reads the latest state of the keyboard and gamepad.
         /// </summary>
-        /// <param name="key">The name of the keybinding to remove</param>
+        /// <remarks>
+        /// This should be called at the beginning of your update loop, so that game logic
+        /// uses latest values.
+        /// Calling update at the end of update loop will have those keys processed
+        /// in the next frame.
+        /// </remarks>
+        public void Update()
+        {
+            LastKeyboardState = CurrentKeyboardState;
+            LastGamePadState = CurrentGamePadState;
+            LastMouseState = CurrentMouseState;
+
+            CurrentKeyboardState = Keyboard.GetState();
+            CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
+            CurrentMouseState = Mouse.GetState();
+        }
+
+        /// <summary>
+        /// Removes the bindings associated with the specified keys
+        /// </summary>
+        /// <param name="keys">The names of the keybindings to remove</param>
         public void RemoveKeyBindings(params string[] keys)
         {
             foreach(var key in keys)
@@ -138,8 +136,6 @@ namespace Engine.Input
             return keybindings.ContainsKey(key);
         }
 
-        #endregion
-
         #region Query Single KeyBinding State
 
         /// <summary>
@@ -152,13 +148,14 @@ namespace Engine.Input
         public bool IsActive(string key, FrameState state = FrameState.Current)
         {
             if (HasKeyBinding(key))
-                return keybindings[key].IsActive(state, this);
+                return keybindings[key].IsActive(this, state);
             return false;
         }
 
         /// <summary>
         /// Returns if the keybinding associated with the string key was pressed this frame,
-        /// but not last.  To register on key up, use IsKeyBindingNewRelease
+        /// but not last frame (s.t. it was pressed for the first time in this frame).
+        /// To register on key up, use IsReleased
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
@@ -170,7 +167,7 @@ namespace Engine.Input
         /// <summary>
         /// Returns if the keybinding associated with the string key was pressed last frame,
         /// but not this frame (s.t. it was released in this frame).  
-        /// To register on key down, use IsKeyBindingNewPress
+        /// To register on key down, use IsPressed
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
@@ -183,6 +180,12 @@ namespace Engine.Input
 
         #region Query Multiple KeyBindings State
 
+        /// <summary>
+        /// Returns true if any of the keybindings associated with the given keys are active in
+        /// the current frame.
+        /// </summary>
+        /// <param name="keys">The strings that the keybindings were stored under</param>
+        /// <returns></returns>
         public bool AnyActive(params string[] keys){
             foreach (var key in keys)
                 if (IsActive(key))
@@ -190,6 +193,12 @@ namespace Engine.Input
             return false;
         }
 
+        /// <summary>
+        /// Returns true if all of the keybindings associated with the given keys are active in
+        /// the current frame.
+        /// </summary>
+        /// <param name="keys">The strings that the keybindings were stored under</param>
+        /// <returns></returns>
         public bool AllActive(params string[] keys){
             foreach (var key in keys)
                 if (!IsActive(key))
@@ -197,6 +206,12 @@ namespace Engine.Input
             return true;
         }
 
+        /// <summary>
+        /// Returns true if any of the keybindings associated with the given keys were first pressed
+        /// in the current frame (and not in the last).
+        /// </summary>
+        /// <param name="keys">The strings that the keybindings were stored under</param>
+        /// <returns></returns>
         public bool AnyPressed(params string[] keys){
             foreach (var key in keys)
                 if (IsPressed(key))
@@ -204,6 +219,12 @@ namespace Engine.Input
             return false;
         }
 
+        /// <summary>
+        /// Returns true if all of the keybindings associated with the given keys were first pressed
+        /// in the current frame (and not in the last).
+        /// </summary>
+        /// <param name="keys">The strings that the keybindings were stored under</param>
+        /// <returns></returns>
         public bool AllPressed(params string[] keys){
             foreach (var key in keys)
                 if (!IsPressed(key))
@@ -211,6 +232,12 @@ namespace Engine.Input
             return true;
         }
 
+        /// <summary>
+        /// Returns true if any of the keybindings associated with the given keys were first released
+        /// in the current frame (and not in the last).
+        /// </summary>
+        /// <param name="keys">The strings that the keybindings were stored under</param>
+        /// <returns></returns>
         public bool AnyReleased(params string[] keys)
         {
             foreach (var key in keys)
@@ -219,6 +246,12 @@ namespace Engine.Input
             return false;
         }
 
+        /// <summary>
+        /// Returns true if all of the keybindings associated with the given keys were first released
+        /// in the current frame (and not in the last).
+        /// </summary>
+        /// <param name="keys">The strings that the keybindings were stored under</param>
+        /// <returns></returns>
         public bool AllReleased(params string[] keys)
         {
             foreach (var key in keys)
@@ -232,28 +265,17 @@ namespace Engine.Input
         #region Mouse Position
 
         /// <summary>
-        /// Get the position of the mouse in the CURRENT frame.
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 GetMousePos()
-        {
-            return GetMousePos(FrameState.Current);
-        }
-
-        /// <summary>
         /// Get the position of the mouse in the specified frame.
+        /// (Default frame is the current frame)
         /// </summary>
         /// <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
         /// <returns></returns>
-        public Vector2 GetMousePos(FrameState state)
+        public Vector2 GetMousePos(FrameState state = FrameState.Current)
         {
             MouseState mouseState = state == FrameState.Current ? CurrentMouseState : LastMouseState;
             return new Vector2(mouseState.X, mouseState.Y);
         }
 
         #endregion
-
-        
-        
     }
 }
