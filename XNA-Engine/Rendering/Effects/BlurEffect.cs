@@ -13,11 +13,12 @@ namespace Engine.Rendering.Effects
     {
         #region Fields
 
+        private RenderTarget2D _combineTarget; 
+        private RenderTarget2D _lastFrame;
+        private Effect _reduceAlphaEffect;
+
         private Vector2 renderDimensions;
         public float AlphaDecay = 0.003f;
-        private Effect _reduceAlphaEffect;
-        private RenderTarget2D _lastFrame;
-        private RenderTarget2D _combineTarget;
 
         #endregion
 
@@ -64,6 +65,13 @@ namespace Engine.Rendering.Effects
 
         #endregion
 
+        /// <summary>
+        /// This should most likely be called every frame, to update the change in position of the camera.
+        /// This will make the blur render w.r.t. the player.  Of course, you could also blur by a normal to
+        /// the camera delta or an oscillating angle to the player, to create different effects.
+        /// </summary>
+        /// <param name="delta">Change in position of the blur effect since the last frame.  
+        ///                     Do not scale the offset to texture coordinates, that will be done for you.</param>
         public void SetFrameDelta(Vector2 delta)
         {
             _reduceAlphaEffect.Parameters["offsetXY"].SetValue(delta / renderDimensions);
@@ -87,6 +95,5 @@ namespace Engine.Rendering.Effects
             // Pass 4: copy the combineTarget to the preEffectTexture
             DrawFullscreenQuad(_combineTarget, postEffectTexture, BlendState.NonPremultiplied, null);
         }
-
     }
 }
