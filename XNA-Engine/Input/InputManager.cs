@@ -149,7 +149,7 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public bool IsKeyBindingActive(string key, FrameState state = FrameState.Current)
+        public bool IsActive(string key, FrameState state = FrameState.Current)
         {
             if (HasKeyBinding(key))
                 return keybindings[key].IsActive(state, this);
@@ -162,9 +162,9 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public bool IsKeyBindingPress(string key)
+        public bool IsPressed(string key)
         {
-            return IsKeyBindingActive(key, FrameState.Current) && !IsKeyBindingActive(key, FrameState.Previous);
+            return IsActive(key, FrameState.Current) && !IsActive(key, FrameState.Previous);
         }
 
         /// <summary>
@@ -174,55 +174,55 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public bool IsKeyBindingRelease(string key)
+        public bool IsReleased(string key)
         {
-            return IsKeyBindingActive(key, FrameState.Previous) && !IsKeyBindingActive(key, FrameState.Current);
+            return IsActive(key, FrameState.Previous) && !IsActive(key, FrameState.Current);
         }
 
         #endregion
 
         #region Query Multiple KeyBindings State
 
-        public bool AnyKeyBindsActive(params string[] keys){
+        public bool AnyActive(params string[] keys){
             foreach (var key in keys)
-                if (IsKeyBindingActive(key))
+                if (IsActive(key))
                     return true;
             return false;
         }
 
-        public bool AllKeyBindsActive(params string[] keys){
+        public bool AllActive(params string[] keys){
             foreach (var key in keys)
-                if (!IsKeyBindingActive(key))
+                if (!IsActive(key))
                     return false;
             return true;
         }
 
-        public bool AnyKeyBindsPress(params string[] keys){
+        public bool AnyPressed(params string[] keys){
             foreach (var key in keys)
-                if (IsKeyBindingPress(key))
+                if (IsPressed(key))
                     return true;
             return false;
         }
 
-        public bool AllKeyBindsPress(params string[] keys){
+        public bool AllPressed(params string[] keys){
             foreach (var key in keys)
-                if (!IsKeyBindingPress(key))
+                if (!IsPressed(key))
                     return false;
             return true;
         }
 
-        public bool AnyKeyBindsRelease(params string[] keys)
+        public bool AnyReleased(params string[] keys)
         {
             foreach (var key in keys)
-                if (IsKeyBindingRelease(key))
+                if (IsReleased(key))
                     return true;
             return false;
         }
 
-        public bool AllKeyBindsRelease(params string[] keys)
+        public bool AllReleased(params string[] keys)
         {
             foreach (var key in keys)
-                if (!IsKeyBindingRelease(key))
+                if (!IsReleased(key))
                     return false;
             return true;
         }
