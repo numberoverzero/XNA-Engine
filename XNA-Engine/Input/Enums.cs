@@ -26,18 +26,6 @@ namespace Engine.Input
     public enum ThumbstickDirection { None, Up, Down, Left, Right }
 
     /// <summary>
-    /// Specifies the type of binding an InputBinding has.
-    /// </summary>
-    /// <remarks>
-    /// This allows high-level checks for the action associated with the Input,
-    /// instead of worrying about the details of that input's type
-    /// 
-    /// Thumbstick is registered on ANY thumbstick activity with magnitude greater than ThumbstickThreshold
-    /// ThumbstickDirection is registered when the specified thumbstick is moved past Threshold in that direction
-    /// </remarks>
-    public enum BindingType { None, Key, Button, Trigger, Thumbstick, ThumbstickDirection, MouseButton }
-
-    /// <summary>
     /// Which frame (previous or current) you are querying.
     /// Used when asking about a key's state
     /// </summary>

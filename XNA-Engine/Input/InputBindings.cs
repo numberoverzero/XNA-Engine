@@ -9,12 +9,9 @@ namespace Engine.Input
 {
     public partial class InputManager
     {
-        /// <summary>
-        /// A single binding, wrapper for Thumbsticks, keys, Buttons, etc
-        /// </summary>
         private class InputBinding
         {
-            public Modifier[] Modifiers { get; private set; }
+            private Modifier[] Modifiers;
 
             #region Initialiation
 
