@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 #endregion
@@ -15,14 +13,14 @@ namespace Engine.Rendering
         /// <summary>
         /// Stores all of the [T, LayerType] => Color information
         /// </summary>
-        Dictionary<T, Dictionary<LayerType, Color>> scheme;
+        Dictionary<T, Dictionary<LayerType, Color>> colorMapping;
 
         /// <summary>
         /// Create a new OrbColorScheme
         /// </summary>
         public ColorScheme()
         {
-            scheme = new Dictionary<T, Dictionary<LayerType, Color>>();
+            colorMapping = new Dictionary<T, Dictionary<LayerType, Color>>();
         }
 
         /// <summary>
@@ -34,14 +32,14 @@ namespace Engine.Rendering
         public Color this[T t, LayerType layer]
         {
             get{
-                if (scheme.ContainsKey(t) && scheme[t].ContainsKey(layer))
-                    return scheme[t][layer];
+                if (colorMapping.ContainsKey(t) && colorMapping[t].ContainsKey(layer))
+                    return colorMapping[t][layer];
                 return default(Color);
             }
             set{
-                if (!scheme.ContainsKey(t))
-                    scheme[t] = new Dictionary<LayerType, Color>();
-                scheme[t][layer] = value;
+                if (!colorMapping.ContainsKey(t))
+                    colorMapping[t] = new Dictionary<LayerType, Color>();
+                colorMapping[t][layer] = value;
             }
         }   
 

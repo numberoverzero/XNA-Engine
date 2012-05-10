@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Engine.Rendering.Pipeline;
+using Engine.Utility;
 
 namespace Engine.Rendering.Effects
 {
@@ -13,9 +14,9 @@ namespace Engine.Rendering.Effects
     {
         #region Fields
 
-        private RenderTarget2D _combineTarget; 
-        private RenderTarget2D _lastFrame;
-        private Effect _reduceAlphaEffect;
+        private RenderTarget2D combineTarget; 
+        private RenderTarget2D previousFrame;
+        private Effect reduceAlphaEffect;
 
         private Vector2 renderDimensions;
         public float AlphaDecay = 0.003f;
@@ -39,25 +40,22 @@ namespace Engine.Rendering.Effects
 
         public override void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
-            _reduceAlphaEffect = contentManager.Load<Effect>("Effects/Blur/ReduceAlpha");
+            reduceAlphaEffect = contentManager.Load<Effect>("Effects/Blur/ReduceAlpha");
 
-            PresentationParameters pp = graphicsDevice.PresentationParameters;
-            SurfaceFormat format = pp.BackBufferFormat; 
-            int width = pp.BackBufferWidth;
-            int height = pp.BackBufferHeight;
-            renderDimensions = new Vector2(width, height);
-
-            _lastFrame = new RenderTarget2D(graphicsDevice, width, height, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.PreserveContents);
-            _combineTarget = new RenderTarget2D(graphicsDevice, width, height, false, format, pp.DepthStencilFormat, pp.MultiSampleCount, RenderTargetUsage.DiscardContents);
+            renderDimensions = new Vector2(graphicsDevice.PresentationParameters.BackBufferWidth,
+                                           graphicsDevice.PresentationParameters.BackBufferHeight);
+            
+            previousFrame = graphicsDevice.CreateFullscreenRenderTarget(true);
+            combineTarget = graphicsDevice.CreateFullscreenRenderTarget(false);
 
             base.LoadContent(contentManager, graphicsDevice, spriteBatch);
         }
 
         public override void UnloadContent()
         {
-            _reduceAlphaEffect = null;
-            _lastFrame = null;
-            _combineTarget = null;
+            reduceAlphaEffect = null;
+            previousFrame = null;
+            combineTarget = null;
 
             base.UnloadContent();
         }
@@ -74,26 +72,26 @@ namespace Engine.Rendering.Effects
         ///                     Do not scale the offset to texture coordinates, that will be done for you.</param>
         public void SetFrameDelta(Vector2 delta)
         {
-            _reduceAlphaEffect.Parameters["offsetXY"].SetValue(delta / renderDimensions);
+            reduceAlphaEffect.Parameters["offsetXY"].SetValue(delta / renderDimensions);
         }
 
         public override void ApplyEffect(RenderTarget2D preEffectTexture, RenderTarget2D postEffectTexture)
         {
-            _reduceAlphaEffect.Parameters["factor"].SetValue(AlphaDecay);
+            reduceAlphaEffect.Parameters["factor"].SetValue(AlphaDecay);
 
             // Pass 1: render the lastFrame onto combineTarget using the reduceAlphaEffect to "fade out" the last draw data.
             
-            _graphicsDevice.Textures[0] = _lastFrame;
-            DrawFullscreenQuad(_lastFrame, _combineTarget, BlendState.Opaque, _reduceAlphaEffect);
+            graphicsDevice.Textures[0] = previousFrame;
+            DrawFullscreenQuad(previousFrame, combineTarget, BlendState.Opaque, reduceAlphaEffect);
 
             // Pass 2: render the contents of this latest frame (preEffectTexture) to the renderTarget1
-            DrawFullscreenQuad(preEffectTexture, _combineTarget, BlendState.AlphaBlend, null);
+            DrawFullscreenQuad(preEffectTexture, combineTarget, BlendState.AlphaBlend, null);
 
             // Pass 3: copy everything from the combineTarget to the lastFrame for the next draw
-            DrawFullscreenQuad(_combineTarget, _lastFrame, BlendState.Opaque, null);
+            DrawFullscreenQuad(combineTarget, previousFrame, BlendState.Opaque, null);
 
             // Pass 4: copy the combineTarget to the preEffectTexture
-            DrawFullscreenQuad(_combineTarget, postEffectTexture, BlendState.NonPremultiplied, null);
+            DrawFullscreenQuad(combineTarget, postEffectTexture, BlendState.NonPremultiplied, null);
         }
     }
 }

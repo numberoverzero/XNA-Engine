@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#region Using Statements
+
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Engine.Rendering.Pipeline;
+
+#endregion
 
 namespace Engine.Rendering.Effects
 {
@@ -155,7 +156,7 @@ namespace Engine.Rendering.Effects
 
         public override void ApplyEffect(RenderTarget2D preEffectTexture, RenderTarget2D postEffectTexture)
         {
-            _graphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
+            graphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
 
             // Pass 1: draw the scene into rendertarget 1, using a
             // shader that extracts only the brightest parts of the image.
@@ -189,7 +190,7 @@ namespace Engine.Rendering.Effects
             // Pass 4: draw both rendertarget 1 and the original scene
             // image back into the main backbuffer, using a shader that
             // combines them to produce the final bloomed result.
-            _graphicsDevice.SetRenderTarget(postEffectTexture);
+            graphicsDevice.SetRenderTarget(postEffectTexture);
 
             EffectParameterCollection parameters = bloomCombineEffect.Parameters;
             parameters["BloomIntensity"].SetValue(Settings.BloomIntensity);
@@ -197,9 +198,9 @@ namespace Engine.Rendering.Effects
             parameters["BloomSaturation"].SetValue(Settings.BloomSaturation);
             parameters["BaseSaturation"].SetValue(Settings.BaseSaturation);
 
-            _graphicsDevice.Textures[1] = preEffectTextureCopy;
+            graphicsDevice.Textures[1] = preEffectTextureCopy;
 
-            Viewport viewport = _graphicsDevice.Viewport;
+            Viewport viewport = graphicsDevice.Viewport;
 
             DrawFullscreenQuad(renderTarget1, BlendState.Opaque,
                                viewport.Width, viewport.Height,
