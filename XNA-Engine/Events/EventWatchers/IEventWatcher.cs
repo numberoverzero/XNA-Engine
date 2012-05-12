@@ -7,5 +7,7 @@ namespace Engine.Events.EventWatchers
 {
     public interface IEventWatcher
     {
+        EventWatchTiming GetWatchTiming();
+        void InspectEvent(GameEvent gameEvent);
     }
 }

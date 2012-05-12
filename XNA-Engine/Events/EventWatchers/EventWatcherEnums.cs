@@ -7,6 +7,9 @@ namespace Engine.Events.EventWatchers
 {
     public enum EventWatchTiming
     {
-
+        None,
+        OnCreate,
+        OnFire,
+        Any
     }
 }

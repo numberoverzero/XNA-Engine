@@ -5,6 +5,7 @@ using System.Text;
 using Engine.Entities.Components;
 using Microsoft.Xna.Framework;
 using Engine.Entities.Behaviors;
+using Engine.Events;
 
 namespace Engine.Entities
 {
@@ -60,6 +61,14 @@ namespace Engine.Entities
                 if (behavior.MeetsCriteria(this))
                     behavior.Apply(this);
             }
+        }
+
+        #endregion
+
+        #region GameEvents
+
+        public virtual void OnGameEvent(GameObject src, GameEventArgs args)
+        {
         }
 
         #endregion
