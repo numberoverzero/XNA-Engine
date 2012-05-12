@@ -6,6 +6,7 @@ using Engine.Entities.Components;
 using Microsoft.Xna.Framework;
 using Engine.Entities.Behaviors;
 using Engine.Events;
+using Engine.Events.GameObjectEvents;
 
 namespace Engine.Entities
 {
@@ -13,6 +14,7 @@ namespace Engine.Entities
     {
         #region Fields
 
+        public GameEventManager GameEventManager { get; protected set; }
         public PhysicsComponent PhysicsComponent { get; protected set; }
         public List<IBehavior> Behaviors { get; protected set; }
         public bool Active { get; protected set; }
@@ -23,20 +25,30 @@ namespace Engine.Entities
 
         #region Initialization
 
-        public GameObject()
+        public GameObject(GameEventManager manager) : this(manager, 0, false, true) { }
+        public GameObject(GameEventManager manager, int health, bool active, bool fireOnCreateEvent)
         {
             PhysicsComponent = new PhysicsComponent();
             Behaviors = new List<IBehavior>();
+            Active = active;
+            Timescale = 1;
+            Health = health;
+            if (fireOnCreateEvent && GameEventManager != null)
+                GameEventManager.AddEvent(new GameObjectCreatedEvent(this));
         }
 
-        public GameObject(GameObject other)
+        public GameObject(GameObject other, bool fireOnCreateEvent=true)
         {
+            GameEventManager = other.GameEventManager;
             PhysicsComponent = new PhysicsComponent(other.PhysicsComponent);
             Behaviors = new List<IBehavior>(other.Behaviors);
 
             Active = other.Active;
             Timescale = other.Timescale;
             Health = other.Health;
+            
+            if (fireOnCreateEvent && GameEventManager != null)
+                GameEventManager.AddEvent(new GameObjectCreatedEvent(this));
         }
 
         #endregion
