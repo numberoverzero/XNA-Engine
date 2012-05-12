@@ -11,19 +11,19 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
-    public partial class InputManager{
+    public class InputManager{
         #region Fields
 
-        private KeyboardState LastKeyboardState;
-        private KeyboardState CurrentKeyboardState;
+        public KeyboardState LastKeyboardState { get; protected set; }
+        public KeyboardState CurrentKeyboardState { get; protected set; }
 
-        private GamePadState LastGamePadState;
-        private GamePadState CurrentGamePadState;
+        public GamePadState LastGamePadState { get; protected set; }
+        public GamePadState CurrentGamePadState { get; protected set; }
 
-        private MouseState LastMouseState;
-        private MouseState CurrentMouseState;
+        public MouseState LastMouseState { get; protected set; }
+        public MouseState CurrentMouseState { get; protected set; }
 
-        private Dictionary<String, InputBinding> keybindings;
+        public Dictionary<String, InputBinding> Bindings { get; protected set; }
         public InputSettings Settings { get; private set; }
 
         #endregion
@@ -33,7 +33,7 @@ namespace Engine.Input
         public InputManager()
         {
             Settings = new InputSettings(0,0);
-            keybindings = new Dictionary<string, InputBinding>();
+            Bindings = new Dictionary<string, InputBinding>();
         }
         public InputManager(InputManager input)
         {
@@ -46,9 +46,8 @@ namespace Engine.Input
             LastMouseState = input.LastMouseState;
             CurrentMouseState = input.CurrentMouseState;
 
-            Settings = new InputSettings(input.Settings.TriggerThreshold, input.Settings.ThumbstickThreshold);
-
-            keybindings = new Dictionary<string, InputBinding>(input.keybindings);
+            Settings = new InputSettings(input.Settings);
+            Bindings = new Dictionary<string, InputBinding>(input.Bindings);
 
         }
 
@@ -56,11 +55,11 @@ namespace Engine.Input
 
         #region AddKeyBinding Methods
 
-        private void AddKeyBinding(string bindingName, InputBinding inputBinding)
+        public void AddKeyBinding(string bindingName, InputBinding inputBinding)
         {
             // Make sure there isn't already a biding with that name
             RemoveKeyBindings(bindingName);
-            keybindings.Add(bindingName, inputBinding);
+            Bindings.Add(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
         {
@@ -123,7 +122,7 @@ namespace Engine.Input
         {
             foreach(var key in keys)
                 if(HasKeyBinding(key))
-                    keybindings.Remove(key);
+                    Bindings.Remove(key);
         }
 
         /// <summary>
@@ -133,7 +132,7 @@ namespace Engine.Input
         /// <returns></returns>
         public bool HasKeyBinding(string key)
         {
-            return keybindings.ContainsKey(key);
+            return Bindings.ContainsKey(key);
         }
 
         #region Query Single KeyBinding State
@@ -148,7 +147,7 @@ namespace Engine.Input
         public bool IsActive(string key, FrameState state = FrameState.Current)
         {
             if (HasKeyBinding(key))
-                return keybindings[key].IsActive(this, state);
+                return Bindings[key].IsActive(this, state);
             return false;
         }
 

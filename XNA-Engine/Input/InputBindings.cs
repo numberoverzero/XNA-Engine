@@ -7,240 +7,239 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
-    public partial class InputManager
+    
+    public class InputBinding
     {
-        private class InputBinding
+        public Modifier[] Modifiers {get;protected set;}
+
+        #region Initialiation
+
+        /// <summary>
+        /// Initialize an InputBinding with an optional list of required modifiers
+        /// </summary>
+        /// <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
+        /// 
+        public InputBinding(params Modifier[] modifiers)
         {
-            private Modifier[] Modifiers;
+            Modifiers = new Modifier[modifiers.Length];
+            Array.Copy(modifiers, Modifiers, modifiers.Length);
+        }
 
-            #region Initialiation
+        #endregion
 
-            /// <summary>
-            /// Initialize an InputBinding with an optional list of required modifiers
-            /// </summary>
-            /// <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
-            /// 
-            protected InputBinding(params Modifier[] modifiers)
+        #region IsActive Methods
+
+        /// <summary>
+        /// True if the InputBinding is active in the given FrameState of the given InputManager
+        /// </summary>
+        /// <param name="state">Current or Previous frame</param>
+        /// <param name="manager">The manager keeping track of current/previous input states</param>
+        /// <remarks>
+        /// At first I wasn't comfortable with passing the entire InputManager around, but on the plus side,
+        /// we can now easily mock up input.  Woohoo!
+        /// </remarks>
+        /// <returns></returns>
+        public bool IsActive(InputManager manager, FrameState state)
+        {
+            KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.LastKeyboardState;
+            GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadState : manager.LastGamePadState;
+            MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.LastMouseState;
+            return IsRawBindingActive(keyState, gamepadState, mouseState, manager.Settings) && AreExactModifiersActive(keyState);
+
+        }
+
+        /// <summary>
+        /// True if the binding (without modifiers) is active.  In general, one should check if a binding is active through IsActive.
+        /// Subclasses of InputBinding should override IsRawBindingActive, which is called from IsActive.
+        /// </summary>
+        /// <param name="keyState">KeybardState to check binding against</param>
+        /// <param name="gamepadState">GamePadState to check binding against</param>
+        /// <param name="mouseState">MouseState to check binding against</param>
+        /// <param name="settings">Settings to use when checking thresholds, etc</param>
+        /// <returns></returns>
+        public virtual bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the modifiers that this binding requires 
+        /// match the active state of the modifiers in the given KeyboardState
+        /// </summary>
+        /// <remarks>
+        /// I suspect it should be possible to streamline this in someway while still keeping the system easily extendable.
+        /// We're O(n) and we can reasonably assume n is smaller than 10, but even still, it looks ugly.
+        /// </remarks>
+        /// <param name="keyState">The KeyboardState to check modifiers against</param>
+        /// <returns>True if only all required modifiers are active</returns>
+        public bool AreExactModifiersActive(KeyboardState keyState)
+        {
+            return (Modifier.Alt.IsActive(keyState) == Modifiers.Contains(Modifier.Alt) &&
+                    Modifier.Ctrl.IsActive(keyState) == Modifiers.Contains(Modifier.Ctrl) &&
+                    Modifier.Shift.IsActive(keyState) == Modifiers.Contains(Modifier.Shift));
+        }
+
+        #endregion
+
+        #region CreateBinding - overloaded function for creating any type of InputBinding.  
+        //Add an overload when creating a new subclass of InputBinding
+
+        public static InputBinding CreateBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
+        {
+            return new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
+        }
+        public static InputBinding CreateBinding(MouseButton mouseButton, params Modifier[] modifiers)
+        {
+            return new MouseInputBinding(mouseButton, modifiers);
+        }
+        public static InputBinding CreateBinding(Thumbstick thumbstick, params Modifier[] modifiers)
+        {
+            return new ThumbstickInputBinding(thumbstick, modifiers);
+        }
+        public static InputBinding CreateBinding(Buttons button, params Modifier[] modifiers)
+        {
+            return new ButtonInputBinding(button, modifiers);
+        }
+        public static InputBinding CreateBinding(Keys key, params Modifier[] modifiers)
+        {
+            return new KeyInputBinding(key, modifiers);
+        }
+        public static InputBinding CreateBinding(Trigger trigger, params Modifier[] modifiers)
+        {
+            return new TriggerInputBinding(trigger, modifiers);
+        }
+
+        #endregion
+    }
+
+    public class ThumbstickDirectionInputBinding : InputBinding
+    {
+        public Thumbstick Thumbstick { get; protected set; }
+        public ThumbstickDirection Direction { get; protected set; }
+
+        public ThumbstickDirectionInputBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
+            : base(modifiers)
+        {
+            this.Thumbstick = thumbstick;
+            Direction = thumbstickDirection;
+        }
+
+        public override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        {
+            Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
+            bool isActive = false;
+            switch (Direction)
             {
-                Modifiers = new Modifier[modifiers.Length];
-                Array.Copy(modifiers, Modifiers, modifiers.Length);
+                case ThumbstickDirection.Up:
+                    isActive = (gamepadThumbstick.Y >= settings.ThumbstickThreshold);
+                    break;
+                case ThumbstickDirection.Down:
+                    isActive = (gamepadThumbstick.Y <= -settings.ThumbstickThreshold);
+                    break;
+                case ThumbstickDirection.Left:
+                    isActive = (gamepadThumbstick.X <= -settings.ThumbstickThreshold);
+                    break;
+                case ThumbstickDirection.Right:
+                    isActive = (gamepadThumbstick.X >= settings.ThumbstickThreshold);
+                    break;
+                default:
+                    break;
             }
+            return isActive;
+        }
+    }
 
-            #endregion
+    public class MouseInputBinding : InputBinding
+    {
+        public MouseButton Button { get; protected set; }
 
-            #region IsActive Methods
+        public MouseInputBinding(MouseButton mouseButton, params Modifier[] modifiers)
+            : base(modifiers)
+        {
+            Button = mouseButton;
+        }
 
-            /// <summary>
-            /// True if the InputBinding is active in the given FrameState of the given InputManager
-            /// </summary>
-            /// <param name="state">Current or Previous frame</param>
-            /// <param name="manager">The manager keeping track of current/previous input states</param>
-            /// <remarks>
-            /// At first I wasn't comfortable with passing the entire InputManager around, but on the plus side,
-            /// we can now easily mock up input.  Woohoo!
-            /// </remarks>
-            /// <returns></returns>
-            public bool IsActive(InputManager manager, FrameState state)
+        public override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        {
+            ButtonState buttonState;
+            switch (Button)
             {
-                KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.LastKeyboardState;
-                GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadState : manager.LastGamePadState;
-                MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.LastMouseState;
-                return IsRawBindingActive(keyState, gamepadState, mouseState, manager.Settings) && AreExactModifiersActive(keyState);
-
+                case MouseButton.Left:
+                    buttonState = mouseState.LeftButton;
+                    break;
+                case MouseButton.Right:
+                    buttonState = mouseState.RightButton;
+                    break;
+                case MouseButton.Middle:
+                    buttonState = mouseState.MiddleButton;
+                    break;
+                default:
+                    buttonState = ButtonState.Released;
+                    break;
             }
+            return buttonState == ButtonState.Pressed;
+        }
+    }
 
-            protected virtual bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
-            {
-                return false;
-            }
+    public class ThumbstickInputBinding : InputBinding
+    {
+        public Thumbstick Thumbstick { get; protected set; }
+        public ThumbstickInputBinding(Thumbstick thumbstick, params Modifier[] modifiers)
+            : base(modifiers)
+        {
+            this.Thumbstick = thumbstick;
+        }
 
-            /// <summary>
-            /// Checks if the modifiers that this binding requires 
-            /// match the active state of the modifiers in the given KeyboardState
-            /// </summary>
-            /// <remarks>
-            /// I suspect it should be possible to streamline this in someway while still keeping the system easily extendable.
-            /// We're O(n) and we can reasonably assume n is smaller than 10, but even still, it looks ugly.
-            /// </remarks>
-            /// <param name="keyState">The KeyboardState to check modifiers against</param>
-            /// <returns>True if only all required modifiers are active</returns>
-            private bool AreExactModifiersActive(KeyboardState keyState)
-            {
-                return (Modifier.Alt.IsActive(keyState) == Modifiers.Contains(Modifier.Alt) &&
-                        Modifier.Ctrl.IsActive(keyState) == Modifiers.Contains(Modifier.Ctrl) &&
-                        Modifier.Shift.IsActive(keyState) == Modifiers.Contains(Modifier.Shift));
-            }
+        public override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        {
+            Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
+            return gamepadThumbstickMag.Length() >= settings.ThumbstickThreshold;
+        }
+    }
 
-            #endregion
+    public class ButtonInputBinding : InputBinding
+    {
+        public Buttons Button { get; protected set; }
+        public ButtonInputBinding(Buttons button, params Modifier[] modifiers)
+            : base(modifiers)
+        {
+            this.Button = button;
+        }
 
-            #region Factory
+        public override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        {
+            return gamepadState.IsButtonDown(Button);
+        }
+    }
 
-            public static InputBinding CreateBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
-            {
-                return new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
-            }
-            
-            public static InputBinding CreateBinding(MouseButton mouseButton, params Modifier[] modifiers)
-            {
-                return new MouseInputBinding(mouseButton, modifiers);
-            }
+    public class KeyInputBinding : InputBinding
+    {
+        public Keys Key { get; protected set; }
+        public KeyInputBinding(Keys key, params Modifier[] modifiers)
+            : base(modifiers)
+        {
+            this.Key = key;
+        }
 
-            public static InputBinding CreateBinding(Thumbstick thumbstick, params Modifier[] modifiers)
-            {
-                return new ThumbstickInputBinding(thumbstick, modifiers);
-            }
+        public override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        {
+            return keyState.IsKeyDown(Key);
+        }
+    }
 
-            public static InputBinding CreateBinding(Buttons button, params Modifier[] modifiers)
-            {
-                return new ButtonInputBinding(button, modifiers);
-            }
+    public class TriggerInputBinding : InputBinding
+    {
+        public Trigger Trigger { get; protected set; }
+        public TriggerInputBinding(Trigger trigger, params Modifier[] modifiers)
+            : base(modifiers)
+        {
+            this.Trigger = trigger;
+        }
 
-            public static InputBinding CreateBinding(Keys key, params Modifier[] modifiers)
-            {
-                return new KeyInputBinding(key, modifiers);
-            }
-
-            public static InputBinding CreateBinding(Trigger trigger, params Modifier[] modifiers)
-            {
-                return new TriggerInputBinding(trigger, modifiers);
-            }
-
-            #endregion
-
-            #region Private Subclasses
-
-            private class ThumbstickDirectionInputBinding : InputBinding
-            {
-                Thumbstick thumbstick;
-                ThumbstickDirection direction;
-
-                public ThumbstickDirectionInputBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
-                    : base(modifiers)
-                {
-                    this.thumbstick = thumbstick;
-                    direction = thumbstickDirection;
-                }
-
-                protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
-                {
-                    Vector2 gamepadThumbstick = thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
-                    bool isActive = false;
-                    switch (direction)
-                    {
-                        case ThumbstickDirection.Up:
-                            isActive = (gamepadThumbstick.Y >= settings.ThumbstickThreshold);
-                            break;
-                        case ThumbstickDirection.Down:
-                            isActive = (gamepadThumbstick.Y <= -settings.ThumbstickThreshold);
-                            break;
-                        case ThumbstickDirection.Left:
-                            isActive = (gamepadThumbstick.X <= -settings.ThumbstickThreshold);
-                            break;
-                        case ThumbstickDirection.Right:
-                            isActive = (gamepadThumbstick.X >= settings.ThumbstickThreshold);
-                            break;
-                        default:
-                            break;
-                    }
-                    return isActive;
-                }
-            }
-
-            private class MouseInputBinding : InputBinding
-            {
-                MouseButton button;
-
-                public MouseInputBinding(MouseButton mouseButton, params Modifier[] modifiers)
-                    : base(modifiers)
-                {
-                    button = mouseButton;
-                }
-
-                protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
-                {
-                    ButtonState buttonState;
-                    switch (button)
-                    {
-                        case MouseButton.Left:
-                            buttonState = mouseState.LeftButton;
-                            break;
-                        case MouseButton.Right:
-                            buttonState = mouseState.RightButton;
-                            break;
-                        case MouseButton.Middle:
-                            buttonState = mouseState.MiddleButton;
-                            break;
-                        default:
-                            buttonState = ButtonState.Released;
-                            break;
-                    }
-                    return buttonState == ButtonState.Pressed;
-                }
-            }
-
-            private class ThumbstickInputBinding : InputBinding
-            {
-                Thumbstick thumbstick;
-                public ThumbstickInputBinding(Thumbstick thumbstick, params Modifier[] modifiers)
-                    : base(modifiers)
-                {
-                    this.thumbstick = thumbstick;
-                }
-
-                protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
-                {
-                    Vector2 gamepadThumbstickMag = thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
-                    return gamepadThumbstickMag.Length() >= settings.ThumbstickThreshold;
-                }
-            }
-
-            private class ButtonInputBinding : InputBinding
-            {
-                Buttons button;
-                public ButtonInputBinding(Buttons button, params Modifier[] modifiers)
-                    : base(modifiers)
-                {
-                    this.button = button;
-                }
-
-                protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
-                {
-                    return gamepadState.IsButtonDown(button);
-                }
-            }
-
-            private class KeyInputBinding : InputBinding
-            {
-                Keys key;
-                public KeyInputBinding(Keys key, params Modifier[] modifiers)
-                    : base(modifiers)
-                {
-                    this.key = key;
-                }
-
-                protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
-                {
-                    return keyState.IsKeyDown(key);
-                }
-            }
-
-            private class TriggerInputBinding : InputBinding
-            {
-                Trigger trigger;
-                public TriggerInputBinding(Trigger trigger, params Modifier[] modifiers)
-                    : base(modifiers)
-                {
-                    this.trigger = trigger;
-                }
-
-                protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
-                {
-                    float triggerMag = trigger == Trigger.Left ? gamepadState.Triggers.Left : gamepadState.Triggers.Right;
-                    return triggerMag >= settings.TriggerThreshold;
-                }
-            }
-
-            #endregion
+        public override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        {
+            float triggerMag = Trigger == Trigger.Left ? gamepadState.Triggers.Left : gamepadState.Triggers.Right;
+            return triggerMag >= settings.TriggerThreshold;
         }
     }
 }

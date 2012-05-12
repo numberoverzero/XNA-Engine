@@ -15,5 +15,10 @@ namespace Engine.Input
             TriggerThreshold = triggerThreshold;
             ThumbstickThreshold = thumbstickThreshold;
         }
+        public InputSettings(InputSettings settings)
+        {
+            TriggerThreshold = settings.TriggerThreshold;
+            ThumbstickThreshold = settings.ThumbstickThreshold;
+        }
     }
 }
