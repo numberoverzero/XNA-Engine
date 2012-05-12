@@ -89,5 +89,12 @@ namespace Engine.Entities
         {
             UpdateBehaviors(dt);
         }
+
+        public virtual void Destroy(bool isCleanup=true, bool fireOnDestroyEvent=true)
+        {
+            Active = false;
+            if (fireOnDestroyEvent && GameEventManager != null)
+                GameEventManager.AddEvent(new GameObjectDestroyedEvent(this));
+        }
     }
 }
