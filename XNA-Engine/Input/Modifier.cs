@@ -12,7 +12,7 @@ namespace Engine.Input
     public class Modifier
     {
         Keys key1, key2;
-        private Modifier(Keys key1, Keys key2)
+        public Modifier(Keys key1, Keys key2)
         {
             this.key1 = key1;
             this.key2 = key2;
