@@ -99,6 +99,13 @@
     <Compile Include="Entities\Behaviors\PrimitiveSteeringBehavior.cs" />
     <Compile Include="Entities\Components\PhysicsComponent.cs" />
     <Compile Include="Entities\GameObject.cs" />
+    <Compile Include="Events\EventWatchers\EventWatcherEnums.cs" />
+    <Compile Include="Events\EventWatchers\IEventWatcher.cs" />
+    <Compile Include="Events\GameEvent.cs" />
+    <Compile Include="Events\GameEventArgs.cs" />
+    <Compile Include="Events\GameEventManager.cs" />
+    <Compile Include="Events\GameObjectEvents\GameObjectCreatedEvent.cs" />
+    <Compile Include="Events\GameObjectEvents\GameObjectDestroyedEvent.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
     <Compile Include="Rendering\RenderEnums.cs" />
     <Compile Include="Rendering\Effects\BloomEffect.cs" />
