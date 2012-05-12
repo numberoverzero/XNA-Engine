@@ -10,15 +10,37 @@ namespace Engine.Entities
 {
     public class GameObject
     {
-        public PhysicsComponent PhysicsComponent { get; protected set; }
+        #region Fields
 
+        public PhysicsComponent PhysicsComponent { get; protected set; }
         public List<IBehavior> Behaviors { get; protected set; }
+        public bool Active { get; protected set; }
+        public float Timescale { get; set; }
+        public int Health { get; set; }
+
+        #endregion
+
+        #region Initialization
 
         public GameObject()
         {
             PhysicsComponent = new PhysicsComponent();
             Behaviors = new List<IBehavior>();
         }
+
+        public GameObject(GameObject other)
+        {
+            PhysicsComponent = new PhysicsComponent(other.PhysicsComponent);
+            Behaviors = new List<IBehavior>(other.Behaviors);
+
+            Active = other.Active;
+            Timescale = other.Timescale;
+            Health = other.Health;
+        }
+
+        #endregion
+
+        #region Behaviors
 
         public virtual void AddBehavior(IBehavior behavior)
         {
@@ -30,20 +52,21 @@ namespace Engine.Entities
             Behaviors.Remove(behavior);
         }
 
-        public virtual void Update(float dt)
-        {
-            UpdateBehaviors(dt);
-        }
-
         protected virtual void UpdateBehaviors(float dt)
         {
             foreach (var behavior in Behaviors)
             {
                 behavior.Update(dt);
-                if(behavior.MeetsCriteria(this))
+                if (behavior.MeetsCriteria(this))
                     behavior.Apply(this);
             }
         }
 
+        #endregion
+
+        public virtual void Update(float dt)
+        {
+            UpdateBehaviors(dt);
+        }
     }
 }
