@@ -12,6 +12,12 @@ using Engine.Rendering;
 
 namespace Engine.Entities
 {
+    /// <summary>
+    /// An object that exists in the game.
+    /// Consists of components which are managed by component systems.
+    /// Most interaction should be handled by passing and receiving appropriate messages,
+    ///     but can be handled directly using the Touch(GameObject other) method.
+    /// </summary>
     public class GameObject
     {
         #region Fields
