@@ -8,10 +8,7 @@ using Engine.Utility;
 
 namespace Engine.Rendering
 {
-    public class BasicShapeRenderer
-    {
-    }
-    public static class BasicShapes
+    public static class BasicShapeRenderer
     {
         private static GraphicsDevice graphicsDevice;
         private static Texture2D pixel1x1;
@@ -20,10 +17,14 @@ namespace Engine.Rendering
             get { return (graphicsDevice != null) && (pixel1x1 != null); }
         }
 
+        /// <summary>
+        /// The BasicShapeRenderer won't actually render until it's been initialized
+        /// </summary>
+        /// <param name="graphicsDevice"></param>
         public static void Initialize(GraphicsDevice graphicsDevice)
         {
-            if (BasicShapes.graphicsDevice == null)
-                BasicShapes.graphicsDevice = graphicsDevice;
+            if (BasicShapeRenderer.graphicsDevice == null)
+                BasicShapeRenderer.graphicsDevice = graphicsDevice;
             if (pixel1x1 == null)
                 pixel1x1 = ColorTextureGenerator.Create(graphicsDevice, 1, 1, Color.White);
         }
