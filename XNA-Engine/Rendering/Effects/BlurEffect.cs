@@ -93,5 +93,11 @@ namespace Engine.Rendering.Effects
             // Pass 4: copy the combineTarget to the preEffectTexture
             DrawFullscreenQuad(combineTarget, postEffectTexture, BlendState.NonPremultiplied, null);
         }
+        public override void Reset()
+        {
+            graphicsDevice.SetRenderTarget(previousFrame);
+            graphicsDevice.Clear(Color.Transparent);
+            base.Reset();
+        }
     }
 }

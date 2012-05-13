@@ -26,7 +26,7 @@ namespace Engine.Rendering.Pipeline
         }
 
         public virtual void ApplyEffect(RenderTarget2D preEffectTexture, RenderTarget2D postEffectTexture) { }
-
+        public virtual void Reset() { }
         protected void DrawFullscreenQuad(Texture2D texture, RenderTarget2D renderTarget, BlendState blendState, Effect effect)
         {
             graphicsDevice.SetRenderTarget(renderTarget);

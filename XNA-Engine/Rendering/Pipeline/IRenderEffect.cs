@@ -14,5 +14,6 @@ namespace Engine.Rendering.Pipeline
         void UnloadContent(); 
         
         void ApplyEffect(RenderTarget2D preEffectTexture, RenderTarget2D postEffectTexture);
+        void Reset();
     }
 }
