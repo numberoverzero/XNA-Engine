@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using Engine.Entities.Components;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Engine.Entities.Behaviors;
 using Engine.Events;
 using Engine.Events.GameObjectEvents;
+using Engine.Rendering;
 
 namespace Engine.Entities
 {
@@ -14,6 +16,7 @@ namespace Engine.Entities
     {
         #region Fields
 
+        public ColorScheme<Hostility> ColorScheme { get; protected set; }
         public GameEventManager GameEventManager { get; protected set; }
         public PhysicsComponent PhysicsComponent { get; protected set; }
         public List<IBehavior> Behaviors { get; protected set; }
@@ -28,6 +31,7 @@ namespace Engine.Entities
         public GameObject(GameEventManager manager) : this(manager, 0, false, true) { }
         public GameObject(GameEventManager manager, int health, bool active, bool fireOnCreateEvent)
         {
+            ColorScheme = new ColorScheme<Hostility>();
             PhysicsComponent = new PhysicsComponent();
             Behaviors = new List<IBehavior>();
             Active = active;
@@ -39,6 +43,7 @@ namespace Engine.Entities
 
         public GameObject(GameObject other, bool fireOnCreateEvent=true)
         {
+            ColorScheme = new ColorScheme<Hostility>(other.ColorScheme);
             GameEventManager = other.GameEventManager;
             PhysicsComponent = new PhysicsComponent(other.PhysicsComponent);
             Behaviors = new List<IBehavior>(other.Behaviors);
@@ -88,6 +93,13 @@ namespace Engine.Entities
         public virtual void Update(float dt)
         {
             UpdateBehaviors(dt);
+        }
+
+        public virtual void Draw(SpriteBatch batch, RenderPass pass) { }
+
+        public virtual bool Touch(GameObject other)
+        {
+            return false;
         }
 
         public virtual void Destroy(bool isCleanup=true, bool fireOnDestroyEvent=true)

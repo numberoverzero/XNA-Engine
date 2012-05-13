@@ -98,6 +98,7 @@
     <Compile Include="Entities\Behaviors\IBehavior.cs" />
     <Compile Include="Entities\Behaviors\PrimitiveSteeringBehavior.cs" />
     <Compile Include="Entities\Components\PhysicsComponent.cs" />
+    <Compile Include="Entities\EntityEnums.cs" />
     <Compile Include="Entities\GameObject.cs" />
     <Compile Include="Events\EventWatchers\EventWatcherEnums.cs" />
     <Compile Include="Events\EventWatchers\IEventWatcher.cs" />

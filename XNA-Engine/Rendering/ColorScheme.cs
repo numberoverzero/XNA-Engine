@@ -24,6 +24,15 @@ namespace Engine.Rendering
         }
 
         /// <summary>
+        /// Create a copy of another ColorScheme
+        /// </summary>
+        /// <param name="other"></param>
+        public ColorScheme(ColorScheme<T> other)
+        {
+            colorMapping = new Dictionary<T, Dictionary<LayerType, Color>>(other.colorMapping);
+        }
+
+        /// <summary>
         /// Gets or sets the Color associated with the key and layer
         /// </summary>
         /// <param name="hostility"></param>
