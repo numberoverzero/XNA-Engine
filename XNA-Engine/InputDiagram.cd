@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Engine.Input.Modifier" Collapsed="true">
+    <Position X="2.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAgAEAAAABIAAAACAAAAAoAAAACAAAA=</HashCode>
+      <FileName>Input\Modifier.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Input.InputBinding" Collapsed="true">
+    <Position X="7.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAgAAEAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputBindings.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Engine.Input.ThumbstickDirectionInputBinding">
+    <Position X="5.75" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAgAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputBindings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Input.MouseInputBinding">
+    <Position X="11.25" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputBindings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Input.ThumbstickInputBinding">
+    <Position X="0.5" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputBindings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Input.ButtonInputBinding">
+    <Position X="3.25" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputBindings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Input.KeyInputBinding">
+    <Position X="9" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputBindings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Input.TriggerInputBinding">
+    <Position X="13.75" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAhAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputBindings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine.Input.InputManager" Collapsed="true">
+    <Position X="0.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>yAQBAEAAAAAAAAAAEAgIAAABAAAAAjBAgEACQQAQBAg=</HashCode>
+      <FileName>Input\InputManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Engine.Input.InputSettings" Collapsed="true">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputSettings.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="Engine.Input.IBinding">
+    <Position X="9" Y="0.5" Width="8" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAEAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\IBinding.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Engine.Input.MouseButton" Collapsed="true">
+    <Position X="2.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACACQAAEAAAA=</HashCode>
+      <FileName>Input\InputEnums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Input.Trigger" Collapsed="true">
+    <Position X="2.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACACAAAEAAAA=</HashCode>
+      <FileName>Input\InputEnums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Input.Thumbstick" Collapsed="true">
+    <Position X="4" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACACAAAEAAAA=</HashCode>
+      <FileName>Input\InputEnums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Input.ThumbstickDirection" Collapsed="true">
+    <Position X="0.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAACACAAAEAAAI=</HashCode>
+      <FileName>Input\InputEnums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Engine.Input.FrameState" Collapsed="true">
+    <Position X="0.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\InputEnums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
