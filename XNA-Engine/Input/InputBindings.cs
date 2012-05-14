@@ -80,36 +80,6 @@ namespace Engine.Input
         }
 
         #endregion
-
-        #region CreateBinding - overloaded function for creating any type of InputBinding.  
-        //Add an overload when creating a new subclass of InputBinding
-
-        public static InputBinding CreateBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
-        {
-            return new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
-        }
-        public static InputBinding CreateBinding(MouseButton mouseButton, params Modifier[] modifiers)
-        {
-            return new MouseInputBinding(mouseButton, modifiers);
-        }
-        public static InputBinding CreateBinding(Thumbstick thumbstick, params Modifier[] modifiers)
-        {
-            return new ThumbstickInputBinding(thumbstick, modifiers);
-        }
-        public static InputBinding CreateBinding(Buttons button, params Modifier[] modifiers)
-        {
-            return new ButtonInputBinding(button, modifiers);
-        }
-        public static InputBinding CreateBinding(Keys key, params Modifier[] modifiers)
-        {
-            return new KeyInputBinding(key, modifiers);
-        }
-        public static InputBinding CreateBinding(Trigger trigger, params Modifier[] modifiers)
-        {
-            return new TriggerInputBinding(trigger, modifiers);
-        }
-
-        #endregion
     }
 
     public class ThumbstickDirectionInputBinding : InputBinding

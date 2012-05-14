@@ -63,32 +63,32 @@ namespace Engine.Input
         }
         public void AddKeyBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = InputBinding.CreateBinding(thumbstickDirection, thumbstick, modifiers);
+            InputBinding inputBinding = new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, MouseButton mouseButton, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = InputBinding.CreateBinding(mouseButton, modifiers);
+            InputBinding inputBinding = new MouseInputBinding(mouseButton, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Thumbstick thumbstick, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = InputBinding.CreateBinding(thumbstick, modifiers);
+            InputBinding inputBinding = new ThumbstickInputBinding(thumbstick, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Trigger trigger, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = InputBinding.CreateBinding(trigger, modifiers);
+            InputBinding inputBinding = new TriggerInputBinding(trigger, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Buttons button, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = InputBinding.CreateBinding(button, modifiers);
+            InputBinding inputBinding = new ButtonInputBinding(button, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
         public void AddKeyBinding(string bindingName, Keys key, params Modifier[] modifiers)
         {
-            InputBinding inputBinding = InputBinding.CreateBinding(key, modifiers);
+            InputBinding inputBinding = new KeyInputBinding(key, modifiers);
             AddKeyBinding(bindingName, inputBinding);
         }
 
