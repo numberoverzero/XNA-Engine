@@ -107,6 +107,7 @@
     <Compile Include="Events\GameEventManager.cs" />
     <Compile Include="Events\GameObjectEvents\GameObjectCreatedEvent.cs" />
     <Compile Include="Events\GameObjectEvents\GameObjectDestroyedEvent.cs" />
+    <Compile Include="Input\IBinding.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
     <Compile Include="Rendering\RenderEnums.cs" />

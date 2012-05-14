@@ -23,7 +23,7 @@ namespace Engine.Input
         public MouseState LastMouseState { get; protected set; }
         public MouseState CurrentMouseState { get; protected set; }
 
-        public Dictionary<String, InputBinding> Bindings { get; protected set; }
+        public Dictionary<String, IBinding> Bindings { get; protected set; }
         public InputSettings Settings { get; private set; }
 
         #endregion
@@ -33,7 +33,7 @@ namespace Engine.Input
         public InputManager()
         {
             Settings = new InputSettings(0,0);
-            Bindings = new Dictionary<string, InputBinding>();
+            Bindings = new Dictionary<string, IBinding>();
         }
         public InputManager(InputManager input)
         {
@@ -47,7 +47,7 @@ namespace Engine.Input
             CurrentMouseState = input.CurrentMouseState;
 
             Settings = new InputSettings(input.Settings);
-            Bindings = new Dictionary<string, InputBinding>(input.Bindings);
+            Bindings = new Dictionary<string, IBinding>(input.Bindings);
 
         }
 
@@ -55,11 +55,11 @@ namespace Engine.Input
 
         #region AddKeyBinding Methods
 
-        public void AddKeyBinding(string bindingName, InputBinding inputBinding)
+        public void AddKeyBinding(string bindingName, IBinding binding)
         {
             // Make sure there isn't already a biding with that name
             RemoveKeyBindings(bindingName);
-            Bindings.Add(bindingName, inputBinding);
+            Bindings.Add(bindingName, binding);
         }
         public void AddKeyBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
         {

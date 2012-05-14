@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Engine.Input
 {
     
-    public class InputBinding
+    public class InputBinding : IBinding
     {
         public Modifier[] Modifiers {get;protected set;}
 
