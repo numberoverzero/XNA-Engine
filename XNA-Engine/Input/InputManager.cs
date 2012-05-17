@@ -58,7 +58,7 @@ namespace Engine.Input
         public void AddBinding(string bindingName, IBinding binding)
         {
             // Make sure there isn't already a biding with that name
-            RemoveKeyBindings(bindingName);
+            RemoveBindings(bindingName);
             Bindings.Add(bindingName, binding);
         }
         public void AddBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
@@ -103,7 +103,7 @@ namespace Engine.Input
         /// Calling update at the end of update loop will have those keys processed
         /// in the next frame.
         /// </remarks>
-        public void Update()
+        public virtual void Update()
         {
             LastKeyboardState = CurrentKeyboardState;
             LastGamePadState = CurrentGamePadState;
@@ -118,9 +118,9 @@ namespace Engine.Input
         /// Removes the binding associated with the specified key
         /// </summary>
         /// <param name="key">The name of the keybinding to remove</param>
-        public void RemoveKeyBinding(string key)
+        public virtual void RemoveBinding(string key)
         {
-            if (HasKeyBinding(key))
+            if (HasBinding(key))
                 Bindings.Remove(key);
         }
 
@@ -128,10 +128,10 @@ namespace Engine.Input
         /// Removes the bindings associated with the specified keys
         /// </summary>
         /// <param name="keys">The names of the keybindings to remove</param>
-        public void RemoveKeyBindings(params string[] keys)
+        public virtual void RemoveBindings(params string[] keys)
         {
             foreach (var key in keys)
-                RemoveKeyBinding(key);
+                RemoveBinding(key);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The name of the keybinding to check for</param>
         /// <returns></returns>
-        public bool HasKeyBinding(string key)
+        public virtual bool HasBinding(string key)
         {
             return Bindings.ContainsKey(key);
         }
@@ -153,9 +153,9 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public bool IsActive(string key, FrameState state = FrameState.Current)
+        public virtual bool IsActive(string key, FrameState state = FrameState.Current)
         {
-            if (HasKeyBinding(key))
+            if (HasBinding(key))
                 return Bindings[key].IsActive(this, state);
             return false;
         }
@@ -167,7 +167,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public bool IsPressed(string key)
+        public virtual bool IsPressed(string key)
         {
             return IsActive(key, FrameState.Current) && !IsActive(key, FrameState.Previous);
         }
@@ -179,7 +179,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public bool IsReleased(string key)
+        public virtual bool IsReleased(string key)
         {
             return IsActive(key, FrameState.Previous) && !IsActive(key, FrameState.Current);
         }
@@ -194,7 +194,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public bool AnyActive(params string[] keys){
+        public virtual bool AnyActive(params string[] keys){
             foreach (var key in keys)
                 if (IsActive(key))
                     return true;
@@ -207,7 +207,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public bool AllActive(params string[] keys){
+        public virtual bool AllActive(params string[] keys){
             foreach (var key in keys)
                 if (!IsActive(key))
                     return false;
@@ -220,7 +220,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public bool AnyPressed(params string[] keys){
+        public virtual bool AnyPressed(params string[] keys){
             foreach (var key in keys)
                 if (IsPressed(key))
                     return true;
@@ -233,7 +233,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public bool AllPressed(params string[] keys){
+        public virtual bool AllPressed(params string[] keys){
             foreach (var key in keys)
                 if (!IsPressed(key))
                     return false;
@@ -246,7 +246,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public bool AnyReleased(params string[] keys)
+        public virtual bool AnyReleased(params string[] keys)
         {
             foreach (var key in keys)
                 if (IsReleased(key))
@@ -260,7 +260,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public bool AllReleased(params string[] keys)
+        public virtual bool AllReleased(params string[] keys)
         {
             foreach (var key in keys)
                 if (!IsReleased(key))
@@ -278,7 +278,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
         /// <returns></returns>
-        public Vector2 GetMousePos(FrameState state = FrameState.Current)
+        public virtual Vector2 GetMousePos(FrameState state = FrameState.Current)
         {
             MouseState mouseState = state == FrameState.Current ? CurrentMouseState : LastMouseState;
             return new Vector2(mouseState.X, mouseState.Y);

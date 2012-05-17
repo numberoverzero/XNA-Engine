@@ -123,12 +123,14 @@
     <Compile Include="Input\InputSettings.cs" />
     <Compile Include="Input\Modifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Testing\InjectableInputManager.cs" />
     <Compile Include="Utility\ColorTextureGenerator.cs" />
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
     <Compile Include="Utility\MathFunctions.cs" />
     <Compile Include="Utility\Vector2Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="InputManager.cd" />
     <None Include="InputDiagram.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
