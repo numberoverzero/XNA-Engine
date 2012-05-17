@@ -25,6 +25,12 @@ namespace Engine.Input
             Array.Copy(modifiers, Modifiers, modifiers.Length);
         }
 
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="other"></param>
+        public InputBinding(InputBinding other) :this(other.Modifiers) { }
+
         #endregion
 
         #region IsActive Methods

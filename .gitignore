@@ -55,3 +55,6 @@ packages/
 #ncrunch
 *ncrunch*
 *crunch*.local.xml
+
+#Renders
+*.png

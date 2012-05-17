@@ -53,43 +53,43 @@ namespace Engine.Input
 
         #endregion
 
-        #region AddKeyBinding Methods
+        #region AddBinding Methods
 
-        public void AddKeyBinding(string bindingName, IBinding binding)
+        public void AddBinding(string bindingName, IBinding binding)
         {
             // Make sure there isn't already a biding with that name
             RemoveKeyBindings(bindingName);
             Bindings.Add(bindingName, binding);
         }
-        public void AddKeyBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
+        public void AddBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
-            AddKeyBinding(bindingName, inputBinding);
+            AddBinding(bindingName, inputBinding);
         }
-        public void AddKeyBinding(string bindingName, MouseButton mouseButton, params Modifier[] modifiers)
+        public void AddBinding(string bindingName, MouseButton mouseButton, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new MouseInputBinding(mouseButton, modifiers);
-            AddKeyBinding(bindingName, inputBinding);
+            AddBinding(bindingName, inputBinding);
         }
-        public void AddKeyBinding(string bindingName, Thumbstick thumbstick, params Modifier[] modifiers)
+        public void AddBinding(string bindingName, Thumbstick thumbstick, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new ThumbstickInputBinding(thumbstick, modifiers);
-            AddKeyBinding(bindingName, inputBinding);
+            AddBinding(bindingName, inputBinding);
         }
-        public void AddKeyBinding(string bindingName, Trigger trigger, params Modifier[] modifiers)
+        public void AddBinding(string bindingName, Trigger trigger, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new TriggerInputBinding(trigger, modifiers);
-            AddKeyBinding(bindingName, inputBinding);
+            AddBinding(bindingName, inputBinding);
         }
-        public void AddKeyBinding(string bindingName, Buttons button, params Modifier[] modifiers)
+        public void AddBinding(string bindingName, Buttons button, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new ButtonInputBinding(button, modifiers);
-            AddKeyBinding(bindingName, inputBinding);
+            AddBinding(bindingName, inputBinding);
         }
-        public void AddKeyBinding(string bindingName, Keys key, params Modifier[] modifiers)
+        public void AddBinding(string bindingName, Keys key, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new KeyInputBinding(key, modifiers);
-            AddKeyBinding(bindingName, inputBinding);
+            AddBinding(bindingName, inputBinding);
         }
 
         #endregion
@@ -115,14 +115,23 @@ namespace Engine.Input
         }
 
         /// <summary>
+        /// Removes the binding associated with the specified key
+        /// </summary>
+        /// <param name="key">The name of the keybinding to remove</param>
+        public void RemoveKeyBinding(string key)
+        {
+            if (HasKeyBinding(key))
+                Bindings.Remove(key);
+        }
+
+        /// <summary>
         /// Removes the bindings associated with the specified keys
         /// </summary>
         /// <param name="keys">The names of the keybindings to remove</param>
         public void RemoveKeyBindings(params string[] keys)
         {
-            foreach(var key in keys)
-                if(HasKeyBinding(key))
-                    Bindings.Remove(key);
+            foreach (var key in keys)
+                RemoveKeyBinding(key);
         }
 
         /// <summary>
