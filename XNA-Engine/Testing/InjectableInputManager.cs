@@ -27,10 +27,9 @@ namespace Engine.Testing
         }
 
         public override bool IsActive(string key, FrameState state = FrameState.Current)
-        {            
+        {
             var injectedPresses = state == FrameState.Current ? currentInjectedPresses : lastInjectedPresses;
             bool isInjected = injectedPresses.Contains(key);
-
             return isInjected || base.IsActive(key, state);
         }
 
@@ -42,8 +41,7 @@ namespace Engine.Testing
         /// <param name="state">The frame to press it in</param>
         public void Press(string key, FrameState state = FrameState.Current)
         {
-            if (!HasBinding(key))
-                return;
+            if (!HasBinding(key)) return;
             var injectedPresses = state == FrameState.Current ? currentInjectedPresses : lastInjectedPresses;
             injectedPresses.Add(key);
         }
@@ -56,10 +54,16 @@ namespace Engine.Testing
         /// <param name="state">The frame to release it in</param>
         public void Release(string key, FrameState state = FrameState.Current)
         {
-            if (!HasBinding(key))
-                return;
+            if (!HasBinding(key)) return;
             var injectedPresses = state == FrameState.Current ? currentInjectedPresses : lastInjectedPresses;
             injectedPresses.Remove(key);
+        }
+
+        public override void RemoveBinding(string key)
+        {
+            lastInjectedPresses.Remove(key);
+            currentInjectedPresses.Remove(key);
+            base.RemoveBinding(key);
         }
     }
 }
