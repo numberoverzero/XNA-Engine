@@ -18,6 +18,11 @@ namespace Engine.Input
             this.key2 = key2;
         }
 
+        /// <summary>
+        /// True if either modifier key is down
+        /// </summary>
+        /// <param name="keyboardState"></param>
+        /// <returns></returns>
         public bool IsActive(KeyboardState keyboardState)
         {
             return keyboardState.IsKeyDown(key1) || keyboardState.IsKeyDown(key2);
@@ -26,6 +31,9 @@ namespace Engine.Input
         #region Modifier Singletons
 
         private static Modifier ctrl;
+        /// <summary>
+        /// The Ctrl modifier (Left + Right)
+        /// </summary>
         public static Modifier Ctrl
         {
             get
@@ -37,6 +45,9 @@ namespace Engine.Input
         }
 
         private static Modifier alt;
+        /// <summary>
+        /// The Alt modifier (Left + Right)
+        /// </summary>
         public static Modifier Alt
         {
             get
@@ -48,6 +59,9 @@ namespace Engine.Input
         }
 
         private static Modifier shift;
+        /// <summary>
+        /// The Shift modifier (Left + Right)
+        /// </summary>
         public static Modifier Shift
         {
             get
