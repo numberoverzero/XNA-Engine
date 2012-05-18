@@ -1,13 +1,20 @@
-﻿using System;
+﻿#region Using Statements
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
+#endregion
+
 namespace Engine.Input
 {
-    
+    /// <summary>
+    /// Supports checking if a particular input is active,
+    /// given states for keyboards, mice, and gamepads.
+    /// </summary>
     public class InputBinding : IBinding
     {
         /// <summary>

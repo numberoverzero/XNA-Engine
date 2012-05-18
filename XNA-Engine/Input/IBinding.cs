@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
+    /// <summary>
+    /// A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
+    /// </summary>
     public interface IBinding
     {
         /// <summary>
