@@ -11,7 +11,13 @@ namespace Engine.Input
     /// </summary>
     public class InjectableInputManager : InputManager
     {
+        /// <summary>
+        /// bindings pressed in the previous frame
+        /// </summary>
         public HashSet<string> PreviousInjectedPresses { get; protected set; }
+        /// <summary>
+        /// bindings pressed in the current frame
+        /// </summary>
         public HashSet<string> CurrentInjectedPresses { get; protected set; }
 
         public InjectableInputManager()
@@ -21,6 +27,15 @@ namespace Engine.Input
             CurrentInjectedPresses = new HashSet<string>();
         }
 
+        /// <summary>
+        /// Reads the latest state of the keyboard and gamepad.
+        /// </summary>
+        /// <remarks>
+        /// This should be called at the beginning of your update loop, so that game logic
+        /// uses latest values.
+        /// Calling update at the end of update loop will have those keys processed
+        /// in the next frame.
+        /// </remarks>
         public override void Update()
         {
             PreviousInjectedPresses = new HashSet<string>(CurrentInjectedPresses);
@@ -29,6 +44,13 @@ namespace Engine.Input
             base.Update();
         }
 
+        /// <summary>
+        /// Returns if the keybinding associated with the string key is active in the specified frame.
+        /// Active can mean pressed for buttons, or above threshold for thumbsticks/triggers
+        /// </summary>
+        /// <param name="key">The string that the keybinding was stored under</param>
+        /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
+        /// <returns></returns>
         public override bool IsActive(string key, FrameState state = FrameState.Current)
         {
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
@@ -62,6 +84,10 @@ namespace Engine.Input
             injectedPresses.Remove(key);
         }
 
+        /// <summary>
+        /// Removes the binding associated with the specified key
+        /// </summary>
+        /// <param name="key">The name of the keybinding to remove</param>
         public override void RemoveBinding(string key)
         {
             PreviousInjectedPresses.Remove(key);

@@ -82,7 +82,7 @@ namespace Engine.Input
 
         #endregion
 
-        #region Binding Add/Remove/Contains
+        #region Binding Update Add/Remove/Contains
 
         #region AddBinding Methods
 
