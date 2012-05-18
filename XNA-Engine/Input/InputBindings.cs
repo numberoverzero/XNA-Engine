@@ -37,9 +37,9 @@ namespace Engine.Input
 
         public bool IsActive(InputManager manager, FrameState state)
         {
-            KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.LastKeyboardState;
-            GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadState : manager.LastGamePadState;
-            MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.LastMouseState;
+            KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.PreviousKeyboardState;
+            GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadState : manager.PreviousGamePadState;
+            MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.PreviousMouseState;
             return IsRawBindingActive(keyState, gamepadState, mouseState, manager.Settings) && AreExactModifiersActive(keyState);
 
         }

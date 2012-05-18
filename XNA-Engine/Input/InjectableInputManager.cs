@@ -2,33 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Engine.Input;
 
-namespace Engine.Testing
+namespace Engine.Input
 {
+    /// <summary>
+    /// Can force keys to press or release using 
+    /// Press(string key) and Release(string key)
+    /// </summary>
     public class InjectableInputManager : InputManager
     {
-        public HashSet<string> lastInjectedPresses { get; protected set; }
-        public HashSet<string> currentInjectedPresses { get; protected set; }
+        public HashSet<string> PreviousInjectedPresses { get; protected set; }
+        public HashSet<string> CurrentInjectedPresses { get; protected set; }
 
         public InjectableInputManager()
             : base()
         {
-            lastInjectedPresses = new HashSet<string>();
-            currentInjectedPresses = new HashSet<string>();
+            PreviousInjectedPresses = new HashSet<string>();
+            CurrentInjectedPresses = new HashSet<string>();
         }
 
         public override void Update()
         {
-            lastInjectedPresses = new HashSet<string>(currentInjectedPresses);
-            currentInjectedPresses.Clear();
+            PreviousInjectedPresses = new HashSet<string>(CurrentInjectedPresses);
+            CurrentInjectedPresses.Clear();
 
             base.Update();
         }
 
         public override bool IsActive(string key, FrameState state = FrameState.Current)
         {
-            var injectedPresses = state == FrameState.Current ? currentInjectedPresses : lastInjectedPresses;
+            var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             bool isInjected = injectedPresses.Contains(key);
             return isInjected || base.IsActive(key, state);
         }
@@ -42,7 +45,7 @@ namespace Engine.Testing
         public void Press(string key, FrameState state = FrameState.Current)
         {
             if (!HasBinding(key)) return;
-            var injectedPresses = state == FrameState.Current ? currentInjectedPresses : lastInjectedPresses;
+            var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             injectedPresses.Add(key);
         }
 
@@ -55,14 +58,14 @@ namespace Engine.Testing
         public void Release(string key, FrameState state = FrameState.Current)
         {
             if (!HasBinding(key)) return;
-            var injectedPresses = state == FrameState.Current ? currentInjectedPresses : lastInjectedPresses;
+            var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             injectedPresses.Remove(key);
         }
 
         public override void RemoveBinding(string key)
         {
-            lastInjectedPresses.Remove(key);
-            currentInjectedPresses.Remove(key);
+            PreviousInjectedPresses.Remove(key);
+            CurrentInjectedPresses.Remove(key);
             base.RemoveBinding(key);
         }
     }

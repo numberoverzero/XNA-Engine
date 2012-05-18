@@ -14,16 +14,41 @@ namespace Engine.Input
     public class InputManager{
         #region Fields
 
-        public KeyboardState LastKeyboardState { get; protected set; }
+        /// <summary>
+        /// KeyboardState for the previous frame
+        /// </summary>
+        public KeyboardState PreviousKeyboardState { get; protected set; }
+        /// <summary>
+        /// KeyboardState for the current frame
+        /// </summary>
         public KeyboardState CurrentKeyboardState { get; protected set; }
 
-        public GamePadState LastGamePadState { get; protected set; }
+        /// <summary>
+        /// GamePadState for the previous frame
+        /// </summary>
+        public GamePadState PreviousGamePadState { get; protected set; }
+        /// <summary>
+        /// GamePadState for the current frame
+        /// </summary>
         public GamePadState CurrentGamePadState { get; protected set; }
 
-        public MouseState LastMouseState { get; protected set; }
+        /// <summary>
+        /// MouseState for the previous frame
+        /// </summary>
+        public MouseState PreviousMouseState { get; protected set; }
+        /// <summary>
+        /// MouseState for the current frame
+        /// </summary>
         public MouseState CurrentMouseState { get; protected set; }
 
+        /// <summary>
+        /// The Bindings being tracked by the Manager
+        /// </summary>
         public Dictionary<String, IBinding> Bindings { get; protected set; }
+
+        /// <summary>
+        /// The InputSettings for this InputManager (trigger thresholds, etc)
+        /// </summary>
         public InputSettings Settings { get; private set; }
 
         #endregion
@@ -35,15 +60,19 @@ namespace Engine.Input
             Settings = new InputSettings(0,0);
             Bindings = new Dictionary<string, IBinding>();
         }
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="input"></param>
         public InputManager(InputManager input)
         {
-            LastKeyboardState = input.LastKeyboardState;
+            PreviousKeyboardState = input.PreviousKeyboardState;
             CurrentKeyboardState = input.CurrentKeyboardState;
 
-            LastGamePadState = input.LastGamePadState;
+            PreviousGamePadState = input.PreviousGamePadState;
             CurrentGamePadState = input.CurrentGamePadState;
 
-            LastMouseState = input.LastMouseState;
+            PreviousMouseState = input.PreviousMouseState;
             CurrentMouseState = input.CurrentMouseState;
 
             Settings = new InputSettings(input.Settings);
@@ -53,39 +82,83 @@ namespace Engine.Input
 
         #endregion
 
+        #region Binding Add/Remove/Contains
+
         #region AddBinding Methods
 
+        /// <summary>
+        /// Add a binding that can be checked for state (Pressed, Released, Active)
+        /// </summary>
+        /// <param name="bindingName"></param>
+        /// <param name="binding"></param>
         public void AddBinding(string bindingName, IBinding binding)
         {
             // Make sure there isn't already a biding with that name
             RemoveBindings(bindingName);
             Bindings.Add(bindingName, binding);
         }
+        /// <summary>
+        /// Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
+        /// </summary>
+        /// <param name="bindingName"></param>
+        /// <param name="thumbstickDirection"></param>
+        /// <param name="thumbstick"></param>
+        /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
             AddBinding(bindingName, inputBinding);
         }
+        /// <summary>
+        /// Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
+        /// </summary>
+        /// <param name="bindingName"></param>
+        /// <param name="mouseButton"></param>
+        /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, MouseButton mouseButton, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new MouseInputBinding(mouseButton, modifiers);
             AddBinding(bindingName, inputBinding);
         }
+        /// <summary>
+        /// Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
+        /// </summary>
+        /// <param name="bindingName"></param>
+        /// <param name="thumbstick"></param>
+        /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, Thumbstick thumbstick, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new ThumbstickInputBinding(thumbstick, modifiers);
             AddBinding(bindingName, inputBinding);
         }
+        /// <summary>
+        /// Add a Trigger binding that can be checked for state (Pressed, Released, Active)
+        /// </summary>
+        /// <param name="bindingName"></param>
+        /// <param name="trigger"></param>
+        /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, Trigger trigger, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new TriggerInputBinding(trigger, modifiers);
             AddBinding(bindingName, inputBinding);
         }
+        /// <summary>
+        /// Add a Button binding that can be checked for state (Pressed, Released, Active)
+        /// </summary>
+        /// <param name="bindingName"></param>
+        /// <param name="button"></param>
+        /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, Buttons button, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new ButtonInputBinding(button, modifiers);
             AddBinding(bindingName, inputBinding);
         }
+        /// <summary>
+        /// Add a key binding that can be checked for state (Pressed, Released, Active)
+        /// </summary>
+        /// <param name="bindingName"></param>
+        /// <param name="key"></param>
+        /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, Keys key, params Modifier[] modifiers)
         {
             InputBinding inputBinding = new KeyInputBinding(key, modifiers);
@@ -105,9 +178,9 @@ namespace Engine.Input
         /// </remarks>
         public virtual void Update()
         {
-            LastKeyboardState = CurrentKeyboardState;
-            LastGamePadState = CurrentGamePadState;
-            LastMouseState = CurrentMouseState;
+            PreviousKeyboardState = CurrentKeyboardState;
+            PreviousGamePadState = CurrentGamePadState;
+            PreviousMouseState = CurrentMouseState;
 
             CurrentKeyboardState = Keyboard.GetState();
             CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
@@ -143,6 +216,8 @@ namespace Engine.Input
         {
             return Bindings.ContainsKey(key);
         }
+
+        #endregion
 
         #region Query Single KeyBinding State
 
@@ -280,7 +355,7 @@ namespace Engine.Input
         /// <returns></returns>
         public virtual Vector2 GetMousePos(FrameState state = FrameState.Current)
         {
-            MouseState mouseState = state == FrameState.Current ? CurrentMouseState : LastMouseState;
+            MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
             return new Vector2(mouseState.X, mouseState.Y);
         }
 
