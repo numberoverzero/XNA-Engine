@@ -15,6 +15,25 @@ namespace Engine.Input
         #region Fields
 
         /// <summary>
+        /// The Bindings being tracked by the Manager
+        /// </summary>
+        public Dictionary<String, IBinding> Bindings { get; protected set; }
+
+        /// <summary>
+        /// The InputSettings for this InputManager (trigger thresholds, etc)
+        /// </summary>
+        public InputSettings Settings { get; private set; }
+
+        /// <summary>
+        /// A unique set of modifiers of the bindings this manager tracks.
+        /// Keeps track of how many bindings use this modifier; 
+        ///     stops checking for modifiers once no bindings use that modifier
+        /// </summary>
+        public CountedSet<IBinding> Modifiers { get; protected set; }
+
+        #region Previous/Current States
+
+        /// <summary>
         /// KeyboardState for the previous frame
         /// </summary>
         public KeyboardState PreviousKeyboardState { get; protected set; }
@@ -41,22 +60,67 @@ namespace Engine.Input
         /// </summary>
         public MouseState CurrentMouseState { get; protected set; }
 
-        /// <summary>
-        /// The Bindings being tracked by the Manager
-        /// </summary>
-        public Dictionary<String, IBinding> Bindings { get; protected set; }
+        #endregion
 
-        /// <summary>
-        /// The InputSettings for this InputManager (trigger thresholds, etc)
-        /// </summary>
-        public InputSettings Settings { get; private set; }
+        #region State Monitoring
 
+        protected bool monitorKeyboard;
         /// <summary>
-        /// A unique set of modifiers of the bindings this manager tracks.
-        /// Keeps track of how many bindings use this modifier; 
-        ///     stops checking for modifiers once no bindings use that modifier
+        /// Enable/Disable grabbing keyboard state when updating the manager.
+        /// Disable for performance when you know the user can't use a keyboard, or no bindings will need the state of the keyboard.
         /// </summary>
-        public CountedSet<IBinding> Modifiers { get; protected set; }
+        public bool MonitorKeyboard
+        {
+            get { return monitorKeyboard; }
+            set
+            {
+                monitorKeyboard = value;
+                if (value)
+                {
+                    PreviousKeyboardState = new KeyboardState();
+                    CurrentKeyboardState = new KeyboardState();
+                }
+            }
+        }
+
+        protected bool monitorGamePad;
+        /// <summary>
+        /// Enable/Disable grabbing gamepad state when updating the manager.
+        /// Disable for performance when you know the user can't use a gamepad, or no bindings will need the state of the gamepad.
+        /// </summary>
+        public bool MonitorGamePad
+        {
+            get { return monitorGamePad; }
+            set
+            {
+                monitorGamePad = value;
+                if (value)
+                {
+                    PreviousGamePadState = new GamePadState();
+                    CurrentGamePadState = new GamePadState();
+                }
+            }
+        }
+
+        protected bool monitorMouse;
+        /// <summary>
+        /// Enable/Disable grabbing mouse state when updating the manager.
+        /// Disable for performance when you know the user can't use a mouse, or no bindings will need the state of the mouse.
+        /// </summary>
+        public bool MonitorMouse
+        {
+            get { return monitorMouse; }
+            set
+            {
+                monitorMouse = value;
+                if (value)
+                {
+                    PreviousMouseState = new MouseState();
+                    CurrentMouseState = new MouseState();
+                }
+            }
+        }
+        #endregion
 
         #endregion
 
