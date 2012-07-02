@@ -3,7 +3,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-
+using Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -51,6 +51,13 @@ namespace Engine.Input
         /// </summary>
         public InputSettings Settings { get; private set; }
 
+        /// <summary>
+        /// A unique set of modifiers of the bindings this manager tracks.
+        /// Keeps track of how many bindings use this modifier; 
+        ///     stops checking for modifiers once no bindings use that modifier
+        /// </summary>
+        public CountedSet<IBinding> Modifiers { get; protected set; }
+
         #endregion
 
         #region Initialization
@@ -59,7 +66,9 @@ namespace Engine.Input
         {
             Settings = new InputSettings(0,0);
             Bindings = new Dictionary<string, IBinding>();
+            Modifiers = new CountedSet<IBinding>();
         }
+
         /// <summary>
         /// Copy Constructor
         /// </summary>
@@ -77,6 +86,7 @@ namespace Engine.Input
 
             Settings = new InputSettings(input.Settings);
             Bindings = new Dictionary<string, IBinding>(input.Bindings);
+            Modifiers = new CountedSet<IBinding>(input.Modifiers);
 
         }
 
@@ -93,9 +103,9 @@ namespace Engine.Input
         /// <param name="binding"></param>
         public void AddBinding(string bindingName, IBinding binding)
         {
-            // Make sure there isn't already a biding with that name
-            RemoveBindings(bindingName);
-            Bindings.Add(bindingName, binding);
+            Bindings[bindingName] = binding;
+            foreach (var modifier in binding.Modifiers)
+                Modifiers.Add(modifier);
         }
         /// <summary>
         /// Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
@@ -194,7 +204,11 @@ namespace Engine.Input
         public virtual void RemoveBinding(string key)
         {
             if (HasBinding(key))
+            {
+                foreach (var modifier in Bindings[key].Modifiers)
+                    Modifiers.Remove(modifier); 
                 Bindings.Remove(key);
+            }
         }
 
         /// <summary>
@@ -231,8 +245,31 @@ namespace Engine.Input
         public virtual bool IsActive(string key, FrameState state = FrameState.Current)
         {
             if (HasBinding(key))
-                return Bindings[key].IsActive(this, state);
+                return Bindings[key].IsActive(this, state) && AreExactModifiersActive(key, state);
             return false;
+        }
+
+        /// <summary>
+        /// Checks that only modifiers for that key are active and no other modifiers
+        /// </summary>
+        /// <param name="key">The string that the keybinding was stored under</param>
+        /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
+        /// <returns></returns>
+        protected virtual bool AreExactModifiersActive(string key, FrameState state)
+        {
+            IBinding binding = Bindings[key];
+            bool modifierActive;
+            bool keyTracksModifier;
+            foreach (var trackedModifier in Modifiers)
+            {
+                modifierActive = trackedModifier.IsActive(this, state);
+                keyTracksModifier = binding.Modifiers.Contains(trackedModifier);
+                if (modifierActive != keyTracksModifier)
+                    return false;
+            }
+
+            // Only the modifiers that the key cares about were active, and no others.
+            return true;
         }
 
         /// <summary>
