@@ -252,13 +252,23 @@ namespace Engine.Input
         /// </remarks>
         public virtual void Update()
         {
-            PreviousKeyboardState = CurrentKeyboardState;
-            PreviousGamePadState = CurrentGamePadState;
-            PreviousMouseState = CurrentMouseState;
+            if (MonitorKeyboard)
+            {
+                PreviousKeyboardState = CurrentKeyboardState;
+                CurrentKeyboardState = Keyboard.GetState();
+            }
 
-            CurrentKeyboardState = Keyboard.GetState();
-            CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
-            CurrentMouseState = Mouse.GetState();
+            if (MonitorGamePad)
+            {
+                PreviousGamePadState = CurrentGamePadState;
+                CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
+            }
+
+            if (MonitorMouse)
+            {
+                PreviousMouseState = CurrentMouseState;
+                CurrentMouseState = Mouse.GetState();
+            }
         }
 
         /// <summary>
