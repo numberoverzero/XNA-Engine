@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
-    public class InputManager{
+    public class InputManager : IInputmanager{
         #region Fields
 
         /// <summary>
@@ -156,9 +156,19 @@ namespace Engine.Input
 
         #endregion
 
-        #region Binding Update Add/Remove/Contains
+        /// <summary>
+        /// Get the position of the mouse in the specified frame.
+        /// (Default frame is the current frame)
+        /// </summary>
+        /// <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
+        /// <returns></returns>
+        public virtual Vector2 GetMousePosition(FrameState state = FrameState.Current)
+        {
+            MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
+            return new Vector2(mouseState.X, mouseState.Y);
+        }
 
-        #region AddBinding Methods
+        #region Binding Mutation
 
         /// <summary>
         /// Add a binding that can be checked for state (Pressed, Released, Active)
@@ -171,105 +181,6 @@ namespace Engine.Input
             foreach (var modifier in binding.Modifiers)
                 Modifiers.Add(modifier);
         }
-        /// <summary>
-        /// Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
-        /// </summary>
-        /// <param name="bindingName"></param>
-        /// <param name="thumbstickDirection"></param>
-        /// <param name="thumbstick"></param>
-        /// <param name="modifiers"></param>
-        public void AddBinding(string bindingName, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params IBinding[] modifiers)
-        {
-            InputBinding inputBinding = new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
-            AddBinding(bindingName, inputBinding);
-        }
-        /// <summary>
-        /// Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
-        /// </summary>
-        /// <param name="bindingName"></param>
-        /// <param name="mouseButton"></param>
-        /// <param name="modifiers"></param>
-        public void AddBinding(string bindingName, MouseButton mouseButton, params IBinding[] modifiers)
-        {
-            InputBinding inputBinding = new MouseInputBinding(mouseButton, modifiers);
-            AddBinding(bindingName, inputBinding);
-        }
-        /// <summary>
-        /// Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
-        /// </summary>
-        /// <param name="bindingName"></param>
-        /// <param name="thumbstick"></param>
-        /// <param name="modifiers"></param>
-        public void AddBinding(string bindingName, Thumbstick thumbstick, params IBinding[] modifiers)
-        {
-            InputBinding inputBinding = new ThumbstickInputBinding(thumbstick, modifiers);
-            AddBinding(bindingName, inputBinding);
-        }
-        /// <summary>
-        /// Add a Trigger binding that can be checked for state (Pressed, Released, Active)
-        /// </summary>
-        /// <param name="bindingName"></param>
-        /// <param name="trigger"></param>
-        /// <param name="modifiers"></param>
-        public void AddBinding(string bindingName, Trigger trigger, params IBinding[] modifiers)
-        {
-            InputBinding inputBinding = new TriggerInputBinding(trigger, modifiers);
-            AddBinding(bindingName, inputBinding);
-        }
-        /// <summary>
-        /// Add a Button binding that can be checked for state (Pressed, Released, Active)
-        /// </summary>
-        /// <param name="bindingName"></param>
-        /// <param name="button"></param>
-        /// <param name="modifiers"></param>
-        public void AddBinding(string bindingName, Buttons button, params IBinding[] modifiers)
-        {
-            InputBinding inputBinding = new ButtonInputBinding(button, modifiers);
-            AddBinding(bindingName, inputBinding);
-        }
-        /// <summary>
-        /// Add a key binding that can be checked for state (Pressed, Released, Active)
-        /// </summary>
-        /// <param name="bindingName"></param>
-        /// <param name="key"></param>
-        /// <param name="modifiers"></param>
-        public void AddBinding(string bindingName, Keys key, params IBinding[] modifiers)
-        {
-            InputBinding inputBinding = new KeyInputBinding(key, modifiers);
-            AddBinding(bindingName, inputBinding);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Reads the latest state of the keyboard and gamepad.
-        /// </summary>
-        /// <remarks>
-        /// This should be called at the beginning of your update loop, so that game logic
-        /// uses latest values.
-        /// Calling update at the end of update loop will have those keys processed
-        /// in the next frame.
-        /// </remarks>
-        public virtual void Update()
-        {
-            if (MonitorKeyboard)
-            {
-                PreviousKeyboardState = CurrentKeyboardState;
-                CurrentKeyboardState = Keyboard.GetState();
-            }
-
-            if (MonitorGamePad)
-            {
-                PreviousGamePadState = CurrentGamePadState;
-                CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
-            }
-
-            if (MonitorMouse)
-            {
-                PreviousMouseState = CurrentMouseState;
-                CurrentMouseState = Mouse.GetState();
-            }
-        }
 
         /// <summary>
         /// Removes the binding associated with the specified key
@@ -277,7 +188,7 @@ namespace Engine.Input
         /// <param name="key">The name of the keybinding to remove</param>
         public virtual void RemoveBinding(string key)
         {
-            if (HasBinding(key))
+            if (ContainsBinding(key))
             {
                 foreach (var modifier in Bindings[key].Modifiers)
                     Modifiers.Remove(modifier); 
@@ -286,23 +197,19 @@ namespace Engine.Input
         }
 
         /// <summary>
-        /// Removes the bindings associated with the specified keys
-        /// </summary>
-        /// <param name="keys">The names of the keybindings to remove</param>
-        public virtual void RemoveBindings(params string[] keys)
-        {
-            foreach (var key in keys)
-                RemoveBinding(key);
-        }
-
-        /// <summary>
         /// Returns true if the input has a binding associated with a key
         /// </summary>
         /// <param name="key">The name of the keybinding to check for</param>
         /// <returns></returns>
-        public virtual bool HasBinding(string key)
+        public virtual bool ContainsBinding(string key)
         {
             return Bindings.ContainsKey(key);
+        }
+
+        public virtual void ClearAllBindings()
+        {
+            Bindings.Clear();
+            Modifiers.Clear();
         }
 
         #endregion
@@ -318,8 +225,8 @@ namespace Engine.Input
         /// <returns></returns>
         public virtual bool IsActive(string key, FrameState state = FrameState.Current)
         {
-            if (HasBinding(key))
-                return Bindings[key].IsActive(this, state) && AreExactModifiersActive(key, state);
+            if (ContainsBinding(key))
+                return Bindings[key].IsActive(this, state) && IsModifiersActive(key, state);
             return false;
         }
 
@@ -329,7 +236,7 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        protected virtual bool AreExactModifiersActive(string key, FrameState state)
+        public virtual bool IsModifiersActive(string key, FrameState state)
         {
             IBinding binding = Bindings[key];
             bool modifierActive;
@@ -456,20 +363,34 @@ namespace Engine.Input
 
         #endregion
 
-        #region Mouse Position
-
         /// <summary>
-        /// Get the position of the mouse in the specified frame.
-        /// (Default frame is the current frame)
+        /// Reads the latest state of the keyboard and gamepad.
         /// </summary>
-        /// <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
-        /// <returns></returns>
-        public virtual Vector2 GetMousePos(FrameState state = FrameState.Current)
+        /// <remarks>
+        /// This should be called at the beginning of your update loop, so that game logic
+        /// uses latest values.
+        /// Calling update at the end of update loop will have those keys processed
+        /// in the next frame.
+        /// </remarks>
+        public virtual void Update()
         {
-            MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
-            return new Vector2(mouseState.X, mouseState.Y);
-        }
+            if (MonitorKeyboard)
+            {
+                PreviousKeyboardState = CurrentKeyboardState;
+                CurrentKeyboardState = Keyboard.GetState();
+            }
 
-        #endregion
+            if (MonitorGamePad)
+            {
+                PreviousGamePadState = CurrentGamePadState;
+                CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
+            }
+
+            if (MonitorMouse)
+            {
+                PreviousMouseState = CurrentMouseState;
+                CurrentMouseState = Mouse.GetState();
+            }
+        }
     }
 }

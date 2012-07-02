@@ -15,6 +15,7 @@ namespace Engine.Input
         /// bindings pressed in the previous frame
         /// </summary>
         public HashSet<string> PreviousInjectedPresses { get; protected set; }
+        
         /// <summary>
         /// bindings pressed in the current frame
         /// </summary>
@@ -40,7 +41,6 @@ namespace Engine.Input
         {
             PreviousInjectedPresses = new HashSet<string>(CurrentInjectedPresses);
             CurrentInjectedPresses.Clear();
-
             base.Update();
         }
 
@@ -66,7 +66,7 @@ namespace Engine.Input
         /// <param name="state">The frame to press it in</param>
         public void Press(string key, FrameState state = FrameState.Current)
         {
-            if (!HasBinding(key)) return;
+            if (!ContainsBinding(key)) return;
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             injectedPresses.Add(key);
         }
@@ -79,7 +79,7 @@ namespace Engine.Input
         /// <param name="state">The frame to release it in</param>
         public void Release(string key, FrameState state = FrameState.Current)
         {
-            if (!HasBinding(key)) return;
+            if (!ContainsBinding(key)) return;
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             injectedPresses.Remove(key);
         }
