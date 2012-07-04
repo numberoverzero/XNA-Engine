@@ -68,7 +68,7 @@ namespace Engine.Input
         /// <param name="mouseState"></param>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public virtual bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected virtual bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             return false;
         }
