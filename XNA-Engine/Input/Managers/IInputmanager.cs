@@ -1,11 +1,16 @@
-﻿using System;
+﻿#region Using Statements
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+
+#endregion
+
 namespace Engine.Input
 {
-    public interface IInputmanager
+    public interface IInputManager
     {
         Vector2 GetMousePosition(FrameState state = FrameState.Current);
 
@@ -19,9 +24,10 @@ namespace Engine.Input
         // Single Binding Query
 
         bool IsActive(string bindingName, FrameState state = FrameState.Current);
-        bool IsModifiersActive(string bindingName, FrameState state = FrameState.Current);
         bool IsPressed(string bindingName);
         bool IsReleased(string bindingName);
+
+        IEnumerable<IBinding> GetModifiers { get; }
 
         // Multiple Binding Query
 

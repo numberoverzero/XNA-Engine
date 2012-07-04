@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
-    public class InputManager : IInputmanager{
+    public class InputManager : IInputManager{
         #region Fields
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public virtual bool IsModifiersActive(string key, FrameState state)
+        protected virtual bool IsModifiersActive(string key, FrameState state)
         {
             IBinding binding = Bindings[key];
             bool modifierActive;
@@ -391,6 +391,12 @@ namespace Engine.Input
                 PreviousMouseState = CurrentMouseState;
                 CurrentMouseState = Mouse.GetState();
             }
+        }
+
+
+        public IEnumerable<IBinding> GetModifiers
+        {
+            get { return Modifiers; }
         }
     }
 }

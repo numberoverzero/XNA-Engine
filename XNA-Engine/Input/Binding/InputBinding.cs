@@ -15,7 +15,7 @@ namespace Engine.Input
     public class InputBinding : IBinding
     {
         /// <summary>
-        /// Any Modifiers required for this binding to be considered 'active'
+        /// Any modifiers required for this binding to be considered 'active'
         /// </summary>
         public IBinding[] Modifiers { get; private set; }
 
@@ -47,11 +47,6 @@ namespace Engine.Input
         /// </summary>
         /// <param name="state">Current or Previous frame</param>
         /// <param name="manager">The manager keeping track of current/previous input states</param>
-        /// <remarks>
-        /// At first I wasn't comfortable with passing the entire InputManager around, but on the plus side,
-        /// we can now easily mock up input.  Woohoo!
-        /// </remarks>
-        /// <returns></returns>
         public bool IsActive(InputManager manager, FrameState state)
         {
             KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.PreviousKeyboardState;
@@ -63,11 +58,6 @@ namespace Engine.Input
         /// <summary>
         /// True if the binding (without modifiers) is active
         /// </summary>
-        /// <param name="keyState"></param>
-        /// <param name="gamepadState"></param>
-        /// <param name="mouseState"></param>
-        /// <param name="settings"></param>
-        /// <returns></returns>
         protected virtual bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             return false;
