@@ -223,10 +223,10 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public virtual bool IsActive(string key, FrameState state = FrameState.Current)
+        public virtual bool IsActive(string key, PlayerIndex player = PlayerIndex.One, FrameState state = FrameState.Current)
         {
             if (ContainsBinding(key))
-                return Bindings[key].IsActive(this, state) && IsModifiersActive(key, state);
+                return Bindings[key].IsActive(this, state) && IsModifiersActive(key, player, state);
             return false;
         }
 
@@ -236,7 +236,7 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        protected virtual bool IsModifiersActive(string key, FrameState state)
+        protected virtual bool IsModifiersActive(string key, PlayerIndex player, FrameState state)
         {
             IBinding binding = Bindings[key];
             bool modifierActive;
@@ -260,9 +260,9 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public virtual bool IsPressed(string key)
+        public virtual bool IsPressed(string key, PlayerIndex player = PlayerIndex.One)
         {
-            return IsActive(key, FrameState.Current) && !IsActive(key, FrameState.Previous);
+            return IsActive(key, player, FrameState.Current) && !IsActive(key, player, FrameState.Previous);
         }
 
         /// <summary>
@@ -272,9 +272,9 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public virtual bool IsReleased(string key)
+        public virtual bool IsReleased(string key, PlayerIndex player = PlayerIndex.One)
         {
-            return IsActive(key, FrameState.Previous) && !IsActive(key, FrameState.Current);
+            return IsActive(key, player, FrameState.Previous) && !IsActive(key, player, FrameState.Current);
         }
 
         #endregion
@@ -287,7 +287,8 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public virtual bool AnyActive(params string[] keys){
+        public virtual bool AnyActive(PlayerIndex player = PlayerIndex.One, params string[] keys)
+        {
             foreach (var key in keys)
                 if (IsActive(key))
                     return true;
@@ -300,7 +301,8 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public virtual bool AllActive(params string[] keys){
+        public virtual bool AllActive(PlayerIndex player = PlayerIndex.One, params string[] keys)
+        {
             foreach (var key in keys)
                 if (!IsActive(key))
                     return false;
@@ -313,7 +315,8 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public virtual bool AnyPressed(params string[] keys){
+        public virtual bool AnyPressed(PlayerIndex player = PlayerIndex.One, params string[] keys)
+        {
             foreach (var key in keys)
                 if (IsPressed(key))
                     return true;
@@ -326,7 +329,8 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public virtual bool AllPressed(params string[] keys){
+        public virtual bool AllPressed(PlayerIndex player = PlayerIndex.One, params string[] keys)
+        {
             foreach (var key in keys)
                 if (!IsPressed(key))
                     return false;
@@ -339,7 +343,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public virtual bool AnyReleased(params string[] keys)
+        public virtual bool AnyReleased(PlayerIndex player = PlayerIndex.One, params string[] keys)
         {
             foreach (var key in keys)
                 if (IsReleased(key))
@@ -353,7 +357,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="keys">The strings that the keybindings were stored under</param>
         /// <returns></returns>
-        public virtual bool AllReleased(params string[] keys)
+        public virtual bool AllReleased(PlayerIndex player = PlayerIndex.One, params string[] keys)
         {
             foreach (var key in keys)
                 if (!IsReleased(key))

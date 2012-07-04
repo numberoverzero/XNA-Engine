@@ -23,25 +23,27 @@ namespace Engine.Input
 
         // Single Binding Query
 
-        bool IsActive(string bindingName, FrameState state = FrameState.Current);
-        bool IsPressed(string bindingName);
-        bool IsReleased(string bindingName);
-
-        IEnumerable<IBinding> GetModifiers { get; }
+        bool IsActive(string bindingName, PlayerIndex player = PlayerIndex.One, FrameState state = FrameState.Current);
+        bool IsPressed(string bindingName, PlayerIndex player = PlayerIndex.One);
+        bool IsReleased(string bindingName, PlayerIndex player = PlayerIndex.One);
 
         // Multiple Binding Query
 
-        bool AnyActive(params string[] keys);
-        bool AllActive(params string[] keys);
+        bool AnyActive(PlayerIndex player = PlayerIndex.One, params string[] keys);
+        bool AllActive(PlayerIndex player = PlayerIndex.One, params string[] keys);
         
-        bool AnyPressed(params string[] keys);
-        bool AllPressed(params string[] keys);
+        bool AnyPressed(PlayerIndex player = PlayerIndex.One, params string[] keys);
+        bool AllPressed(PlayerIndex player = PlayerIndex.One, params string[] keys);
         
-        bool AnyReleased(params string[] keys);
-        bool AllReleased(params string[] keys);
+        bool AnyReleased(PlayerIndex player = PlayerIndex.One, params string[] keys);
+        bool AllReleased(PlayerIndex player = PlayerIndex.One, params string[] keys);
 
         // Per-frame input polling
 
         void Update();
+
+        // Modifiers
+
+        IEnumerable<IBinding> GetModifiers { get; }
     }
 }

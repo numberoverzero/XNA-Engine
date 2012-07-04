@@ -1,7 +1,12 @@
-﻿using System;
+﻿#region Using Statements
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+
+#endregion
 
 namespace Engine.Input
 {
@@ -51,11 +56,11 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public override bool IsActive(string key, FrameState state = FrameState.Current)
+        public override bool IsActive(string key, PlayerIndex player = PlayerIndex.One, FrameState state = FrameState.Current)
         {
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             bool isInjected = injectedPresses.Contains(key);
-            return isInjected || base.IsActive(key, state);
+            return isInjected || base.IsActive(key, player, state);
         }
 
         /// <summary>
