@@ -124,7 +124,6 @@
     <Compile Include="Input\Binding\BasicInputBindings.cs" />
     <Compile Include="Input\Managers\InputManager.cs" />
     <Compile Include="Input\InputSettings.cs" />
-    <Compile Include="Input\Binding\Modifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Input\Managers\InjectableInputManager.cs" />
     <Compile Include="Utility\ColorTextureGenerator.cs" />

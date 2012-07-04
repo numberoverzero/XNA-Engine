@@ -6,6 +6,11 @@ using System.Text;
 
 namespace Engine.Utility
 {
+    /// <summary>
+    /// Uses TryGetValue for index-notation lookup
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     public class DefaultDictionary<TKey, TValue> : Dictionary<TKey, TValue>
     {
         public DefaultDictionary() : base() { }
@@ -34,18 +39,18 @@ namespace Engine.Utility
     /// The iterator is over unique values
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CountedSet<T> : IList<T>
+    public class CountedSet<T> : IEnumerable<T>
     {
-        private List<T> set;
+        private HashSet<T> set;
         private DefaultDictionary<T, int> count;
 
         public CountedSet()
         {
-            set = new List<T>();
+            set = new HashSet<T>();
             count = new DefaultDictionary<T, int>();
         }
 
-        public CountedSet(IList<T> enumerable) : this()
+        public CountedSet(IEnumerable<T> enumerable) : this()
         {
             foreach (T item in enumerable)
                 Add(item);
@@ -53,40 +58,9 @@ namespace Engine.Utility
 
         public CountedSet(CountedSet<T> countedSet)
         {
-            set = new List<T>(countedSet.set);
+            set = new HashSet<T>(countedSet.set);
             count = new DefaultDictionary<T, int>(countedSet.count);
         }
-
-        #region IList NotImplementedException
-
-        public int IndexOf(T item)
-        {
-            throw new NotImplementedException("Sets do not support ordering.");
-        }
-
-        public void Insert(int index, T item)
-        {
-            throw new NotImplementedException("Sets do not support ordering.");
-        }
-
-        public void RemoveAt(int index)
-        {
-            throw new NotImplementedException("Sets do not support ordering.");
-        }
-
-        public T this[int index]
-        {
-            get
-            {
-                throw new NotImplementedException("Sets do not support ordering.");
-            }
-            set
-            {
-                throw new NotImplementedException("Sets do not support ordering.");
-            }
-        }
-
-        #endregion
 
         public void Add(T item)
         {
@@ -106,19 +80,9 @@ namespace Engine.Utility
             return set.Contains(item);
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            set.CopyTo(array, arrayIndex);
-        }
-
         public int Count
         {
             get { return set.Count; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return false; }
         }
 
         public bool Remove(T item)
