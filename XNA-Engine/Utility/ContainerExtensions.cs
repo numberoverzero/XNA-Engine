@@ -13,6 +13,8 @@ namespace Engine.Utility
     /// <typeparam name="TValue"></typeparam>
     public class DefaultDictionary<TKey, TValue> : Dictionary<TKey, TValue>
     {
+        // TODO Add comments
+
         public DefaultDictionary() : base() { }
         public DefaultDictionary(IDictionary<TKey, TValue> dictionary) :base(dictionary) { }
         public new TValue this[TKey key]
@@ -41,6 +43,8 @@ namespace Engine.Utility
     /// <typeparam name="T"></typeparam>
     public class CountedSet<T> : IEnumerable<T>
     {
+        // TODO Add comments
+
         private HashSet<T> set;
         private DefaultDictionary<T, int> count;
 
@@ -105,6 +109,54 @@ namespace Engine.Utility
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+    }
+
+    /// <summary>
+    /// A DefaultDict that supports two keys.
+    /// </summary>
+    /// <typeparam name="TKey1"></typeparam>
+    /// <typeparam name="TKey2"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    public class DefaultMultiKeyDict<TKey1, TKey2, TValue>
+    {
+        // TODO Add comments
+
+        DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>> dict;
+
+        public DefaultMultiKeyDict()
+        {
+            dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>();
+        }
+
+        public DefaultMultiKeyDict(DefaultMultiKeyDict<TKey1, TKey2, TValue> defaultMultiKeyDict)
+        {
+            dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>(defaultMultiKeyDict.dict);
+        }
+
+        public void Clear()
+        {
+            dict.Clear();
+        }
+
+        public TValue this[TKey1 key1, TKey2 key2]
+        {
+            get
+            {
+                return dict[key1][key2];
+            }
+            set
+            {
+                dict[key1][key2] = value;
+            }
+        }
+
+        public DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>.KeyCollection Keys
+        {
+            get
+            {
+                return dict.Keys;
+            }
         }
     }
 }
