@@ -11,13 +11,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
+    // TODO Add multiplayer support for GamePadState.
+    // TODO Update every single comment
     public class InputManager : IInputManager{
         #region Fields
 
         /// <summary>
         /// The Bindings being tracked by the Manager
         /// </summary>
-        public Dictionary<String, IBinding> Bindings { get; protected set; }
+        public DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>> Bindings { get; protected set; }
 
         /// <summary>
         /// The InputSettings for this InputManager (trigger thresholds, etc)
@@ -129,7 +131,7 @@ namespace Engine.Input
         public InputManager()
         {
             Settings = new InputSettings(0,0);
-            Bindings = new Dictionary<string, IBinding>();
+            Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>();
             Modifiers = new CountedSet<IBinding>();
         }
 
@@ -149,7 +151,7 @@ namespace Engine.Input
             CurrentMouseState = input.CurrentMouseState;
 
             Settings = new InputSettings(input.Settings);
-            Bindings = new Dictionary<string, IBinding>(input.Bindings);
+            Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
             Modifiers = new CountedSet<IBinding>(input.Modifiers);
 
         }
@@ -175,9 +177,13 @@ namespace Engine.Input
         /// </summary>
         /// <param name="bindingName"></param>
         /// <param name="binding"></param>
-        public void AddBinding(string bindingName, IBinding binding)
+        public void AddBinding(string bindingName, IBinding binding, PlayerIndex player = PlayerIndex.One)
         {
-            Bindings[bindingName] = binding;
+            var bindings = Bindings[bindingName, player];
+            if (bindings.Contains(binding))
+                return;
+
+            bindings.Add(binding);
             foreach (var modifier in binding.Modifiers)
                 Modifiers.Add(modifier);
         }
@@ -185,25 +191,55 @@ namespace Engine.Input
         /// <summary>
         /// Removes the binding associated with the specified key
         /// </summary>
-        /// <param name="key">The name of the keybinding to remove</param>
-        public virtual void RemoveBinding(string key)
+        /// <param name="bindingName">The name of the keybinding to remove</param>
+        public virtual void RemoveBinding(string bindingName, int index, PlayerIndex player = PlayerIndex.One)
         {
-            if (ContainsBinding(key))
-            {
-                foreach (var modifier in Bindings[key].Modifiers)
+            if (!ContainsBinding(bindingName, player))
+                return;
+            
+            var bindings = Bindings[bindingName, player];
+
+            if (index < 0 || index >= bindings.Count)
+                return;
+
+            var binding = bindings[index];
+            
+            foreach (var modifier in binding.Modifiers)
                     Modifiers.Remove(modifier); 
-                Bindings.Remove(key);
-            }
+            bindings.RemoveAt(index);
+        }
+
+        public virtual void RemoveBinding(string bindingName, IBinding binding, PlayerIndex player = PlayerIndex.One)
+        {
+            if (!ContainsBinding(bindingName, player))
+                return;
+
+            var bindings = Bindings[bindingName, player];
+
+            if (bindings.Contains(binding))
+                bindings.Remove(binding);
+            
+            foreach (var modifier in binding.Modifiers)
+                Modifiers.Remove(modifier);
         }
 
         /// <summary>
         /// Returns true if the input has a binding associated with a key
         /// </summary>
-        /// <param name="key">The name of the keybinding to check for</param>
+        /// <param name="bindingName">The name of the keybinding to check for</param>
         /// <returns></returns>
-        public virtual bool ContainsBinding(string key)
+        public virtual bool ContainsBinding(string bindingName, PlayerIndex player = PlayerIndex.One)
         {
-            return Bindings.ContainsKey(key);
+            return Bindings[bindingName, player].Count > 0;
+        }
+
+        public virtual void ClearBinding(string bindingName, PlayerIndex player = PlayerIndex.One)
+        {
+            // Make sure we clean up any modifiers
+            var old_bindings = new List<IBinding>(Bindings[bindingName, player]);
+            foreach (var binding in old_bindings)
+                RemoveBinding(bindingName, binding, player);
+            Bindings[bindingName, player] = new List<IBinding>();
         }
 
         public virtual void ClearAllBindings()
@@ -220,13 +256,17 @@ namespace Engine.Input
         /// Returns if the keybinding associated with the string key is active in the specified frame.
         /// Active can mean pressed for buttons, or above threshold for thumbsticks/triggers
         /// </summary>
-        /// <param name="key">The string that the keybinding was stored under</param>
+        /// <param name="bindingName">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public virtual bool IsActive(string key, PlayerIndex player = PlayerIndex.One, FrameState state = FrameState.Current)
+        public virtual bool IsActive(string bindingName, PlayerIndex player = PlayerIndex.One, FrameState state = FrameState.Current)
         {
-            if (ContainsBinding(key))
-                return Bindings[key].IsActive(this, state) && IsModifiersActive(key, player, state);
+            if (!ContainsBinding(bindingName, player))
+                return false;
+            var bindings = Bindings[bindingName, player];
+            foreach (var binding in bindings)
+                if (binding.IsActive(this, state) && IsModifiersActive(binding, state))
+                    return true;
             return false;
         }
 
@@ -236,9 +276,8 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        protected virtual bool IsModifiersActive(string key, PlayerIndex player, FrameState state)
+        protected virtual bool IsModifiersActive(IBinding binding, FrameState state)
         {
-            IBinding binding = Bindings[key];
             bool modifierActive;
             bool keyTracksModifier;
             foreach (var trackedModifier in Modifiers)
@@ -258,11 +297,11 @@ namespace Engine.Input
         /// but not last frame (s.t. it was pressed for the first time in this frame).
         /// To register on key up, use IsReleased
         /// </summary>
-        /// <param name="key">The string that the keybinding was stored under</param>
+        /// <param name="bindingName">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public virtual bool IsPressed(string key, PlayerIndex player = PlayerIndex.One)
+        public virtual bool IsPressed(string bindingName, PlayerIndex player = PlayerIndex.One)
         {
-            return IsActive(key, player, FrameState.Current) && !IsActive(key, player, FrameState.Previous);
+            return IsActive(bindingName, player, FrameState.Current) && !IsActive(bindingName, player, FrameState.Previous);
         }
 
         /// <summary>
@@ -270,99 +309,41 @@ namespace Engine.Input
         /// but not this frame (s.t. it was released in this frame).  
         /// To register on key down, use IsPressed
         /// </summary>
-        /// <param name="key">The string that the keybinding was stored under</param>
+        /// <param name="bindingName">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public virtual bool IsReleased(string key, PlayerIndex player = PlayerIndex.One)
+        public virtual bool IsReleased(string bindingName, PlayerIndex player = PlayerIndex.One)
         {
-            return IsActive(key, player, FrameState.Previous) && !IsActive(key, player, FrameState.Current);
+            return IsActive(bindingName, player, FrameState.Previous) && !IsActive(bindingName, player, FrameState.Current);
+        }
+
+        public List<IBinding> GetCurrentBindings(string bindingName, PlayerIndex player = PlayerIndex.One)
+        {
+            return Bindings[bindingName, player];
         }
 
         #endregion
 
-        #region Query Multiple KeyBindings State
+        #region Manager Query
 
         /// <summary>
-        /// Returns true if any of the keybindings associated with the given keys are active in
-        /// the current frame.
+        /// Returns a list of bindings that currently use the specified IBinding
         /// </summary>
-        /// <param name="keys">The strings that the keybindings were stored under</param>
+        /// <param name="binding"></param>
+        /// <param name="player"></param>
         /// <returns></returns>
-        public virtual bool AnyActive(PlayerIndex player = PlayerIndex.One, params string[] keys)
+        public List<string> BindingsUsing(IBinding binding, PlayerIndex player = PlayerIndex.One)
         {
-            foreach (var key in keys)
-                if (IsActive(key))
-                    return true;
-            return false;
-        }
+            List<string> binds = new List<string>();
 
-        /// <summary>
-        /// Returns true if all of the keybindings associated with the given keys are active in
-        /// the current frame.
-        /// </summary>
-        /// <param name="keys">The strings that the keybindings were stored under</param>
-        /// <returns></returns>
-        public virtual bool AllActive(PlayerIndex player = PlayerIndex.One, params string[] keys)
-        {
-            foreach (var key in keys)
-                if (!IsActive(key))
-                    return false;
-            return true;
-        }
+            List<IBinding> bindingGroup;
+            foreach (string bindingGroupKey in Bindings.Keys)
+            {
+                bindingGroup = Bindings[bindingGroupKey, player];
+                if (bindingGroup.Contains(binding))
+                    binds.Add(bindingGroupKey);
+            }
 
-        /// <summary>
-        /// Returns true if any of the keybindings associated with the given keys were first pressed
-        /// in the current frame (and not in the last).
-        /// </summary>
-        /// <param name="keys">The strings that the keybindings were stored under</param>
-        /// <returns></returns>
-        public virtual bool AnyPressed(PlayerIndex player = PlayerIndex.One, params string[] keys)
-        {
-            foreach (var key in keys)
-                if (IsPressed(key))
-                    return true;
-            return false;
-        }
-
-        /// <summary>
-        /// Returns true if all of the keybindings associated with the given keys were first pressed
-        /// in the current frame (and not in the last).
-        /// </summary>
-        /// <param name="keys">The strings that the keybindings were stored under</param>
-        /// <returns></returns>
-        public virtual bool AllPressed(PlayerIndex player = PlayerIndex.One, params string[] keys)
-        {
-            foreach (var key in keys)
-                if (!IsPressed(key))
-                    return false;
-            return true;
-        }
-
-        /// <summary>
-        /// Returns true if any of the keybindings associated with the given keys were first released
-        /// in the current frame (and not in the last).
-        /// </summary>
-        /// <param name="keys">The strings that the keybindings were stored under</param>
-        /// <returns></returns>
-        public virtual bool AnyReleased(PlayerIndex player = PlayerIndex.One, params string[] keys)
-        {
-            foreach (var key in keys)
-                if (IsReleased(key))
-                    return true;
-            return false;
-        }
-
-        /// <summary>
-        /// Returns true if all of the keybindings associated with the given keys were first released
-        /// in the current frame (and not in the last).
-        /// </summary>
-        /// <param name="keys">The strings that the keybindings were stored under</param>
-        /// <returns></returns>
-        public virtual bool AllReleased(PlayerIndex player = PlayerIndex.One, params string[] keys)
-        {
-            foreach (var key in keys)
-                if (!IsReleased(key))
-                    return false;
-            return true;
+            return binds;
         }
 
         #endregion
