@@ -11,6 +11,8 @@ namespace Engine.Input
     /// </summary>
     public interface IBinding
     {
+        // TODO Update IsActive to use IInputManager
+
         /// <summary>
         /// True if the InputBinding is active in the given FrameState of the given InputManager
         /// </summary>

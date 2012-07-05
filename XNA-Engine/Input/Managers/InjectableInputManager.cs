@@ -93,11 +93,11 @@ namespace Engine.Input
         /// Removes the binding associated with the specified key
         /// </summary>
         /// <param name="key">The name of the keybinding to remove</param>
-        public override void RemoveBinding(string key)
+        public override void RemoveBinding(string key, int index, PlayerIndex player = PlayerIndex.One)
         {
             PreviousInjectedPresses.Remove(key);
             CurrentInjectedPresses.Remove(key);
-            base.RemoveBinding(key);
+            base.RemoveBinding(key, index, player);
         }
     }
 }
