@@ -56,7 +56,7 @@ namespace Engine.Input
         /// <param name="key">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public override bool IsActive(string key, PlayerIndex player = PlayerIndex.One, FrameState state = FrameState.Current)
+        public override bool IsActive(string key, PlayerIndex player, FrameState state)
         {
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             bool isInjected = injectedPresses.Contains(key);
@@ -69,9 +69,9 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The binding to press</param>
         /// <param name="state">The frame to press it in</param>
-        public void Press(string key, FrameState state = FrameState.Current)
+        public void Press(string key, PlayerIndex player, FrameState state)
         {
-            if (!ContainsBinding(key)) return;
+            if (!ContainsBinding(key, player)) return;
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             injectedPresses.Add(key);
         }
@@ -82,9 +82,9 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key">The binding to release</param>
         /// <param name="state">The frame to release it in</param>
-        public void Release(string key, FrameState state = FrameState.Current)
+        public void Release(string key, PlayerIndex player, FrameState state)
         {
-            if (!ContainsBinding(key)) return;
+            if (!ContainsBinding(key, player)) return;
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
             injectedPresses.Remove(key);
         }
@@ -93,7 +93,7 @@ namespace Engine.Input
         /// Removes the binding associated with the specified key
         /// </summary>
         /// <param name="key">The name of the keybinding to remove</param>
-        public override void RemoveBinding(string key, int index, PlayerIndex player = PlayerIndex.One)
+        public override void RemoveBinding(string key, int index, PlayerIndex player)
         {
             PreviousInjectedPresses.Remove(key);
             CurrentInjectedPresses.Remove(key);

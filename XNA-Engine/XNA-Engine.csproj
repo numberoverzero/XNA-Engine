@@ -110,7 +110,7 @@
     <Compile Include="Input\Binding\IBinding.cs" />
     <Compile Include="Input\Binding\InputBinding.cs" />
     <Compile Include="Input\Managers\BasicInjectableInputManager.cs" />
-    <Compile Include="Input\Managers\IInputmanager.cs" />
+    <Compile Include="Input\Managers\IInputManager.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
     <Compile Include="Rendering\RenderEnums.cs" />

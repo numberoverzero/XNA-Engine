@@ -164,7 +164,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
         /// <returns></returns>
-        public virtual Vector2 GetMousePosition(FrameState state = FrameState.Current)
+        public virtual Vector2 GetMousePosition(FrameState state)
         {
             MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
             return new Vector2(mouseState.X, mouseState.Y);
@@ -177,7 +177,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="bindingName"></param>
         /// <param name="binding"></param>
-        public void AddBinding(string bindingName, IBinding binding, PlayerIndex player = PlayerIndex.One)
+        public void AddBinding(string bindingName, IBinding binding, PlayerIndex player)
         {
             var bindings = Bindings[bindingName, player];
             if (bindings.Contains(binding))
@@ -192,7 +192,7 @@ namespace Engine.Input
         /// Removes the binding associated with the specified key
         /// </summary>
         /// <param name="bindingName">The name of the keybinding to remove</param>
-        public virtual void RemoveBinding(string bindingName, int index, PlayerIndex player = PlayerIndex.One)
+        public virtual void RemoveBinding(string bindingName, int index, PlayerIndex player)
         {
             if (!ContainsBinding(bindingName, player))
                 return;
@@ -209,7 +209,7 @@ namespace Engine.Input
             bindings.RemoveAt(index);
         }
 
-        public virtual void RemoveBinding(string bindingName, IBinding binding, PlayerIndex player = PlayerIndex.One)
+        public virtual void RemoveBinding(string bindingName, IBinding binding, PlayerIndex player)
         {
             if (!ContainsBinding(bindingName, player))
                 return;
@@ -228,12 +228,12 @@ namespace Engine.Input
         /// </summary>
         /// <param name="bindingName">The name of the keybinding to check for</param>
         /// <returns></returns>
-        public virtual bool ContainsBinding(string bindingName, PlayerIndex player = PlayerIndex.One)
+        public virtual bool ContainsBinding(string bindingName, PlayerIndex player)
         {
             return Bindings[bindingName, player].Count > 0;
         }
 
-        public virtual void ClearBinding(string bindingName, PlayerIndex player = PlayerIndex.One)
+        public virtual void ClearBinding(string bindingName, PlayerIndex player)
         {
             // Make sure we clean up any modifiers
             var old_bindings = new List<IBinding>(Bindings[bindingName, player]);
@@ -259,7 +259,7 @@ namespace Engine.Input
         /// <param name="bindingName">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public virtual bool IsActive(string bindingName, PlayerIndex player = PlayerIndex.One, FrameState state = FrameState.Current)
+        public virtual bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player))
                 return false;
@@ -299,7 +299,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="bindingName">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public virtual bool IsPressed(string bindingName, PlayerIndex player = PlayerIndex.One)
+        public virtual bool IsPressed(string bindingName, PlayerIndex player)
         {
             return IsActive(bindingName, player, FrameState.Current) && !IsActive(bindingName, player, FrameState.Previous);
         }
@@ -311,12 +311,12 @@ namespace Engine.Input
         /// </summary>
         /// <param name="bindingName">The string that the keybinding was stored under</param>
         /// <returns></returns>
-        public virtual bool IsReleased(string bindingName, PlayerIndex player = PlayerIndex.One)
+        public virtual bool IsReleased(string bindingName, PlayerIndex player)
         {
             return IsActive(bindingName, player, FrameState.Previous) && !IsActive(bindingName, player, FrameState.Current);
         }
 
-        public List<IBinding> GetCurrentBindings(string bindingName, PlayerIndex player = PlayerIndex.One)
+        public List<IBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
             return Bindings[bindingName, player];
         }
