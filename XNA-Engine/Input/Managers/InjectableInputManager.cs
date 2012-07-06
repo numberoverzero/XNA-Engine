@@ -53,51 +53,51 @@ namespace Engine.Input
         /// Returns if the keybinding associated with the string key is active in the specified frame.
         /// Active can mean pressed for buttons, or above threshold for thumbsticks/triggers
         /// </summary>
-        /// <param name="key">The string that the keybinding was stored under</param>
+        /// <param name="bindingName">The string that the keybinding was stored under</param>
         /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
         /// <returns></returns>
-        public override bool IsActive(string key, PlayerIndex player, FrameState state)
+        public override bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
-            bool isInjected = injectedPresses.Contains(key);
-            return isInjected || base.IsActive(key, player, state);
+            bool isInjected = injectedPresses.Contains(bindingName);
+            return isInjected || base.IsActive(bindingName, player, state);
         }
 
         /// <summary>
         /// "Press" a key in a given frame.
         /// Cannot press a binding unless it has been added to the InputManager
         /// </summary>
-        /// <param name="key">The binding to press</param>
+        /// <param name="bindingName">The binding to press</param>
         /// <param name="state">The frame to press it in</param>
-        public void Press(string key, PlayerIndex player, FrameState state)
+        public void Press(string bindingName, PlayerIndex player, FrameState state)
         {
-            if (!ContainsBinding(key, player)) return;
+            if (!ContainsBinding(bindingName, player)) return;
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
-            injectedPresses.Add(key);
+            injectedPresses.Add(bindingName);
         }
 
         /// <summary>
         /// "Release" a key in a given frame.
         /// Cannot release a binding unless it has been added to the InputManager
         /// </summary>
-        /// <param name="key">The binding to release</param>
+        /// <param name="bindingName">The binding to release</param>
         /// <param name="state">The frame to release it in</param>
-        public void Release(string key, PlayerIndex player, FrameState state)
+        public void Release(string bindingName, PlayerIndex player, FrameState state)
         {
-            if (!ContainsBinding(key, player)) return;
+            if (!ContainsBinding(bindingName, player)) return;
             var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
-            injectedPresses.Remove(key);
+            injectedPresses.Remove(bindingName);
         }
 
         /// <summary>
-        /// Removes the binding associated with the specified key
+        /// Removes the binding associated with the specified bindingName
         /// </summary>
-        /// <param name="key">The name of the keybinding to remove</param>
-        public override void RemoveBinding(string key, int index, PlayerIndex player)
+        /// <param name="bindingName">The name of the binding to remove</param>
+        public override void RemoveBinding(string bindingName, int index, PlayerIndex player)
         {
-            PreviousInjectedPresses.Remove(key);
-            CurrentInjectedPresses.Remove(key);
-            base.RemoveBinding(key, index, player);
+            PreviousInjectedPresses.Remove(bindingName);
+            CurrentInjectedPresses.Remove(bindingName);
+            base.RemoveBinding(bindingName, index, player);
         }
     }
 }
