@@ -44,13 +44,18 @@ namespace Engine.Input
         public KeyboardState CurrentKeyboardState { get; protected set; }
 
         /// <summary>
+        /// For enumerating through player indices
+        /// </summary>
+        public static readonly PlayerIndex[] Players = new PlayerIndex[4] { PlayerIndex.One, PlayerIndex.Two, PlayerIndex.Three, PlayerIndex.Four };
+
+        /// <summary>
         /// GamePadState for the previous frame
         /// </summary>
-        public GamePadState PreviousGamePadState { get; protected set; }
+        public Dictionary<PlayerIndex, GamePadState> PreviousGamePadStates { get; protected set; }
         /// <summary>
         /// GamePadState for the current frame
         /// </summary>
-        public GamePadState CurrentGamePadState { get; protected set; }
+        public Dictionary<PlayerIndex, GamePadState> CurrentGamePadStates { get; protected set; }
 
         /// <summary>
         /// MouseState for the previous frame
@@ -65,7 +70,7 @@ namespace Engine.Input
 
         #region Device Polling
 
-        protected bool isPollingKeyboard = true;
+        protected bool isPollingKeyboard;
         /// <summary>
         /// Enable/Disable grabbing keyboard state when updating the manager.
         /// Disable for performance when you know the user can't use a keyboard, or no bindings will need the state of the keyboard.
@@ -84,26 +89,31 @@ namespace Engine.Input
             }
         }
 
-        protected bool isPollingGamePad = true;
+        protected bool isPollingGamePads;
         /// <summary>
         /// Enable/Disable grabbing gamepad state when updating the manager.
         /// Disable for performance when you know the user can't use a gamepad, or no bindings will need the state of the gamepad.
         /// </summary>
-        public bool IsPollingGamePad
+        public bool IsPollingGamePads
         {
-            get { return isPollingGamePad; }
+            get { return isPollingGamePads; }
             set
             {
-                isPollingGamePad = value;
+                isPollingGamePads = value;
                 if (value)
                 {
-                    PreviousGamePadState = new GamePadState();
-                    CurrentGamePadState = new GamePadState();
+                    PreviousGamePadStates = new Dictionary<PlayerIndex,GamePadState>();
+                    CurrentGamePadStates = new Dictionary<PlayerIndex, GamePadState>();
+                    foreach (var player in Players)
+                    {
+                        PreviousGamePadStates[player] = new GamePadState();
+                        CurrentGamePadStates[player] = new GamePadState();
+                    }
                 }
             }
         }
 
-        protected bool isPollingMouse = true;
+        protected bool isPollingMouse;
         /// <summary>
         /// Enable/Disable grabbing mouse state when updating the manager.
         /// Disable for performance when you know the user can't use a mouse, or no bindings will need the state of the mouse.
@@ -135,6 +145,7 @@ namespace Engine.Input
             Settings = new InputSettings(0,0);
             Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>();
             Modifiers = new CountedSet<IBinding>();
+            IsPollingKeyboard = IsPollingGamePads = IsPollingMouse = true;
         }
 
         /// <summary>
@@ -146,8 +157,9 @@ namespace Engine.Input
             PreviousKeyboardState = input.PreviousKeyboardState;
             CurrentKeyboardState = input.CurrentKeyboardState;
 
-            PreviousGamePadState = input.PreviousGamePadState;
-            CurrentGamePadState = input.CurrentGamePadState;
+            PreviousGamePadStates = new Dictionary<PlayerIndex, GamePadState>(input.PreviousGamePadStates);
+            CurrentGamePadStates = new Dictionary<PlayerIndex, GamePadState>(input.CurrentGamePadStates);
+            
 
             PreviousMouseState = input.PreviousMouseState;
             CurrentMouseState = input.CurrentMouseState;
@@ -156,7 +168,7 @@ namespace Engine.Input
             Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
             Modifiers = new CountedSet<IBinding>(input.Modifiers);
 
-            IsPollingGamePad = input.IsPollingGamePad;
+            IsPollingGamePads = input.IsPollingGamePads;
             IsPollingKeyboard = input.IsPollingKeyboard;
             IsPollingMouse = input.IsPollingMouse;
 
@@ -292,7 +304,7 @@ namespace Engine.Input
                 return false;
             var bindings = Bindings[bindingName, player];
             foreach (var binding in bindings)
-                if (binding.IsActive(this, state) && IsModifiersActive(binding, state))
+                if (binding.IsActive(this, player, state) && IsModifiersActive(binding, player, state))
                     return true;
             return false;
         }
@@ -301,15 +313,16 @@ namespace Engine.Input
         /// Checks that only modifiers for that key are active and no other modifiers
         /// </summary>
         /// <param name="binding">The binding to check modifiers of</param>
+        /// <param name="player">The player to check the binding's modifiers of</param>
         /// <param name="state">The FrameState in which to check modifiers</param>
         /// <returns>True if no tracked modifiers except those required for the binding are active</returns>
-        protected virtual bool IsModifiersActive(IBinding binding, FrameState state)
+        protected virtual bool IsModifiersActive(IBinding binding, PlayerIndex player, FrameState state)
         {
             bool modifierActive;
             bool keyTracksModifier;
             foreach (var trackedModifier in Modifiers)
             {
-                modifierActive = trackedModifier.IsActive(this, state);
+                modifierActive = trackedModifier.IsActive(this, player, state);
                 keyTracksModifier = binding.Modifiers.Contains(trackedModifier);
                 if (modifierActive != keyTracksModifier)
                     return false;
@@ -398,10 +411,13 @@ namespace Engine.Input
                 CurrentKeyboardState = Keyboard.GetState();
             }
 
-            if (IsPollingGamePad)
+            if (IsPollingGamePads)
             {
-                PreviousGamePadState = CurrentGamePadState;
-                CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
+                foreach (var player in Players)
+                {
+                    PreviousGamePadStates[player] = CurrentGamePadStates[player];
+                    CurrentGamePadStates[player] = GamePad.GetState(player);
+                }
             }
 
             if (IsPollingMouse)

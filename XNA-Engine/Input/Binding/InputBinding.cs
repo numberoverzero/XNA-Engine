@@ -47,10 +47,10 @@ namespace Engine.Input
         /// </summary>
         /// <param name="state">Current or Previous frame</param>
         /// <param name="manager">The manager keeping track of current/previous input states</param>
-        public bool IsActive(InputManager manager, FrameState state)
+        public bool IsActive(InputManager manager, PlayerIndex player, FrameState state)
         {
             KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.PreviousKeyboardState;
-            GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadState : manager.PreviousGamePadState;
+            GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadStates[player] : manager.PreviousGamePadStates[player];
             MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.PreviousMouseState;
             return IsRawBindingActive(keyState, gamepadState, mouseState, manager.Settings);
         }

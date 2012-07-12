@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
@@ -16,9 +17,10 @@ namespace Engine.Input
         /// <summary>
         /// True if the InputBinding is active in the given FrameState of the given InputManager
         /// </summary>
-        /// <param name="state">Current or Previous frame</param>
         /// <param name="manager">The manager keeping track of current/previous input states</param>
-        bool IsActive(InputManager manager, FrameState state);
+        /// <param name="player">Player to check binding on</param>
+        /// <param name="state">Current or Previous frame</param>
+        bool IsActive(InputManager manager, PlayerIndex player, FrameState state);
 
         /// <summary>
         /// Returns the list of modifiers necessary to be active before the binding is considered "active"
