@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
-    // TODO Add multiplayer support for GamePadState.
     public class InputManager : IInputManager{
         #region Fields
 
