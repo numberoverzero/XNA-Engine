@@ -3,9 +3,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Engine.Utility;
 
 #endregion
 
