@@ -12,7 +12,6 @@ using Microsoft.Xna.Framework.Input;
 namespace Engine.Input
 {
     // TODO Add multiplayer support for GamePadState.
-    // TODO Update every single comment
     public class InputManager : IInputManager{
         #region Fields
 
@@ -64,19 +63,19 @@ namespace Engine.Input
 
         #endregion
 
-        #region State Monitoring
+        #region Device Polling
 
-        protected bool monitorKeyboard;
+        protected bool isPollingKeyboard = true;
         /// <summary>
         /// Enable/Disable grabbing keyboard state when updating the manager.
         /// Disable for performance when you know the user can't use a keyboard, or no bindings will need the state of the keyboard.
         /// </summary>
-        public bool MonitorKeyboard
+        public bool IsPollingKeyboard
         {
-            get { return monitorKeyboard; }
+            get { return isPollingKeyboard; }
             set
             {
-                monitorKeyboard = value;
+                isPollingKeyboard = value;
                 if (value)
                 {
                     PreviousKeyboardState = new KeyboardState();
@@ -85,17 +84,17 @@ namespace Engine.Input
             }
         }
 
-        protected bool monitorGamePad;
+        protected bool isPollingGamePad = true;
         /// <summary>
         /// Enable/Disable grabbing gamepad state when updating the manager.
         /// Disable for performance when you know the user can't use a gamepad, or no bindings will need the state of the gamepad.
         /// </summary>
-        public bool MonitorGamePad
+        public bool IsPollingGamePad
         {
-            get { return monitorGamePad; }
+            get { return isPollingGamePad; }
             set
             {
-                monitorGamePad = value;
+                isPollingGamePad = value;
                 if (value)
                 {
                     PreviousGamePadState = new GamePadState();
@@ -104,17 +103,17 @@ namespace Engine.Input
             }
         }
 
-        protected bool monitorMouse;
+        protected bool isPollingMouse = true;
         /// <summary>
         /// Enable/Disable grabbing mouse state when updating the manager.
         /// Disable for performance when you know the user can't use a mouse, or no bindings will need the state of the mouse.
         /// </summary>
-        public bool MonitorMouse
+        public bool IsPollingMouse
         {
-            get { return monitorMouse; }
+            get { return isPollingMouse; }
             set
             {
-                monitorMouse = value;
+                isPollingMouse = value;
                 if (value)
                 {
                     PreviousMouseState = new MouseState();
@@ -128,6 +127,9 @@ namespace Engine.Input
 
         #region Initialization
 
+        /// <summary>
+        /// Create an empty InputManager.  By default, polls all devices.
+        /// </summary>
         public InputManager()
         {
             Settings = new InputSettings(0,0);
@@ -154,16 +156,19 @@ namespace Engine.Input
             Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
             Modifiers = new CountedSet<IBinding>(input.Modifiers);
 
+            IsPollingGamePad = input.IsPollingGamePad;
+            IsPollingKeyboard = input.IsPollingKeyboard;
+            IsPollingMouse = input.IsPollingMouse;
+
         }
 
         #endregion
 
         /// <summary>
         /// Get the position of the mouse in the specified frame.
-        /// (Default frame is the current frame)
         /// </summary>
         /// <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
-        /// <returns></returns>
+        /// <returns>The position of the mouse in screen space</returns>
         public virtual Vector2 GetMousePosition(FrameState state)
         {
             MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
@@ -175,8 +180,9 @@ namespace Engine.Input
         /// <summary>
         /// Add a binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
-        /// <param name="bindingName"></param>
-        /// <param name="binding"></param>
+        /// <param name="bindingName">The string used to query the binding state</param>
+        /// <param name="binding">The binding to associate with the bindingName</param>
+        /// <param name="player">The player to add the binding for</param>
         public void AddBinding(string bindingName, IBinding binding, PlayerIndex player)
         {
             var bindings = Bindings[bindingName, player];
@@ -189,9 +195,14 @@ namespace Engine.Input
         }
 
         /// <summary>
-        /// Removes the binding associated with the specified key
+        /// Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
+        /// For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
+        /// RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
+        /// This is useful when you know the index of the binding in its list of bindings
         /// </summary>
-        /// <param name="bindingName">The name of the keybinding to remove</param>
+        /// <param name="bindingName">The string used to query the binding state</param>
+        /// <param name="index">The index of the binding in the list of bindings associated with the bindingName</param>
+        /// <param name="player">The player the binding is being removed for</param>
         public virtual void RemoveBinding(string bindingName, int index, PlayerIndex player)
         {
             if (!ContainsBinding(bindingName, player))
@@ -209,6 +220,13 @@ namespace Engine.Input
             bindings.RemoveAt(index);
         }
 
+        /// <summary>
+        /// Remove a binding from the InputManager.  Removes the exact binding from the relation.
+        /// This can be used when you don't know the binding's index in its list of bindings.
+        /// </summary>
+        /// <param name="bindingName">The string used to query the binding state</param>
+        /// <param name="binding">The binding to remove from the association with the bindingName</param>
+        /// <param name="player">The player the binding is being removed for</param>
         public virtual void RemoveBinding(string bindingName, IBinding binding, PlayerIndex player)
         {
             if (!ContainsBinding(bindingName, player))
@@ -224,15 +242,21 @@ namespace Engine.Input
         }
 
         /// <summary>
-        /// Returns true if the input has a binding associated with a key
+        /// Check if the manager has a binding associated with a bindingName for a player
         /// </summary>
-        /// <param name="bindingName">The name of the keybinding to check for</param>
-        /// <returns></returns>
+        /// <param name="bindingName">The name of the binding to check for</param>
+        /// <param name="player">The player to check the binding for</param>
+        /// <returns>True if there are bindings associated with the bindingName for the given player</returns>
         public virtual bool ContainsBinding(string bindingName, PlayerIndex player)
         {
             return Bindings[bindingName, player].Count > 0;
         }
 
+        /// <summary>
+        /// Clears all bindings associated with the given bindingName for a particular player
+        /// </summary>
+        /// <param name="bindingName">The name of the binding to clear</param>
+        /// <param name="player">The player to clear the binding for</param>
         public virtual void ClearBinding(string bindingName, PlayerIndex player)
         {
             // Make sure we clean up any modifiers
@@ -242,6 +266,9 @@ namespace Engine.Input
             Bindings[bindingName, player] = new List<IBinding>();
         }
 
+        /// <summary>
+        /// Clears all bindings for all players
+        /// </summary>
         public virtual void ClearAllBindings()
         {
             Bindings.Clear();
@@ -253,12 +280,12 @@ namespace Engine.Input
         #region Query Single KeyBinding State
 
         /// <summary>
-        /// Returns if the keybinding associated with the string key is active in the specified frame.
-        /// Active can mean pressed for buttons, or above threshold for thumbsticks/triggers
+        /// Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
         /// </summary>
-        /// <param name="bindingName">The string that the keybinding was stored under</param>
-        /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
-        /// <returns></returns>
+        /// <param name="bindingName">The name of the binding to query for active state</param>
+        /// <param name="player">The player to check the binding's activity for</param>
+        /// <param name="state">The FrameState in which to check for activity</param>
+        /// <returns>True if any of the bindings associated with the bindingName for a given player in a given FrameState is active.</returns>
         public virtual bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player))
@@ -273,9 +300,9 @@ namespace Engine.Input
         /// <summary>
         /// Checks that only modifiers for that key are active and no other modifiers
         /// </summary>
-        /// <param name="key">The string that the keybinding was stored under</param>
-        /// <param name="state">The frame to inspect for the press- the current frame or the previous frame</param>
-        /// <returns></returns>
+        /// <param name="binding">The binding to check modifiers of</param>
+        /// <param name="state">The FrameState in which to check modifiers</param>
+        /// <returns>True if no tracked modifiers except those required for the binding are active</returns>
         protected virtual bool IsModifiersActive(IBinding binding, FrameState state)
         {
             bool modifierActive;
@@ -293,32 +320,36 @@ namespace Engine.Input
         }
 
         /// <summary>
-        /// Returns if the keybinding associated with the string key was pressed this frame,
-        /// but not last frame (s.t. it was pressed for the first time in this frame).
-        /// To register on key up, use IsReleased
+        /// Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
         /// </summary>
-        /// <param name="bindingName">The string that the keybinding was stored under</param>
-        /// <returns></returns>
+        /// <param name="bindingName">The name of the binding to query for active state</param>
+        /// <param name="player">The player to check the binding's activity for</param>
+        /// <returns>True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).</returns>
         public virtual bool IsPressed(string bindingName, PlayerIndex player)
         {
             return IsActive(bindingName, player, FrameState.Current) && !IsActive(bindingName, player, FrameState.Previous);
         }
 
         /// <summary>
-        /// Returns if the keybinding associated with the string key was pressed last frame,
-        /// but not this frame (s.t. it was released in this frame).  
-        /// To register on key down, use IsPressed
+        /// Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
         /// </summary>
-        /// <param name="bindingName">The string that the keybinding was stored under</param>
-        /// <returns></returns>
+        /// <param name="bindingName">The name of the binding to query for active state</param>
+        /// <param name="player">The player to check the binding's activity for</param>
+        /// <returns>True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).</returns>
         public virtual bool IsReleased(string bindingName, PlayerIndex player)
         {
             return IsActive(bindingName, player, FrameState.Previous) && !IsActive(bindingName, player, FrameState.Current);
         }
 
+        /// <summary>
+        /// Gets the list of bindings associated with a particular bindingName for a given player
+        /// </summary>
+        /// <param name="bindingName">The bindingName associated with the list of Bindings</param>
+        /// <param name="player">The player to get the list of bindings for</param>
+        /// <returns>Returns a copy of the Bindings associated with the bindingName for a givem player</returns>
         public List<IBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
-            return Bindings[bindingName, player];
+            return new List<IBinding>(Bindings[bindingName, player]);
         }
 
         #endregion
@@ -326,11 +357,13 @@ namespace Engine.Input
         #region Manager Query
 
         /// <summary>
-        /// Returns a list of bindings that currently use the specified IBinding
+        /// Used to get a list of strings that map to the given binding for a given player.
+        /// This is useful when you want to unbind a key from current bindings and remap to a new binding:
+        /// You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
         /// </summary>
-        /// <param name="binding"></param>
-        /// <param name="player"></param>
-        /// <returns></returns>
+        /// <param name="binding">The binding to search for in the InputManager</param>
+        /// <param name="player">The player to search for bindings on</param>
+        /// <returns>A list of the bindingNames that, for a given player, track the given binding as a possible input</returns>
         public List<string> BindingsUsing(IBinding binding, PlayerIndex player = PlayerIndex.One)
         {
             List<string> binds = new List<string>();
@@ -349,7 +382,7 @@ namespace Engine.Input
         #endregion
 
         /// <summary>
-        /// Reads the latest state of the keyboard and gamepad.
+        /// Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
         /// </summary>
         /// <remarks>
         /// This should be called at the beginning of your update loop, so that game logic
@@ -359,26 +392,28 @@ namespace Engine.Input
         /// </remarks>
         public virtual void Update()
         {
-            if (MonitorKeyboard)
+            if (IsPollingKeyboard)
             {
                 PreviousKeyboardState = CurrentKeyboardState;
                 CurrentKeyboardState = Keyboard.GetState();
             }
 
-            if (MonitorGamePad)
+            if (IsPollingGamePad)
             {
                 PreviousGamePadState = CurrentGamePadState;
                 CurrentGamePadState = GamePad.GetState(PlayerIndex.One);
             }
 
-            if (MonitorMouse)
+            if (IsPollingMouse)
             {
                 PreviousMouseState = CurrentMouseState;
                 CurrentMouseState = Mouse.GetState();
             }
         }
 
-
+        /// <summary>
+        /// All the modifiers currently being tracked.
+        /// </summary>
         public IEnumerable<IBinding> GetModifiers
         {
             get { return Modifiers; }
