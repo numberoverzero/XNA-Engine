@@ -151,6 +151,7 @@ namespace Engine.Input
             Settings = new InputSettings(0,0);
             Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>();
             Modifiers = new CountedSet<IBinding>();
+            BufferedText = new DoubleBuffer<char>();
             IsPollingKeyboard = IsPollingGamePads = IsPollingMouse = true;
             EventInput.KeyboardDispatcher.RegisterListener(this);
         }

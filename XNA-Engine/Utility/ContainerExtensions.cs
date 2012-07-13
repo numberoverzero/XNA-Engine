@@ -6,6 +6,26 @@ using System.Text;
 
 namespace Engine.Utility
 {
+    public static class DictionaryExtensions
+    {
+        public static TValue GetValueOrDefault<TKey, TValue>
+            (this IDictionary<TKey, TValue> dictionary, 
+            TKey key, TValue defaultValue) {
+                TValue value;
+                return dictionary.TryGetValue(key, out value) ? value : defaultValue;
+            }
+
+            public static TValue GetValueOrDefault<TKey, TValue>
+                (this IDictionary<TKey, TValue> dictionary,
+                 TKey key,
+                 Func<TValue> defaultValueProvider)
+            {
+                TValue value;
+                return dictionary.TryGetValue(key, out value) ? value
+                     : defaultValueProvider();
+            }
+
+    }
     /// <summary>
     /// Uses TryGetValue for index-notation lookup
     /// </summary>
@@ -13,16 +33,24 @@ namespace Engine.Utility
     /// <typeparam name="TValue"></typeparam>
     public class DefaultDictionary<TKey, TValue> : Dictionary<TKey, TValue>
     {
+        Func<TValue> defaultValueFunc;
+
         /// <summary>
         /// Construct an empty DefaultDictionary
         /// </summary>
-        public DefaultDictionary() : base() { }
-        
+        public DefaultDictionary(Func<TValue> defaultValueFunc = null) : base()
+        {
+            this.defaultValueFunc = defaultValueFunc;
+        }
+
         /// <summary>
         /// Copy Constructor
         /// </summary>
-        /// <param name="dictionary"></param>
-        public DefaultDictionary(IDictionary<TKey, TValue> dictionary) :base(dictionary) { }
+        /// <param name="other"></param>
+        public DefaultDictionary(DefaultDictionary<TKey, TValue> other) : base(other)
+        {
+            defaultValueFunc = other.defaultValueFunc;
+        }
 
         /// <summary>
         /// Gets or sets the value associated with the specified key.
@@ -35,11 +63,84 @@ namespace Engine.Utility
             {
                 TValue value;
                 base.TryGetValue(key, out value);
+                if (value == null)
+                {
+                    if (defaultValueFunc == null)
+                        value = default(TValue);
+                    else
+                        value = defaultValueFunc();
+                }
                 return value;
             }
             set
             {
                 base[key] = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// A DefaultDict that supports two keys.
+    /// </summary>
+    /// <typeparam name="TKey1">The first key type</typeparam>
+    /// <typeparam name="TKey2">The second key type</typeparam>
+    /// <typeparam name="TValue">The value type stored in the dictionary</typeparam>
+    public class DefaultMultiKeyDict<TKey1, TKey2, TValue>
+    {
+        Func<DefaultDictionary<TKey2, TValue>> DefaultDictFunc = () => { return new DefaultDictionary<TKey2, TValue>(); };
+        DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>> dict;
+
+        /// <summary>
+        /// Construct an empty Double-keyed dictionary
+        /// </summary>
+        public DefaultMultiKeyDict()
+        {
+            dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>(DefaultDictFunc);
+        }
+
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="defaultMultiKeyDict"></param>
+        public DefaultMultiKeyDict(DefaultMultiKeyDict<TKey1, TKey2, TValue> defaultMultiKeyDict)
+        {
+            dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>(defaultMultiKeyDict.dict);
+        }
+
+        /// <summary>
+        /// Clear all values from the DefaultMultiKeyDict
+        /// </summary>
+        public void Clear()
+        {
+            dict.Clear();
+        }
+
+        /// <summary>
+        /// Gets or sets the value associated with the specified keys.
+        /// </summary>
+        /// <param name="key1">The first key of the value to get or set.</param>
+        /// <param name="key2">The second key of the value to get or set.</param>
+        /// <returns></returns>
+        public TValue this[TKey1 key1, TKey2 key2]
+        {
+            get
+            {
+                return dict[key1][key2];
+            }
+            set
+            {
+                dict[key1][key2] = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
+        /// </summary>
+        public DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>.KeyCollection Keys
+        {
+            get
+            {
+                return dict.Keys;
             }
         }
     }
@@ -155,71 +256,6 @@ namespace Engine.Utility
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        }
-    }
-
-    /// <summary>
-    /// A DefaultDict that supports two keys.
-    /// </summary>
-    /// <typeparam name="TKey1">The first key type</typeparam>
-    /// <typeparam name="TKey2">The second key type</typeparam>
-    /// <typeparam name="TValue">The value type stored in the dictionary</typeparam>
-    public class DefaultMultiKeyDict<TKey1, TKey2, TValue>
-    {
-        DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>> dict;
-
-        /// <summary>
-        /// Construct an empty Double-keyed dictionary
-        /// </summary>
-        public DefaultMultiKeyDict()
-        {
-            dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>();
-        }
-
-        /// <summary>
-        /// Copy Constructor
-        /// </summary>
-        /// <param name="defaultMultiKeyDict"></param>
-        public DefaultMultiKeyDict(DefaultMultiKeyDict<TKey1, TKey2, TValue> defaultMultiKeyDict)
-        {
-            dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>(defaultMultiKeyDict.dict);
-        }
-
-        /// <summary>
-        /// Clear all values from the DefaultMultiKeyDict
-        /// </summary>
-        public void Clear()
-        {
-            dict.Clear();
-        }
-
-        /// <summary>
-        /// Gets or sets the value associated with the specified keys.
-        /// </summary>
-        /// <param name="key1">The first key of the value to get or set.</param>
-        /// <param name="key2">The second key of the value to get or set.</param>
-        /// <returns></returns>
-        public TValue this[TKey1 key1, TKey2 key2]
-        {
-            get
-            {
-                return dict[key1][key2];
-            }
-            set
-            {
-                dict[key1][key2] = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
-        /// </summary>
-        public DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>.KeyCollection Keys
-        {
-            get
-            {
-                return dict.Keys;
-            }
         }
     }
 
