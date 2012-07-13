@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 #endregion
 
@@ -9,6 +10,12 @@ namespace Engine.Input
 {
     public interface IInputManager
     {
+        /// <summary>
+        /// The buffered text input since the last frame.  This is cleared per frame,
+        /// regardless of whether it has been read.
+        /// </summary>
+        List<char> GetBufferedText();
+
         /// <summary>
         /// Get the position of the mouse in the specified frame.
         /// </summary>

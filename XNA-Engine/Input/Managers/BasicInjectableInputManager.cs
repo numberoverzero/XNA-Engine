@@ -13,6 +13,8 @@ namespace Engine.Input
     /// </summary>
     public class BasicInjectableInputManager : InjectableInputManager
     {
+        public BasicInjectableInputManager() : base() { }
+
         /// <summary>
         /// Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
