@@ -11,7 +11,7 @@ using Engine.Utility;
 
 namespace Engine.Input
 {
-    public class InputManager : IInputManager{
+    public class InputManager : IInputManager, EventInput.IKeyboardSubscriber{
         #region Fields
 
         /// <summary>
@@ -30,6 +30,11 @@ namespace Engine.Input
         ///     stops checking for modifiers once no bindings use that modifier
         /// </summary>
         public CountedSet<IBinding> Modifiers { get; protected set; }
+
+        /// <summary>
+        /// The per-frame text buffer.
+        /// </summary>
+        protected DoubleBuffer<char> BufferedText;
 
         #region Previous/Current States
 
@@ -135,6 +140,8 @@ namespace Engine.Input
         #endregion
 
         #region Initialization
+        
+        static bool initialized = false;
 
         /// <summary>
         /// Create an empty InputManager.  By default, polls all devices.
@@ -145,6 +152,7 @@ namespace Engine.Input
             Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>();
             Modifiers = new CountedSet<IBinding>();
             IsPollingKeyboard = IsPollingGamePads = IsPollingMouse = true;
+            EventInput.KeyboardDispatcher.RegisterListener(this);
         }
 
         /// <summary>
@@ -171,9 +179,29 @@ namespace Engine.Input
             IsPollingKeyboard = input.IsPollingKeyboard;
             IsPollingMouse = input.IsPollingMouse;
 
+            EventInput.KeyboardDispatcher.RegisterListener(this);
+        }
+
+
+        public static void Initialize(GameWindow window)
+        {
+            if (!initialized)
+            {
+                EventInput.KeyboardDispatcher.Initialize(window);
+                initialized = true;
+            }
         }
 
         #endregion
+
+        /// <summary>
+        /// The buffered text input since the last frame.  This is cleared per frame,
+        /// regardless of whether it has been read.
+        /// </summary>
+        public List<char> GetBufferedText()
+        {
+            return BufferedText.Front;
+        } 
 
         /// <summary>
         /// Get the position of the mouse in the specified frame.
@@ -404,6 +432,8 @@ namespace Engine.Input
         /// </remarks>
         public virtual void Update()
         {
+            BufferedText.Flip();
+
             if (IsPollingKeyboard)
             {
                 PreviousKeyboardState = CurrentKeyboardState;
@@ -433,5 +463,26 @@ namespace Engine.Input
         {
             get { return Modifiers; }
         }
+
+        #region IKeyboardSubscriber Interface
+
+        public void RecieveTextInput(char inputChar)
+        {
+            BufferedText.Push(inputChar);
+        }
+
+        public void RecieveCommandInput(char command)
+        {
+            BufferedText.Push(command);
+        }
+
+        public void RecieveSpecialInput(Keys key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Selected { get; set; }
+
+        #endregion
     }
 }
