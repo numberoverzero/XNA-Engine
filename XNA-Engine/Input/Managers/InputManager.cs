@@ -479,7 +479,7 @@ namespace Engine.Input
 
         public void RecieveSpecialInput(Keys key)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public bool Selected { get; set; }

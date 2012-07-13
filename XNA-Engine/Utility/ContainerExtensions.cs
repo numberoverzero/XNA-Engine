@@ -69,6 +69,7 @@ namespace Engine.Utility
                         value = default(TValue);
                     else
                         value = defaultValueFunc();
+                    base[key] = value;
                 }
                 return value;
             }
@@ -85,9 +86,8 @@ namespace Engine.Utility
     /// <typeparam name="TKey1">The first key type</typeparam>
     /// <typeparam name="TKey2">The second key type</typeparam>
     /// <typeparam name="TValue">The value type stored in the dictionary</typeparam>
-    public class DefaultMultiKeyDict<TKey1, TKey2, TValue>
+    public class DefaultMultiKeyDict<TKey1, TKey2, TValue> where TValue : new()
     {
-        Func<DefaultDictionary<TKey2, TValue>> DefaultDictFunc = () => { return new DefaultDictionary<TKey2, TValue>(); };
         DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>> dict;
 
         /// <summary>
@@ -95,6 +95,8 @@ namespace Engine.Utility
         /// </summary>
         public DefaultMultiKeyDict()
         {
+            Func<TValue> DefaultInnerDictFunc = () => { return new TValue(); };
+            Func<DefaultDictionary<TKey2, TValue>> DefaultDictFunc = () => { return new DefaultDictionary<TKey2, TValue>(DefaultInnerDictFunc); };
             dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>(DefaultDictFunc);
         }
 
