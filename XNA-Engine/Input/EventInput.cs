@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 #endregion
 
@@ -81,9 +83,9 @@ namespace Engine.Input.EventInput
 
     public class KeyEventArgs : EventArgs
     {
-        public Keys KeyCode { get; private set; }
+        public Microsoft.Xna.Framework.Input.Keys KeyCode { get; private set; }
 
-        public KeyEventArgs(Keys keyCode)
+        public KeyEventArgs(Microsoft.Xna.Framework.Input.Keys keyCode)
         {
             KeyCode = keyCode;
         }
@@ -171,12 +173,12 @@ namespace Engine.Input.EventInput
 
                 case WM_KEYDOWN:
                     if (KeyDown != null)
-                        KeyDown(null, new KeyEventArgs((Keys)wParam));
+                        KeyDown(null, new KeyEventArgs((Microsoft.Xna.Framework.Input.Keys)wParam));
                     break;
 
                 case WM_KEYUP:
                     if (KeyUp != null)
-                        KeyUp(null, new KeyEventArgs((Keys)wParam));
+                        KeyUp(null, new KeyEventArgs((Microsoft.Xna.Framework.Input.Keys)wParam));
                     break;
 
                 case WM_CHAR:
@@ -202,8 +204,9 @@ namespace Engine.Input.EventInput
     public interface IKeyboardSubscriber
     {
         void RecieveTextInput(char inputChar);
+        void RecieveTextInput(string text);
         void RecieveCommandInput(char command);
-        void RecieveSpecialInput(Keys key);
+        void RecieveSpecialInput(Microsoft.Xna.Framework.Input.Keys key);
 
         bool Selected { get; set; } //or Focused
     }
@@ -238,8 +241,22 @@ namespace Engine.Input.EventInput
                 return;
             if (char.IsControl(e.Character))
             {
-                foreach (var subscriber in _subscriber)
-                    subscriber.RecieveCommandInput(e.Character);
+                //ctrl-v
+                if (e.Character == 0x16)
+                {
+                    //XNA runs in Multiple Thread Apartment state, which cannot recieve clipboard
+                    Thread thread = new Thread(PasteThread);
+                    thread.SetApartmentState(ApartmentState.STA);
+                    thread.Start();
+                    thread.Join();
+                    foreach (var subscriber in _subscriber)
+                        subscriber.RecieveTextInput(_pasteResult);
+                }
+                else
+                {
+                    foreach (var subscriber in _subscriber)
+                        subscriber.RecieveCommandInput(e.Character);
+                }
             }
             else
             {
@@ -258,6 +275,21 @@ namespace Engine.Input.EventInput
         public static void UnregisterListener(IKeyboardSubscriber subscriber)
         {
             _subscriber.Remove(subscriber);
+        }
+
+        //Thread has to be in Single Thread Apartment state in order to receive clipboard
+        static string _pasteResult = "";
+        [STAThread]
+        static void PasteThread()
+        {
+            if (Clipboard.ContainsText())
+            {
+                _pasteResult = Clipboard.GetText();
+            }
+            else
+            {
+                _pasteResult = "";
+            }
         }
     }
 }

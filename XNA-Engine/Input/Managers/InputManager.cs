@@ -472,6 +472,12 @@ namespace Engine.Input
             BufferedText.Push(inputChar);
         }
 
+        public void RecieveTextInput(string text)
+        {
+            foreach (char c in text)
+                BufferedText.Push(c);
+        }
+
         public void RecieveCommandInput(char command)
         {
             BufferedText.Push(command);
