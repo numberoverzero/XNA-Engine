@@ -109,6 +109,7 @@
     <Compile Include="Events\GameObjectEvents\GameObjectDestroyedEvent.cs" />
     <Compile Include="Input\Binding\IBinding.cs" />
     <Compile Include="Input\Binding\InputBinding.cs" />
+    <Compile Include="Input\EventInput.cs" />
     <Compile Include="Input\Managers\BasicInjectableInputManager.cs" />
     <Compile Include="Input\Managers\IInputManager.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
