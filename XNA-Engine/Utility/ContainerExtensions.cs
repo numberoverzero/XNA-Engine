@@ -222,4 +222,50 @@ namespace Engine.Utility
             }
         }
     }
+
+    /// <summary>
+    /// Provides Push, Flip, and full Front inspection.
+    /// Does not support Pop or buffer folding (extend front with back instead of swapping and clearing)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class DoubleBuffer<T>
+    {
+        List<T> _buffer1, _buffer2;
+        /// <summary>
+        /// The current Front buffer.  Cannot be written to.
+        /// </summary>
+        public List<T> Front { get; protected set; }
+        protected List<T> Back { get; set; }
+
+        /// <summary>
+        /// Construct an empty DoubleBuffer
+        /// </summary>
+        public DoubleBuffer()
+        {
+            Front = _buffer1 = new List<T>();
+            Back = _buffer2 = new List<T>();
+            Back.Clear();
+        }
+
+        /// <summary>
+        /// Flip Front and Back buffers
+        /// </summary>
+        public void Flip()
+        {
+            var temp = Front;
+            Front = Back;
+            Back = temp;
+            Back.Clear();
+
+        }
+
+        /// <summary>
+        /// Push a value onto the back buffer
+        /// </summary>
+        /// <param name="item">The item to push</param>
+        public void Push(T item)
+        {
+            Back.Add(item);
+        }
+    }
 }
