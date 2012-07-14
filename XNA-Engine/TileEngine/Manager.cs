@@ -11,6 +11,8 @@ namespace Engine.Tiles
     /// </summary>
     public class TileManager<TValue>
     {
+        #region Fields
+
         /// <summary>
         /// Individual tiles loaded in memory
         /// </summary>
@@ -50,6 +52,34 @@ namespace Engine.Tiles
         /// The size of a single chunk
         /// </summary>
         public Point ChunkDimensions { get; protected set; }
+
+        #endregion
+
+
+        #region Initialization
+
+        public TileManager(Point bufferDimensions, Point chunkDimensions)
+        {
+            BufferDimensions = bufferDimensions; 
+            ChunkDimensions = chunkDimensions;
+            InitializeTiles();
+            GlobalOrigin = Point.Zero;
+        }
+
+        void InitializeTiles()
+        {
+            int ntiles = BufferDimensions.X * BufferDimensions.Y * ChunkDimensions.X * ChunkDimensions.Y;
+            Tiles = new TValue[ntiles];
+            for(int i=0;i<ntiles;i++)
+                Tiles[i] = default(TValue);
+        }
+
+        public void SetGlobalOrigin(Point globalOrigin)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         /// <summary>
         /// Re-center the tile manager at the specified chunk offset from the previous origin chunk.
@@ -104,7 +134,7 @@ namespace Engine.Tiles
         /// <param name="relativeChunkPosition"></param>
         /// <param name="data"></param>
         /// <param name="startIndex"></param>
-        public void CacheTile(Point relativeChunkPosition, TValue[] data, int startIndex)
+        public void CacheChunk(Point relativeChunkPosition, TValue[] data, int startIndex)
         {
             throw new NotImplementedException();
         }
