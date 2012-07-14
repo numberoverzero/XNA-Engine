@@ -9,12 +9,12 @@ namespace Engine.Tiles
     /// <summary>
     /// Tracks buffered chunks and point/chunk updating
     /// </summary>
-    public class TileManager
+    public class TileManager<TValue>
     {
         /// <summary>
         /// Individual tiles loaded in memory
         /// </summary>
-        public int[] Tiles { get; protected set; }
+        public TValue[] Tiles { get; protected set; }
 
         /// <summary>
         /// The absolute origin of the first chunk loaded.
@@ -93,7 +93,7 @@ namespace Engine.Tiles
         /// <param name="relativeChunkPosition">The chunk offset relative the origin chunk</param>
         /// <param name="localTilePosition">The x and y coordinates of the tile in the chunk</param>
         /// <param name="value">The value to give the specified tile</param>
-        public void UpdateTile(Point relativeChunkPosition, Point localTilePosition, int value)
+        public void UpdateTile(Point relativeChunkPosition, Point localTilePosition, TValue value)
         {
             throw new NotImplementedException();
         }
@@ -104,7 +104,7 @@ namespace Engine.Tiles
         /// <param name="relativeChunkPosition"></param>
         /// <param name="data"></param>
         /// <param name="startIndex"></param>
-        public void CacheTile(Point relativeChunkPosition, int[] data, int startIndex)
+        public void CacheTile(Point relativeChunkPosition, TValue[] data, int startIndex)
         {
             throw new NotImplementedException();
         }
