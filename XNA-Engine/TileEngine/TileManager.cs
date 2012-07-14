@@ -14,9 +14,9 @@ namespace Engine.Tiles
         #region Fields
 
         /// <summary>
-        /// Individual tiles loaded in memory
+        /// Chunks of tiles loaded in memory
         /// </summary>
-        public TValue[] Tiles { get; protected set; }
+        Chunk<TValue>[] Chunks { get; set; }
 
         /// <summary>
         /// The absolute origin of the first chunk loaded.
@@ -62,16 +62,16 @@ namespace Engine.Tiles
         {
             BufferDimensions = bufferDimensions; 
             ChunkDimensions = chunkDimensions;
-            InitializeTiles();
+            InitializeChunks();
             GlobalOrigin = Point.Zero;
         }
 
-        void InitializeTiles()
+        void InitializeChunks()
         {
-            int ntiles = BufferDimensions.X * BufferDimensions.Y * ChunkDimensions.X * ChunkDimensions.Y;
-            Tiles = new TValue[ntiles];
-            for(int i=0;i<ntiles;i++)
-                Tiles[i] = default(TValue);
+            int nchunks = BufferDimensions.X * BufferDimensions.Y;
+            Chunks = new Chunk<TValue>[nchunks];
+            for (int i = 0; i < nchunks; i++)
+                Chunks[i] = new Chunk<TValue>(Point.Zero, ChunkDimensions);
         }
 
         public void SetGlobalOrigin(Point globalOrigin)
@@ -97,24 +97,34 @@ namespace Engine.Tiles
         }
 
         /// <summary>
-        /// Gets the start index of a chunk's tile data
+        /// Gets the chunk at the relative chunk position
         /// </summary>
         /// <param name="relativeChunkPosition">The chunk offset relative the origin chunk</param>
-        /// <returns></returns>
-        public int GetChunkStartIndex(Point relativeChunkPosition)
+        /// <returns>null if there is no such chunk</returns>
+        public Chunk<TValue> GetChunk(Point relativeChunkPosition)
         {
-            throw new NotImplementedException();
+            var globalChunkPosition = GetGlobalChunkPosition(relativeChunkPosition);
+            Chunk<TValue> chunk = null;
+            foreach (var bufferedChunk in Chunks)
+                if (bufferedChunk.GlobalPosition == globalChunkPosition)
+                    return bufferedChunk;
+            return chunk;
         }
 
         /// <summary>
-        /// Gets the start index of a chunk's tile data
+        /// Gets the chunk at the absolute tile position
         /// </summary>
-        /// <param name="absoluteTilePosX">The x-coord of the upper-left corner of the chunk, in abs global coordinates</param>
-        /// <param name="absoluteTilePosY">The y-coord of the upper-left corner of the chunk, in abs global coordinates</param>
-        /// <returns></returns>
-        public int GetChunkStartIndex(int absoluteTilePosX, int absoluteTilePosY)
+        /// <param name="absoluteChunkPosX">The x-coord of the tile in the upper-left corner of the chunk, in abs global coordinates</param>
+        /// <param name="absoluteChunkPosY">The y-coord of the tile in the upper-left corner of the chunk, in abs global coordinates</param>
+        /// <returns>null if there is no such chunk</returns>
+        public Chunk<TValue> GetChunk(int absoluteChunkPosX, int absoluteChunkPosY)
         {
-            throw new NotImplementedException();
+            var globalChunkPosition = new Point(absoluteChunkPosX, absoluteChunkPosY);
+            Chunk<TValue> chunk = null;
+            foreach (var bufferedChunk in Chunks)
+                if (bufferedChunk.GlobalPosition == globalChunkPosition)
+                    return bufferedChunk;
+            return chunk;
         }
 
         /// <summary>
@@ -125,7 +135,9 @@ namespace Engine.Tiles
         /// <param name="value">The value to give the specified tile</param>
         public void UpdateTile(Point relativeChunkPosition, Point localTilePosition, TValue value)
         {
-            throw new NotImplementedException();
+            var chunk = GetChunk(relativeChunkPosition);
+            if (chunk != null)
+                chunk.UpdateTile(localTilePosition, value);
         }
 
         /// <summary>
@@ -155,6 +167,27 @@ namespace Engine.Tiles
         /// <param name="absoluteTilePos"></param>
         /// <returns></returns>
         public Point GetLocalTilePosition(Point absoluteTilePos)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Absolute position of the tile in the world
+        /// </summary>
+        /// <param name="relativeChunkPosition"></param>
+        /// <param name="localTilePosition"></param>
+        /// <returns></returns>
+        public Point GetGlobalTilePosition(Point relativeChunkPosition, Point localTilePosition)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Absolute position of a chunk in the world as given by its relative offset w.r.t. the current GlobalOrigin
+        /// </summary>
+        /// <param name="relativeChunkPosition"></param>
+        /// <returns></returns>
+        public Point GetGlobalChunkPosition(Point relativeChunkPosition)
         {
             throw new NotImplementedException();
         }
