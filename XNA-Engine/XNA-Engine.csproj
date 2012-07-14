@@ -128,6 +128,7 @@
     <Compile Include="Input\InputSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Input\Managers\InjectableInputManager.cs" />
+    <Compile Include="TileEngine\Manager.cs" />
     <Compile Include="Utility\ColorTextureGenerator.cs" />
     <Compile Include="Utility\ContainerExtensions.cs" />
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
