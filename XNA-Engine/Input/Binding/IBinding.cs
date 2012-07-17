@@ -20,7 +20,7 @@ namespace Engine.Input
         /// <param name="manager">The manager keeping track of current/previous input states</param>
         /// <param name="player">Player to check binding on</param>
         /// <param name="state">Current or Previous frame</param>
-        bool IsActive(InputManager manager, PlayerIndex player, FrameState state);
+        bool IsActive(BasicInputManager manager, PlayerIndex player, FrameState state);
 
         /// <summary>
         /// Returns the list of modifiers necessary to be active before the binding is considered "active"

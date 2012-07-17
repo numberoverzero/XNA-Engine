@@ -14,7 +14,7 @@ namespace Engine.Input
     /// Can force keys to press or release using 
     /// Press(string key) and Release(string key)
     /// </summary>
-    public class InjectableInputManager : InputManager
+    public class InjectableInputManager : BasicInputManager
     {
         /// <summary>
         /// bindings pressed in the previous frame

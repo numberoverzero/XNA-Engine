@@ -47,7 +47,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="state">Current or Previous frame</param>
         /// <param name="manager">The manager keeping track of current/previous input states</param>
-        public bool IsActive(InputManager manager, PlayerIndex player, FrameState state)
+        public bool IsActive(BasicInputManager manager, PlayerIndex player, FrameState state)
         {
             KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.PreviousKeyboardState;
             GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadStates[player] : manager.PreviousGamePadStates[player];
