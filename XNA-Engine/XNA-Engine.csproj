@@ -112,7 +112,7 @@
     <Compile Include="Input\Binding\InputBinding.cs" />
     <Compile Include="Input\EventInput.cs" />
     <Compile Include="Input\Managers\BasicInjectableInputManager.cs" />
-    <Compile Include="Input\Managers\IInputManager.cs" />
+    <Compile Include="Input\Managers\InputManager.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
     <Compile Include="Rendering\RenderEnums.cs" />
@@ -124,7 +124,7 @@
     <Compile Include="Rendering\Pipeline\PixelShaderPipeline.cs" />
     <Compile Include="Input\InputEnums.cs" />
     <Compile Include="Input\Binding\BasicInputBindings.cs" />
-    <Compile Include="Input\Managers\InputManager.cs" />
+    <Compile Include="Input\Managers\BasicInputManager.cs" />
     <Compile Include="Input\InputSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Input\Managers\InjectableInputManager.cs" />

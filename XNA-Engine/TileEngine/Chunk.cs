@@ -8,10 +8,37 @@ namespace Engine.Tiles
 {
     public class Chunk<TValue>
     {
+        /// <summary>
+        /// The values of the tiles in the chunk
+        /// </summary>
         public TValue[] Tiles { get; protected set; }
-        public string TileHash { get; protected set; }
-        
+
+        /// <summary>
+        /// Set or Get a tile's value at the given local coordinates.
+        /// 
+        /// </summary>
+        /// <param name="x">Local Chunk x-coordinate</param>
+        /// <param name="y">Local Chunk y-coordinate</param>
+        /// <returns></returns>
+        public TValue this[int x, int y]
+        {
+            get
+            {
+                RangeCheckTile(x, y);
+                return Tiles[x + y * Dimensions.X];
+            }
+            set
+            {
+                RangeCheckTile(x, y);
+                Tiles[x + y * Dimensions.X] = value;
+            }
+        }
+
         int globalX, globalY;
+
+        /// <summary>
+        /// The global position of the upper-left-most tile in the chunk
+        /// </summary>
         public Point GlobalPosition
         {
             get
@@ -19,7 +46,16 @@ namespace Engine.Tiles
                 return new Point(globalX, globalY);
             }
         }
+
+        /// <summary>
+        /// Width and Height of the chunk
+        /// </summary>
         public Point Dimensions { get; protected set; }
+
+        /// <summary>
+        /// Whether or not the values loaded in the chunk are valid.
+        /// False when the chunk has been cleared, or is partially loaded.
+        /// </summary>
         public bool IsLoaded { get; protected set; }
 
         public Chunk(int x, int y, int width, int height){
@@ -33,7 +69,7 @@ namespace Engine.Tiles
         public Chunk(Point position, Point dimensions) 
             :this(position.X, position.Y, dimensions.X, dimensions.Y) { }
 
-        void InitializeTiles()
+        private void InitializeTiles()
         {
             int n = Dimensions.X * Dimensions.Y;
             Tiles = new TValue[n];
@@ -41,33 +77,84 @@ namespace Engine.Tiles
                 Tiles[i] = default(TValue);
         }
 
+        /// <summary>
+        /// Update the value of a single tile.
+        /// Location is local to the chunk coordinates
+        /// </summary>
+        /// <param name="localTilePosition">Position of the tile in chunk's coordinates</param>
+        /// <param name="value">New value for the tile to take</param>
         public void UpdateTile(Point localTilePosition, TValue value)
         {
             Tiles[localTilePosition.X + Dimensions.X * localTilePosition.Y] = value;
         }
 
-
+        /// <summary>
+        /// Loads data from an array into the chunk.
+        /// Note that while this won't necessarily fill all data in the chunk,
+        /// it will flag the chunk as loaded.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="startIndex"></param>
         public void LoadData(TValue[] data, int startIndex)
         {
             Array.Copy(data, startIndex, Tiles, 0, Dimensions.X * Dimensions.Y);
             IsLoaded = true;
         }
 
+        /// <summary>
+        /// Clears the chunk's data.
+        /// Note that this does not actually null the values,
+        /// so the chunk can be used again by a tile manager.
+        /// Do not read values from a chunk after it has been cleared
+        /// until all of the values have been read over using LoadData
+        /// </summary>
         public void ClearData()
         {
             IsLoaded = false;
         }
 
+        /// <summary>
+        /// Set the chunk's global position.  This is the position of the upper-left tile in the chunk.
+        /// </summary>
+        /// <param name="position"></param>
         public void SetGlobalPosition(Point position)
         {
             globalX = position.X;
             globalY = position.Y;
         }
 
-        public void SetGlobalPosition(int x, int y)
+        /// <summary>
+        /// Calculates the local position of a tile in the chunk given its global location
+        /// </summary>
+        /// <param name="globalTilePosition"></param>
+        /// <returns>The local coordinates of the tile in the chunk, or null if the tile is not in the chunk</returns>
+        public Point GetLocalPosition(Point globalTilePosition)
         {
-            globalX = x;
-            globalY = y;
+            Point localTilePosition = new Point(
+                            globalTilePosition.X - globalX,
+                            globalTilePosition.Y - globalY);
+            if (localTilePosition.X < 0 || localTilePosition.X >= Dimensions.X
+                || localTilePosition.Y < 0 || localTilePosition.Y >= Dimensions.Y)
+                localTilePosition = new Point(-1, -1);
+            return localTilePosition;
+        }
+
+        /// <summary>
+        /// Calculates the global position of a tile in the world given its local chunk location
+        /// </summary>
+        /// <param name="localTilePosition"></param>
+        /// <returns>The global coordinates of the tile in the world</returns>
+        public Point GetGlobalPosition(Point localTilePosition)
+        {
+            return new Point(localTilePosition.X + globalX, localTilePosition.Y + globalY);
+        }
+
+
+        private void RangeCheckTile(int x, int y)
+        {
+            if (x < 0 || x >= Dimensions.X
+                    || y < 0 || y >= Dimensions.Y)
+                throw new IndexOutOfRangeException("x and y must be between 0 and Dimensions - 1");
         }
     }
 }
