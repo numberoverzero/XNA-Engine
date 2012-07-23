@@ -1,17 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
-  <Class Name="Engine.Input.Modifier" Collapsed="true">
-    <Position X="6.25" Y="1" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAACAAAAAgAEAAAABIAAAACAAAAAoAAAACAAAA=</HashCode>
-      <FileName>Input\Modifier.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Engine.Input.InputBinding" Collapsed="true">
     <Position X="4.25" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAgAAEAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\InputBindings.cs</FileName>
+      <HashCode>AAAABAAAAAAAAgAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Binding\InputBinding.cs</FileName>
     </TypeIdentifier>
     <Lollipop Orientation="Left" Position="0.1" />
   </Class>
@@ -19,49 +12,42 @@
     <Position X="6.25" Y="3.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAgAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\InputBindings.cs</FileName>
+      <FileName>Input\Binding\BasicInputBindings.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Engine.Input.MouseInputBinding" Collapsed="true">
     <Position X="5.25" Y="2.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AEAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\InputBindings.cs</FileName>
+      <FileName>Input\Binding\BasicInputBindings.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Engine.Input.ThumbstickInputBinding" Collapsed="true">
     <Position X="0.5" Y="2.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\InputBindings.cs</FileName>
+      <FileName>Input\Binding\BasicInputBindings.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Engine.Input.ButtonInputBinding" Collapsed="true">
     <Position X="3" Y="2.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AEAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\InputBindings.cs</FileName>
+      <FileName>Input\Binding\BasicInputBindings.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Engine.Input.KeyInputBinding" Collapsed="true">
     <Position X="4.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\InputBindings.cs</FileName>
+      <FileName>Input\Binding\BasicInputBindings.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Engine.Input.TriggerInputBinding" Collapsed="true">
     <Position X="1.75" Y="3.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAhAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\InputBindings.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Engine.Input.InputManager">
-    <Position X="9" Y="0.5" Width="2.75" />
-    <TypeIdentifier>
-      <HashCode>yAQBAEAAAAAAAAAAEAgIAAABQAAAAjIAgEACQQAQBAg=</HashCode>
-      <FileName>Input\InputManager.cs</FileName>
+      <FileName>Input\Binding\BasicInputBindings.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="Engine.Input.InputSettings" Collapsed="true">
@@ -74,8 +60,8 @@
   <Interface Name="Engine.Input.IBinding">
     <Position X="0.5" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAgAAEAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Input\IBinding.cs</FileName>
+      <HashCode>AAAABAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Binding\IBinding.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="Engine.Input.MouseButton" Collapsed="true">
