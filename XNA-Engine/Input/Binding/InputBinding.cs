@@ -3,6 +3,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 #endregion
 
@@ -47,9 +48,9 @@ namespace Engine.Input
         /// </summary>
         /// <param name="state">Current or Previous frame</param>
         /// <param name="manager">The manager keeping track of current/previous input states</param>
-        public bool IsActive(BasicInputManager manager, PlayerIndex player, FrameState state)
+        public bool IsActive(DefaultInputManager manager, PlayerIndex player, FrameState state)
         {
-            KeyboardState keyState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.PreviousKeyboardState;
+            var keyState = state == FrameState.Current ? manager.CurrentKeys : manager.PreviousKeys;
             GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadStates[player] : manager.PreviousGamePadStates[player];
             MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.PreviousMouseState;
             return IsRawBindingActive(keyState, gamepadState, mouseState, manager.Settings);
@@ -58,7 +59,7 @@ namespace Engine.Input
         /// <summary>
         /// True if the binding (without modifiers) is active
         /// </summary>
-        protected virtual bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected virtual bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             return false;
         }

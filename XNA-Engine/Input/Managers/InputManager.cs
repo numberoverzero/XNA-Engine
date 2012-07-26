@@ -135,10 +135,10 @@ namespace Engine.Input
         /// Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
         /// </summary>
         /// <remarks>
-        /// This should be called at the beginning of your update loop, so that game logic
+        /// This should be called at the end of your update loop, so that game logic
         /// uses latest values.
-        /// Calling update at the end of update loop will have those keys processed
-        /// in the next frame.
+        /// Calling update at the beginning of the update loop will clear current buffers (if any) which
+        /// means you will not be able to read the most recent input.
         /// </remarks>
         void Update();
 

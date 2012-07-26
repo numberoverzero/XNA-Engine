@@ -183,7 +183,10 @@ namespace Engine.Input.EventInput
 
                 case WM_CHAR:
                     if (CharEntered != null)
+                    {
                         CharEntered(null, new CharacterEventArgs((char)wParam, lParam.ToInt32()));
+                        KeyDown(null, new KeyEventArgs((Microsoft.Xna.Framework.Input.Keys)wParam));
+                    }
                     break;
 
                 case WM_IME_SETCONTEXT:

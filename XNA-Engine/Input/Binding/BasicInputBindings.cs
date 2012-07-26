@@ -23,7 +23,7 @@ namespace Engine.Input
             Direction = thumbstickDirection;
         }
 
-        protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
             bool isActive = false;
@@ -58,7 +58,7 @@ namespace Engine.Input
             Button = mouseButton;
         }
 
-        protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             ButtonState buttonState;
             switch (Button)
@@ -89,7 +89,7 @@ namespace Engine.Input
             this.Thumbstick = thumbstick;
         }
 
-        protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
             return gamepadThumbstickMag.Length() >= settings.ThumbstickThreshold;
@@ -105,7 +105,7 @@ namespace Engine.Input
             this.Button = button;
         }
 
-        protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             return gamepadState.IsButtonDown(Button);
         }
@@ -120,9 +120,9 @@ namespace Engine.Input
             this.Key = key;
         }
 
-        protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
-            return keyState.IsKeyDown(Key);
+            return keyState.Contains(Key);
         }
     }
 
@@ -135,7 +135,7 @@ namespace Engine.Input
             this.Trigger = trigger;
         }
 
-        protected override bool IsRawBindingActive(KeyboardState keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
         {
             float triggerMag = Trigger == Trigger.Left ? gamepadState.Triggers.Left : gamepadState.Triggers.Right;
             return triggerMag >= settings.TriggerThreshold;
