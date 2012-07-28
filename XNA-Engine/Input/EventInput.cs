@@ -17,7 +17,9 @@ using System.Windows.Forms;
 
 namespace Engine.Input.EventInput
 {
-
+    /// <summary>
+    /// Hooks up windows dlls for keyboard event capture
+    /// </summary>
     public class KeyboardLayout
     {
         const uint KLF_ACTIVATE = 1; //activate the layout
@@ -36,6 +38,10 @@ namespace Engine.Input.EventInput
               System.Text.StringBuilder pwszKLID  //[out] string that receives the name of the locale identifier
               );
 
+        /// <summary>
+        /// The name of the keyboard layout
+        /// </summary>
+        /// <returns></returns>
         public static string getName()
         {
             System.Text.StringBuilder name = new System.Text.StringBuilder(KL_NAMELENGTH);
@@ -44,47 +50,87 @@ namespace Engine.Input.EventInput
         }
     }
 
+    /// <summary>
+    /// EventArgs of a character press
+    /// (includes info about modifers such as alt, as well as repeat count)
+    /// </summary>
     public class CharacterEventArgs : EventArgs
     {
+        /// <summary>
+        /// The character that was entered
+        /// </summary>
         public char Character { get; private set; }
+        /// <summary>
+        /// Extra info such as modifers that were pressed
+        /// </summary>
         public int Param { get; private set; }
 
+        /// <summary>
+        /// Construct a new character event arg for a key press
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="lParam"></param>
         public CharacterEventArgs(char character, int lParam)
         {
             Character = character;
             Param = lParam;
         }
 
+        /// <summary>
+        /// How many times the key was registered
+        /// </summary>
         public int RepeatCount
         {
             get { return Param & 0xffff; }
         }
 
+        /// <summary>
+        /// True if this was an extended key
+        /// </summary>
         public bool ExtendedKey
         {
             get { return (Param & (1 << 24)) > 0; }
         }
 
+        /// <summary>
+        /// Was alt depressed when the key was entered
+        /// </summary>
         public bool AltPressed
         {
             get { return (Param & (1 << 29)) > 0; }
         }
 
+        /// <summary>
+        /// The state the key was in before this event
+        /// </summary>
         public bool PreviousState
         {
             get { return (Param & (1 << 30)) > 0; }
         }
 
+        /// <summary>
+        /// Is this a transition from a different previous state
+        /// </summary>
         public bool TransitionState
         {
             get { return (Param & (1 << 31)) > 0; }
         }
     }
 
+    /// <summary>
+    /// EventArgs of a Keys press
+    /// </summary>
     public class KeyEventArgs : EventArgs
     {
+        /// <summary>
+        /// The key that was pressed
+        /// </summary>
         public Microsoft.Xna.Framework.Input.Keys KeyCode { get; private set; }
 
+        /// <summary>
+        /// Construct a new Key event arg for a key press
+        /// </summary>
+        /// <param name="keyCode"></param>
         public KeyEventArgs(Microsoft.Xna.Framework.Input.Keys keyCode)
         {
             KeyCode = keyCode;
@@ -92,9 +138,22 @@ namespace Engine.Input.EventInput
 
     }
 
+    /// <summary>
+    /// EventHandler for char events
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     public delegate void CharEnteredHandler(object sender, CharacterEventArgs e);
+    /// <summary>
+    /// EventHandler for Key events
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     public delegate void KeyEventHandler(object sender, KeyEventArgs e);
 
+    /// <summary>
+    /// Converts win dll hooked input events into nice CharacterEvents and KeyEvents
+    /// </summary>
     public static class EventInput
     {
         /// <summary>
@@ -239,10 +298,17 @@ namespace Engine.Input.EventInput
         bool Selected { get; set; } //or Focused
     }
 
+    /// <summary>
+    /// Sends out read calls when input is handled from EventInput
+    /// </summary>
     public static class KeyboardDispatcher
     {
         static bool initialized;
 
+        /// <summary>
+        /// Initialize the KeyboardDispatcher by connecting it to a GameWindow
+        /// </summary>
+        /// <param name="window"></param>
         public static void Initialize(GameWindow window)
         {
             if (!initialized)
@@ -295,11 +361,19 @@ namespace Engine.Input.EventInput
 
         static List<IKeyboardSubscriber> _subscriber = new List<IKeyboardSubscriber>();
 
+        /// <summary>
+        /// Add a listener that receives messages when new keys are pressed
+        /// </summary>
+        /// <param name="subscriber"></param>
         public static void RegisterListener(IKeyboardSubscriber subscriber)
         {
             _subscriber.Add(subscriber);
         }
 
+        /// <summary>
+        /// Remove a listener
+        /// </summary>
+        /// <param name="subscriber"></param>
         public static void UnregisterListener(IKeyboardSubscriber subscriber)
         {
             _subscriber.Remove(subscriber);

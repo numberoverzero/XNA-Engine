@@ -10,7 +10,10 @@ using Engine.Utility;
 
 namespace Engine.Rendering.Pipeline
 {
-    public class PixelShaderpipeline
+    /// <summary>
+    /// Basic pipeline for rendering effects using pixel shaders
+    /// </summary>
+    public class PixelShaderPipeline
     {
         #region Fields
 
@@ -58,7 +61,12 @@ namespace Engine.Rendering.Pipeline
 
         #region Constructor
 
-        public PixelShaderpipeline(GraphicsDevice graphicsDevice, Game game)
+        /// <summary>
+        /// Basic PixelShaderPipeline
+        /// </summary>
+        /// <param name="graphicsDevice"></param>
+        /// <param name="game"></param>
+        public PixelShaderPipeline(GraphicsDevice graphicsDevice, Game game)
         {
             contentManager = new ContentManager(game.Services, "Content");
             effects = new List<IRenderEffect>();

@@ -897,6 +897,198 @@
                 but can be handled directly using the Touch(GameObject other) method.
             </summary>
         </member>
+        <member name="M:Engine.Entities.GameObject.#ctor(Engine.Events.GameEventManager)">
+            <summary>
+            Create a deactived GameObject with 0 health, and fire a GameObjectCreatedEvent
+            </summary>
+            <param name="manager">The manager which will fire the GameObjectCreatedEvent</param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.#ctor(Engine.Events.GameEventManager,System.Int32,System.Boolean,System.Boolean)">
+            <summary>
+            Create a GameObject with a certain amount of health, possible active, and
+            can fire a GameObjectCreatedEvent
+            </summary>
+            <param name="manager">The manager which will fire the GameObjectCreatedEvent</param>
+            <param name="health"></param>
+            <param name="active"></param>
+            <param name="fireOnCreateEvent"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.#ctor(Engine.Entities.GameObject,System.Boolean)">
+            <summary>
+            Copy another Gameobject.  Optionally fire a GameObjectCreatedEvent
+            </summary>
+            <param name="other"></param>
+            <param name="fireOnCreateEvent"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.AddBehavior(Engine.Entities.Behaviors.IBehavior)">
+            <summary>
+            Adds a behavior to the GameObject
+            </summary>
+            <param name="behavior"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.RemoveBehavior(Engine.Entities.Behaviors.IBehavior)">
+            <summary>
+            Removes a behavior from the GameObject
+            </summary>
+            <param name="behavior"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.UpdateBehaviors(System.Single)">
+            <summary>
+            Update all behaviors the GameObject has,
+            and applies those behaviors to this object
+            if it meets the behavior's criteria
+            </summary>
+            <param name="dt"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.OnGameEvent(Engine.Entities.GameObject,Engine.Events.GameEventArgs)">
+            <summary>
+            Handle a GameEvent from a GameObject (can be self)
+            </summary>
+            <param name="src"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.Update(System.Single)">
+            <summary>
+            Update any logic and behaviors
+            </summary>
+            <param name="dt"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch,Engine.Rendering.RenderPass)">
+            <summary>
+            Draw a certain pass of the GameObject using a given SpriteBatch
+            </summary>
+            <param name="batch"></param>
+            <param name="pass"></param>
+        </member>
+        <member name="M:Engine.Entities.GameObject.Touch(Engine.Entities.GameObject)">
+            <summary>
+            Touch the GameObject with another
+            </summary>
+            <param name="other"></param>
+            <returns>True if the objects interact</returns>
+        </member>
+        <member name="M:Engine.Entities.GameObject.Destroy(System.Boolean,System.Boolean)">
+            <summary>
+            Destroy the GameObject.  Can be used in cleanup and can fire GameObjectDestroyedEvents
+            </summary>
+            <param name="isCleanup">This object is being destroyed as part of a cleanup step</param>
+            <param name="fireOnDestroyEvent">The GameObject should signal that is is being destroyed</param>
+        </member>
+        <member name="P:Engine.Entities.GameObject.ColorScheme">
+            <summary>
+            The RenderLayer and Hostility-based ColorScheme used to render the GameObject.
+            </summary>
+        </member>
+        <member name="P:Engine.Entities.GameObject.GameEventManager">
+            <summary>
+            The GameEventManager to send events to.
+            A singleton is not used, in case some groups of objects broadcast general
+            messages that would be misinterpreted by supersets of their object group
+            </summary>
+        </member>
+        <member name="P:Engine.Entities.GameObject.PhysicsComponent">
+            <summary>
+            The PhysicsComponent which controls the GameObject's motion
+            </summary>
+        </member>
+        <member name="P:Engine.Entities.GameObject.Behaviors">
+            <summary>
+            Any behaviors the GameObject has (not necessarily active or for which the GameObject meets all criteria)
+            </summary>
+        </member>
+        <member name="P:Engine.Entities.GameObject.Active">
+            <summary>
+            Whether or not the GameObject is active.  Non-active objects are not necessarily dead, however)
+            </summary>
+        </member>
+        <member name="P:Engine.Entities.GameObject.Timescale">
+            <summary>
+            The ratio of elapsed time for this unit compared to the time delta it is given.
+            </summary>
+            /// <example>
+            For a unit with Timescale 2.0, things happen twice as fast - energy regen, attack rate, etc
+            </example>
+        </member>
+        <member name="P:Engine.Entities.GameObject.Health">
+            <summary>
+            The unit's health.  &lt;= 0 does not necessarily indicate dead or non-active
+            </summary>
+        </member>
+        <member name="T:Engine.Entities.Hostility">
+            <summary>
+            Describes the hostility relation between GameObject(s)
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.None">
+            <summary>
+            There is no defined relation between the object(s)
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Any">
+            <summary>
+            All relations apply between the object(s)
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Player">
+            <summary>
+            The object(s) are player controlled or can be considered part of the player
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Friend">
+            <summary>
+            The object(s) are friendly with each other
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Neutral">
+            <summary>
+            The object(s) are neutral with each other
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Unfriendly">
+            <summary>
+            The object(s) are unfriendly with each other
+            </summary>
+        </member>
+        <member name="T:Engine.Entities.Behaviors.IBehavior">
+            <summary>
+            A behavior which can be applied to a GameObject if another GameObject meets the
+            Behavior's criteria.  Note that the GameObjects being checked and applied can be the same.
+            </summary>
+        </member>
+        <member name="M:Engine.Entities.Behaviors.IBehavior.Apply(Engine.Entities.GameObject)">
+            <summary>
+            Apply the Behavior to a GameObject.
+            This method assumes that the behavior's criteria have been met
+            </summary>
+            <param name="gameObject"></param>
+        </member>
+        <member name="M:Engine.Entities.Behaviors.IBehavior.Destroy">
+            <summary>
+            Destroy the Behavior
+            </summary>
+        </member>
+        <member name="M:Engine.Entities.Behaviors.IBehavior.MeetsCriteria(Engine.Entities.GameObject)">
+            <summary>
+            Whether or not a given GameObject meets this Behavior's criteria
+            </summary>
+            <param name="gameObject"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Entities.Behaviors.IBehavior.Update(System.Single)">
+            <summary>
+            Updates any temporal data the Behavior tracks, which can be used when
+            checking critera or applying the behavior.  Behaviors do not necessarily
+            use this information.
+            </summary>
+            <param name="dt"></param>
+        </member>
+        <member name="P:Engine.Entities.Behaviors.IBehavior.Enabled">
+            <summary>
+            Set/Get the state of the Behavior.
+            Enabled should be checked before applying a Behavior,
+            but such a check isn't strictly required.
+            </summary>
+        </member>
         <member name="M:Engine.Utility.Vector2Extensions.AsAngle(Microsoft.Xna.Framework.Vector2)">
             <summary>
             Returns the angle of the vector, counter-clockwise from +x
@@ -1222,9 +1414,104 @@
             Specify which stage of rendering is occuring
             </summary>
         </member>
+        <member name="F:Engine.Rendering.RenderPass.None">
+            <summary>
+            Nothing happens in this RenderPass (or, an unknown state)
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.Background">
+            <summary>
+            Background items are being rendered
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.PreEffect">
+            <summary>
+            Just before main special effects are applied
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.Effects">
+            <summary>
+            Any special effects that aren't fullscreen post happen here
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.PostEffect">
+            <summary>
+            Anything that happens after effects are applied
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.PrePostProcessing">
+            <summary>
+            Just before fullscreen postprocessing happens
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.Post">
+            <summary>
+            Postprocessing - blur, bloom, etc
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.UI">
+            <summary>
+            Any UI rendered on top of the game world which shouldn't be touched by
+            postprocessing.  Note that it's fine for UI to have its own effects, but
+            they may be applied to the game rendering as well (depending on how your
+            pipeline is configured)
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.RenderPass.Debug">
+            <summary>
+            Anything that should be rendered while debugging
+            </summary>
+        </member>
         <member name="T:Engine.Rendering.LayerType">
             <summary>
             Draw layer type for an object
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.LayerType.None">
+            <summary>
+            A noop layer, or a layer when one is unknown
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.LayerType.Base">
+            <summary>
+            Basic rendering layer
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.LayerType.Highlight">
+            <summary>
+            Any rendering done on top of the base
+            </summary>
+        </member>
+        <member name="T:Engine.Rendering.Pipeline.IRenderEffect">
+            <summary>
+            Renders an effect on a preEffect texture, out to a postEffect texture.
+            preEffect texture is unmodified, unless preEffect texture is postEffect texture
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.IRenderEffect.LoadContent(Microsoft.Xna.Framework.Content.ContentManager,Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.SpriteBatch)">
+            <summary>
+            Load any required content the effect requires for rendering
+            </summary>
+            <param name="contentManager"></param>
+            <param name="graphicsDevice"></param>
+            <param name="spriteBatch"></param>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.IRenderEffect.UnloadContent">
+            <summary>
+            Free up resources when you don't need to render bloom effects anymore.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.IRenderEffect.ApplyEffect(Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D)">
+            <summary>
+            Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+            (preEffectTexture unmodified unless pre == post)
+            </summary>
+            <param name="preEffectTexture"></param>
+            <param name="postEffectTexture"></param>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.IRenderEffect.Reset">
+            <summary>
+            Reset any state the effect might track, such as camera deltas or elapsed game time
             </summary>
         </member>
         <member name="T:Engine.Camera.CameraMode">
@@ -1269,71 +1556,184 @@
             </summary>
             <param name="settings"></param>
         </member>
-        <member name="F:Engine.Rendering.Pipeline.PixelShaderpipeline.RenderTarget">
+        <member name="T:Engine.Rendering.Pipeline.PixelShaderPipeline">
+            <summary>
+            Basic pipeline for rendering effects using pixel shaders
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Pipeline.PixelShaderPipeline.RenderTarget">
             <summary>
             The current RenderTarget2D based on which pass the PostPipeline is in
             </summary>
         </member>
-        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.LoadContent">
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderPipeline.#ctor(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Game)">
+            <summary>
+            Basic PixelShaderPipeline
+            </summary>
+            <param name="graphicsDevice"></param>
+            <param name="game"></param>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderPipeline.LoadContent">
             <summary>
             Load the pipeline's content
             </summary>
         </member>
-        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.UnloadContent">
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderPipeline.UnloadContent">
             <summary>
             Unload the pipeline's content, 
             and the content of any effects in the pipeline
             </summary>
         </member>
-        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.Clear(Microsoft.Xna.Framework.Color)">
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderPipeline.Clear(Microsoft.Xna.Framework.Color)">
             <summary>
             Clear the screens, set background color
             </summary>
         </member>
-        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.Draw">
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderPipeline.Draw">
             <summary>
             Draw everything to the screen
             </summary>
         </member>
-        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.AddRenderEffect(Engine.Rendering.Pipeline.IRenderEffect)">
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderPipeline.AddRenderEffect(Engine.Rendering.Pipeline.IRenderEffect)">
             <summary>
             Append a rendering effect to the pipeline
             and load the effect's content
             </summary>
             <param name="effect">The effect to be added</param>
         </member>
-        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.RemoveRenderEffect(Engine.Rendering.Pipeline.IRenderEffect)">
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderPipeline.RemoveRenderEffect(Engine.Rendering.Pipeline.IRenderEffect)">
             <summary>
             Remove a rendering effect from the pipeline
             Unloads that effect's content
             </summary>
             <param name="effect"></param>
         </member>
-        <member name="P:Engine.Rendering.Pipeline.PixelShaderpipeline.Passes">
+        <member name="P:Engine.Rendering.Pipeline.PixelShaderPipeline.Passes">
             <summary>
             Array of render passes for iteration
             </summary>
         </member>
-        <member name="P:Engine.Rendering.Pipeline.PixelShaderpipeline.RenderPass">
+        <member name="P:Engine.Rendering.Pipeline.PixelShaderPipeline.RenderPass">
             <summary>
             Which RenderPass the RenderPipeline is currently processing.
             Changing this value will trigger at least one render target switch.
             </summary>
         </member>
-        <member name="T:Engine.Rendering.Effects.BloomSettings">
+        <member name="T:Engine.Entities.Behaviors.PrimitiveSteeringBehavior">
             <summary>
-            Class holds all the settings used to tweak the bloom effect.
+            Always updates the PhysicsComponent's rotation to align with the object's velocity
             </summary>
         </member>
-        <member name="M:Engine.Rendering.Effects.BloomSettings.#ctor(System.String,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+        <member name="T:Engine.Rendering.Effects.BloomEffect">
             <summary>
-            Constructs a new bloom settings descriptor.
+            The classic bloom effect.  Use sparingly.
             </summary>
         </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.PresetSettings">
+        <member name="T:Engine.Rendering.Pipeline.RenderEffect">
             <summary>
-            Table of preset bloom settings, used by the sample program.
+            Renders an effect on a preEffect texture, out to a postEffect texture.
+            preEffect texture is unmodified, unless preEffect texture is postEffect texture
             </summary>
+        </member>
+        <member name="F:Engine.Rendering.Pipeline.RenderEffect.graphicsDevice">
+            <summary>
+            Used for switching render targets and drawing full-quad effects
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.RenderEffect.LoadContent(Microsoft.Xna.Framework.Content.ContentManager,Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.SpriteBatch)">
+            <summary>
+            Load any required content the effect requires for rendering
+            </summary>
+            <param name="contentManager"></param>
+            <param name="graphicsDevice"></param>
+            <param name="spriteBatch"></param>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.RenderEffect.UnloadContent">
+            <summary>
+            Free up resources when you don't need to render bloom effects anymore.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.RenderEffect.ApplyEffect(Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D)">
+            <summary>
+            Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+            (preEffectTexture unmodified unless pre == post)
+            </summary>
+            <param name="preEffectTexture"></param>
+            <param name="postEffectTexture"></param>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.RenderEffect.Reset">
+            <summary>
+            Reset any state the effect might track, such as camera deltas or elapsed game time
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.RenderEffect.DrawFullscreenQuad(Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.BlendState,Microsoft.Xna.Framework.Graphics.Effect)">
+            <summary>
+            Draw a texture to the renderTarget using a particular BlendState and Effect
+            </summary>
+            <param name="texture"></param>
+            <param name="renderTarget"></param>
+            <param name="blendState"></param>
+            <param name="effect"></param>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.RenderEffect.DrawFullscreenQuad(Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Graphics.BlendState,System.Int32,System.Int32,Microsoft.Xna.Framework.Graphics.Effect)">
+            <summary>
+            Draw a texture to a widthxheight section of the current RenderTarget using a particular BlendState and Effect
+            </summary>
+            <param name="texture"></param>
+            <param name="blendState"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <param name="effect"></param>
+        </member>
+        <member name="P:Engine.Rendering.Pipeline.RenderEffect.None">
+            <summary>
+            A RenderEffect which does nothing
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.RenderEffect.EmptyRenderEffect.ApplyEffect(Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D)">
+            <summary>
+            Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+            (preEffectTexture unmodified unless pre == post)
+            </summary>
+            <param name="preEffectTexture"></param>
+            <param name="postEffectTexture"></param>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomEffect.Settings">
+            <summary>
+            The settings that control how much bling your screen has
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomEffect.#ctor">
+            <summary>
+            Default Bloom effect, subtle and clean
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomEffect.#ctor(Engine.Rendering.Effects.BloomSettings)">
+            <summary>
+            Set up your own Bloom effect based on a set of BloomSettings
+            </summary>
+            <param name="bloomSettings"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomEffect.LoadContent(Microsoft.Xna.Framework.Content.ContentManager,Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.SpriteBatch)">
+            <summary>
+            Load any required content the effect requires for rendering
+            </summary>
+            <param name="contentManager"></param>
+            <param name="graphicsDevice"></param>
+            <param name="spriteBatch"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomEffect.UnloadContent">
+            <summary>
+            Free up resources when you don't need to render bloom effects anymore.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomEffect.ApplyEffect(Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D)">
+            <summary>
+            Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+            (preEffectTexture unmodified unless pre == post)
+            </summary>
+            <param name="preEffectTexture"></param>
+            <param name="postEffectTexture"></param>
         </member>
         <member name="M:Engine.Rendering.Effects.BloomEffect.SetBlurEffectParameters(System.Single,System.Single)">
             <summary>
@@ -1613,6 +2013,65 @@
             <param name="color">The color to set the texture to.</param>
             <returns>The newly created texture.</returns>
         </member>
+        <member name="T:Engine.Rendering.Effects.RepeaterEffect">
+            <summary>
+            Repeats a given RenderEffect n times in a row
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.RepeaterEffect.Effect">
+            <summary>
+            The effect to repeat
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.RepeaterEffect.Repetitions">
+            <summary>
+            The number of times the effect is repeated
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.RepeaterEffect.#ctor">
+            <summary>
+            Repeats a noop effect 0 times
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.RepeaterEffect.#ctor(Engine.Rendering.Pipeline.RenderEffect)">
+            <summary>
+            Repeats the given effect once
+            </summary>
+            <param name="effect"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.RepeaterEffect.#ctor(Engine.Rendering.Pipeline.RenderEffect,System.Int32)">
+            <summary>
+            Repeats the given effect n times
+            </summary>
+            <param name="effect"></param>
+            <param name="repetitions"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.RepeaterEffect.LoadContent(Microsoft.Xna.Framework.Content.ContentManager,Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.SpriteBatch)">
+            <summary>
+            Load any required content the effect requires for rendering
+            </summary>
+            <param name="contentManager"></param>
+            <param name="graphicsDevice"></param>
+            <param name="spriteBatch"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.RepeaterEffect.UnloadContent">
+            <summary>
+            Free up resources when you don't need to render bloom effects anymore.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.RepeaterEffect.ApplyEffect(Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D)">
+            <summary>
+            Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+            (preEffectTexture unmodified unless pre == post)
+            </summary>
+            <param name="preEffectTexture"></param>
+            <param name="postEffectTexture"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.RepeaterEffect.Reset">
+            <summary>
+            Reset any state the effect might track, such as camera deltas or elapsed game time
+            </summary>
+        </member>
         <member name="T:Engine.Tiles.TileManager`1">
             <summary>
             Tracks buffered chunks and point/chunk updating
@@ -1666,6 +2125,100 @@
             The size of a single chunk
             </summary>
         </member>
+        <member name="T:Engine.Input.EventInput.KeyboardLayout">
+            <summary>
+            Hooks up windows dlls for keyboard event capture
+            </summary>
+        </member>
+        <member name="M:Engine.Input.EventInput.KeyboardLayout.getName">
+            <summary>
+            The name of the keyboard layout
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Input.EventInput.CharacterEventArgs">
+            <summary>
+            EventArgs of a character press
+            (includes info about modifers such as alt, as well as repeat count)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.EventInput.CharacterEventArgs.#ctor(System.Char,System.Int32)">
+            <summary>
+            Construct a new character event arg for a key press
+            </summary>
+            <param name="character"></param>
+            <param name="lParam"></param>
+        </member>
+        <member name="P:Engine.Input.EventInput.CharacterEventArgs.Character">
+            <summary>
+            The character that was entered
+            </summary>
+        </member>
+        <member name="P:Engine.Input.EventInput.CharacterEventArgs.Param">
+            <summary>
+            Extra info such as modifers that were pressed
+            </summary>
+        </member>
+        <member name="P:Engine.Input.EventInput.CharacterEventArgs.RepeatCount">
+            <summary>
+            How many times the key was registered
+            </summary>
+        </member>
+        <member name="P:Engine.Input.EventInput.CharacterEventArgs.ExtendedKey">
+            <summary>
+            True if this was an extended key
+            </summary>
+        </member>
+        <member name="P:Engine.Input.EventInput.CharacterEventArgs.AltPressed">
+            <summary>
+            Was alt depressed when the key was entered
+            </summary>
+        </member>
+        <member name="P:Engine.Input.EventInput.CharacterEventArgs.PreviousState">
+            <summary>
+            The state the key was in before this event
+            </summary>
+        </member>
+        <member name="P:Engine.Input.EventInput.CharacterEventArgs.TransitionState">
+            <summary>
+            Is this a transition from a different previous state
+            </summary>
+        </member>
+        <member name="T:Engine.Input.EventInput.KeyEventArgs">
+            <summary>
+            EventArgs of a Keys press
+            </summary>
+        </member>
+        <member name="M:Engine.Input.EventInput.KeyEventArgs.#ctor(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Construct a new Key event arg for a key press
+            </summary>
+            <param name="keyCode"></param>
+        </member>
+        <member name="P:Engine.Input.EventInput.KeyEventArgs.KeyCode">
+            <summary>
+            The key that was pressed
+            </summary>
+        </member>
+        <member name="T:Engine.Input.EventInput.CharEnteredHandler">
+            <summary>
+            EventHandler for char events
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:Engine.Input.EventInput.KeyEventHandler">
+            <summary>
+            EventHandler for Key events
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:Engine.Input.EventInput.EventInput">
+            <summary>
+            Converts win dll hooked input events into nice CharacterEvents and KeyEvents
+            </summary>
+        </member>
         <member name="M:Engine.Input.EventInput.EventInput.Initialize(Microsoft.Xna.Framework.GameWindow)">
             <summary>
             Initialize the TextInput with the given GameWindow.
@@ -1687,6 +2240,68 @@
             Event raised when a key has been released.
             </summary>
         </member>
+        <member name="T:Engine.Input.EventInput.KeyboardDispatcher">
+            <summary>
+            Sends out read calls when input is handled from EventInput
+            </summary>
+        </member>
+        <member name="M:Engine.Input.EventInput.KeyboardDispatcher.Initialize(Microsoft.Xna.Framework.GameWindow)">
+            <summary>
+            Initialize the KeyboardDispatcher by connecting it to a GameWindow
+            </summary>
+            <param name="window"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.KeyboardDispatcher.RegisterListener(Engine.Input.EventInput.IKeyboardSubscriber)">
+            <summary>
+            Add a listener that receives messages when new keys are pressed
+            </summary>
+            <param name="subscriber"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.KeyboardDispatcher.UnregisterListener(Engine.Input.EventInput.IKeyboardSubscriber)">
+            <summary>
+            Remove a listener
+            </summary>
+            <param name="subscriber"></param>
+        </member>
+        <member name="T:Engine.Rendering.Effects.BlurEffect">
+            <summary>
+            Blurs the movement of objects, appropriately compensating for screen shake (radial) and position changes.
+            Does not account for scale changes, which will 
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BlurEffect.AlphaDecay">
+            <summary>
+            The percent of the previous frames that decays each frame.
+            The amount of opacity from previous frames that remains is 1 - AlphaDecay.
+            <example>
+            For AlphaDecay = 0.05, 95% of the previous frame is kept.  It will take 14 frames to get to &lt;= 50% opacity
+            </example>
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BlurEffect.#ctor">
+            <summary>
+            Default BlurEffect - never decays
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BlurEffect.#ctor(System.Single)">
+            <summary>
+            BlurEffect which loses alphaDecay% opacity per frame
+            </summary>
+            <param name="alphaDecay"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BlurEffect.LoadContent(Microsoft.Xna.Framework.Content.ContentManager,Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.SpriteBatch)">
+            <summary>
+            Load any required content the effect requires for rendering
+            </summary>
+            <param name="contentManager"></param>
+            <param name="graphicsDevice"></param>
+            <param name="spriteBatch"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BlurEffect.UnloadContent">
+            <summary>
+            Free up resources when you don't need to render bloom effects anymore.
+            </summary>
+        </member>
         <member name="M:Engine.Rendering.Effects.BlurEffect.SetFrameDelta(Microsoft.Xna.Framework.Vector2)">
             <summary>
             This should most likely be called every frame, to update the change in position of the camera.
@@ -1695,6 +2310,19 @@
             </summary>
             <param name="delta">Change in position of the blur effect since the last frame.  
                                 Do not scale the offset to texture coordinates, that will be done for you.</param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BlurEffect.ApplyEffect(Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D)">
+            <summary>
+            Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+            (preEffectTexture unmodified unless pre == post)
+            </summary>
+            <param name="preEffectTexture"></param>
+            <param name="postEffectTexture"></param>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BlurEffect.Reset">
+            <summary>
+            Reset any state the effect might track, such as camera deltas or elapsed game time
+            </summary>
         </member>
         <member name="M:Engine.Rendering.BasicShapeRenderer.Initialize(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
             <summary>
@@ -1722,6 +2350,65 @@
             <param name="width">Square side length</param>
             <param name="rotation">Rotation in radians about the center</param>
             <param name="lineWidth">Width in pixels of the line</param>
+        </member>
+        <member name="T:Engine.Rendering.Effects.BloomSettings">
+            <summary>
+            Class holds all the settings used to tweak the bloom effect.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.Name">
+            <summary>
+            Name of a preset bloom setting, for display to the user.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomThreshold">
+            <summary>
+            Controls how bright a pixel needs to be before it will bloom.
+            Zero makes everything bloom equally, while higher values select
+            only brighter colors. Somewhere between 0.25 and 0.5 is good.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BlurAmount">
+            <summary>
+            Controls how much blurring is applied to the bloom image.
+            The typical range is from 1 up to 10 or so.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomIntensity">
+            <summary>
+            Controls the amount of the bloom and base images that
+            will be mixed into the final scene. Range 0 to 1.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BaseIntensity">
+            <summary>
+            Controls the amount of the bloom and base images that
+            will be mixed into the final scene. Range 0 to 1.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomSaturation">
+            <summary>
+            Independently control the color saturation of the bloom and
+            base images. Zero is totally desaturated, 1.0 leaves saturation
+            unchanged, while higher values increase the saturation level.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BaseSaturation">
+            <summary>
+            Independently control the color saturation of the bloom and
+            base images. Zero is totally desaturated, 1.0 leaves saturation
+            unchanged, while higher values increase the saturation level.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomSettings.#ctor(System.String,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Constructs a new bloom settings descriptor.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.PresetSettings">
+            <summary>
+            Table of preset bloom settings, used by the sample program.
+            </summary>
         </member>
     </members>
 </doc>

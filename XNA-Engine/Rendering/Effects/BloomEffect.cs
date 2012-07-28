@@ -11,76 +11,11 @@ using Engine.Rendering.Pipeline;
 namespace Engine.Rendering.Effects
 {
     /// <summary>
-    /// Class holds all the settings used to tweak the bloom effect.
+    /// The classic bloom effect.  Use sparingly.
     /// </summary>
-    public class BloomSettings
-    {
-        #region Fields
-
-
-        // Name of a preset bloom setting, for display to the user.
-        public string Name;
-
-
-        // Controls how bright a pixel needs to be before it will bloom.
-        // Zero makes everything bloom equally, while higher values select
-        // only brighter colors. Somewhere between 0.25 and 0.5 is good.
-        public float BloomThreshold;
-
-
-        // Controls how much blurring is applied to the bloom image.
-        // The typical range is from 1 up to 10 or so.
-        public float BlurAmount;
-
-
-        // Controls the amount of the bloom and base images that
-        // will be mixed into the final scene. Range 0 to 1.
-        public float BloomIntensity;
-        public float BaseIntensity;
-
-
-        // Independently control the color saturation of the bloom and
-        // base images. Zero is totally desaturated, 1.0 leaves saturation
-        // unchanged, while higher values increase the saturation level.
-        public float BloomSaturation;
-        public float BaseSaturation;
-
-
-        #endregion
-
-
-        /// <summary>
-        /// Constructs a new bloom settings descriptor.
-        /// </summary>
-        public BloomSettings(string name, float bloomThreshold, float blurAmount,
-                             float bloomIntensity, float baseIntensity,
-                             float bloomSaturation, float baseSaturation)
-        {
-            Name = name;
-            BloomThreshold = bloomThreshold;
-            BlurAmount = blurAmount;
-            BloomIntensity = bloomIntensity;
-            BaseIntensity = baseIntensity;
-            BloomSaturation = bloomSaturation;
-            BaseSaturation = baseSaturation;
-        }
-
-
-        /// <summary>
-        /// Table of preset bloom settings, used by the sample program.
-        /// </summary>
-        public static BloomSettings[] PresetSettings =
-        {
-            //                Name           Thresh  Blur Bloom  Base  BloomSat BaseSat
-            new BloomSettings("Default",     0.25f,  4,   1.25f, 1,    1,       1),
-            new BloomSettings("Mild",  0f,     2,   3f,    1,    2,       1),
-        };
-    }
-
     public class BloomEffect : RenderEffect
     {
         #region Fields
-
 
         private Effect bloomExtractEffect;
         private Effect bloomCombineEffect;
@@ -90,16 +25,24 @@ namespace Engine.Rendering.Effects
         private RenderTarget2D renderTarget2;
         private RenderTarget2D preEffectTextureCopy;
 
+        /// <summary>
+        /// The settings that control how much bling your screen has
+        /// </summary>
         public BloomSettings Settings;
-
 
         #endregion
 
         #region Constructors
 
-
+        /// <summary>
+        /// Default Bloom effect, subtle and clean
+        /// </summary>
         public BloomEffect() : this(BloomSettings.PresetSettings[0]) { }
 
+        /// <summary>
+        /// Set up your own Bloom effect based on a set of BloomSettings
+        /// </summary>
+        /// <param name="bloomSettings"></param>
         public BloomEffect(BloomSettings bloomSettings) : this(bloomSettings.Name, bloomSettings.BloomThreshold, bloomSettings.BlurAmount,
             bloomSettings.BloomIntensity, bloomSettings.BaseIntensity, bloomSettings.BloomSaturation, bloomSettings.BaseSaturation) { }
 
@@ -109,12 +52,16 @@ namespace Engine.Rendering.Effects
             Settings = new BloomSettings(name, bloomThreshold, blurAmount, bloomIntensity, baseIntensity, bloomSaturation, baseSaturation);
         }
 
-
         #endregion
 
         #region Content Management
 
-
+        /// <summary>
+        /// Load any required content the effect requires for rendering
+        /// </summary>
+        /// <param name="contentManager"></param>
+        /// <param name="graphicsDevice"></param>
+        /// <param name="spriteBatch"></param>
         public override void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             bloomExtractEffect = contentManager.Load<Effect>("Effects/Bloom/BloomExtract");
@@ -137,6 +84,9 @@ namespace Engine.Rendering.Effects
             base.LoadContent(contentManager, graphicsDevice, spriteBatch);
         }
 
+        /// <summary>
+        /// Free up resources when you don't need to render bloom effects anymore.
+        /// </summary>
         public override void UnloadContent()
         {
             bloomExtractEffect = null;
@@ -151,9 +101,14 @@ namespace Engine.Rendering.Effects
             base.UnloadContent();
         }
 
-
         #endregion
 
+        /// <summary>
+        /// Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+        /// (preEffectTexture unmodified unless pre == post)
+        /// </summary>
+        /// <param name="preEffectTexture"></param>
+        /// <param name="postEffectTexture"></param>
         public override void ApplyEffect(RenderTarget2D preEffectTexture, RenderTarget2D postEffectTexture)
         {
             graphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
@@ -208,7 +163,6 @@ namespace Engine.Rendering.Effects
         }
 
         #region Helper Methods
-
 
         /// <summary>
         /// Computes sample weightings and texture coordinate offsets
@@ -287,7 +241,6 @@ namespace Engine.Rendering.Effects
             return (float)((1.0 / Math.Sqrt(2 * Math.PI * theta)) *
                            Math.Exp(-(n * n) / (2 * theta * theta)));
         }
-
 
         #endregion
 

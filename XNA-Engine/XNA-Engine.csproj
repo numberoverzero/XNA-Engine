@@ -121,6 +121,7 @@
     <Compile Include="Input\Managers\InputManager.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
+    <Compile Include="Rendering\Effects\BloomSettings.cs" />
     <Compile Include="Rendering\RenderEnums.cs" />
     <Compile Include="Rendering\Effects\BloomEffect.cs" />
     <Compile Include="Rendering\Effects\BlurEffect.cs" />

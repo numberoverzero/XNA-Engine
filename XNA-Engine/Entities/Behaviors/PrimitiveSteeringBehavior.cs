@@ -6,6 +6,9 @@ using Engine.Utility;
 
 namespace Engine.Entities.Behaviors
 {
+    /// <summary>
+    /// Always updates the PhysicsComponent's rotation to align with the object's velocity
+    /// </summary>
     public class PrimitiveSteeringBehavior : IBehavior
     {
         bool isEnabled = true;

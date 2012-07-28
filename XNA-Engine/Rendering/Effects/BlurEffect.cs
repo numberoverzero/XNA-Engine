@@ -10,6 +10,10 @@ using Engine.Utility;
 
 namespace Engine.Rendering.Effects
 {
+    /// <summary>
+    /// Blurs the movement of objects, appropriately compensating for screen shake (radial) and position changes.
+    /// Does not account for scale changes, which will 
+    /// </summary>
     public class BlurEffect : RenderEffect
     {
         #region Fields
@@ -19,25 +23,43 @@ namespace Engine.Rendering.Effects
         private Effect reduceAlphaEffect;
 
         private Vector2 renderDimensions;
+        /// <summary>
+        /// The percent of the previous frames that decays each frame.
+        /// The amount of opacity from previous frames that remains is 1 - AlphaDecay.
+        /// <example>
+        /// For AlphaDecay = 0.05, 95% of the previous frame is kept.  It will take 14 frames to get to &lt;= 50% opacity
+        /// </example>
+        /// </summary>
         public float AlphaDecay = 0.003f;
 
         #endregion
 
         #region Constructors
 
-
+        /// <summary>
+        /// Default BlurEffect - never decays
+        /// </summary>
         public BlurEffect() : this(0) { }
+
+        /// <summary>
+        /// BlurEffect which loses alphaDecay% opacity per frame
+        /// </summary>
+        /// <param name="alphaDecay"></param>
         public BlurEffect(float alphaDecay) : base()
         {
             AlphaDecay = alphaDecay;
         }
 
-
         #endregion
 
         #region Content Management
 
-
+        /// <summary>
+        /// Load any required content the effect requires for rendering
+        /// </summary>
+        /// <param name="contentManager"></param>
+        /// <param name="graphicsDevice"></param>
+        /// <param name="spriteBatch"></param>
         public override void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
             reduceAlphaEffect = contentManager.Load<Effect>("Effects/Blur/ReduceAlpha");
@@ -51,6 +73,9 @@ namespace Engine.Rendering.Effects
             base.LoadContent(contentManager, graphicsDevice, spriteBatch);
         }
 
+        /// <summary>
+        /// Free up resources when you don't need to render bloom effects anymore.
+        /// </summary>
         public override void UnloadContent()
         {
             reduceAlphaEffect = null;
@@ -59,7 +84,6 @@ namespace Engine.Rendering.Effects
 
             base.UnloadContent();
         }
-
 
         #endregion
 
@@ -75,6 +99,12 @@ namespace Engine.Rendering.Effects
             reduceAlphaEffect.Parameters["offsetXY"].SetValue(delta / renderDimensions);
         }
 
+        /// <summary>
+        /// Renders the results of the effect on the preEffectTexture to the postEffectTexture.
+        /// (preEffectTexture unmodified unless pre == post)
+        /// </summary>
+        /// <param name="preEffectTexture"></param>
+        /// <param name="postEffectTexture"></param>
         public override void ApplyEffect(RenderTarget2D preEffectTexture, RenderTarget2D postEffectTexture)
         {
             reduceAlphaEffect.Parameters["factor"].SetValue(AlphaDecay);
@@ -93,6 +123,10 @@ namespace Engine.Rendering.Effects
             // Pass 4: copy the combineTarget to the preEffectTexture
             DrawFullscreenQuad(combineTarget, postEffectTexture, BlendState.NonPremultiplied, null);
         }
+
+        /// <summary>
+        /// Reset any state the effect might track, such as camera deltas or elapsed game time
+        /// </summary>
         public override void Reset()
         {
             graphicsDevice.SetRenderTarget(previousFrame);
