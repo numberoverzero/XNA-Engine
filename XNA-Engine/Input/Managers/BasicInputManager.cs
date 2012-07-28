@@ -11,7 +11,7 @@ namespace Engine.Input
     /// An InjectableInputManager that has shortcut methods for 
     /// adding basic input controls (thumbstickDirection, button, etc)
     /// </summary>
-    public class BasicInputManager : InjectableInputManager
+    public class BasicInputManager : DefaultInputManager
     {
         public BasicInputManager() : base() { }
 

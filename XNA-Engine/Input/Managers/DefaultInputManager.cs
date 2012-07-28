@@ -17,7 +17,7 @@ namespace Engine.Input
         /// <summary>
         /// The Bindings being tracked by the Manager
         /// </summary>
-        public DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>> Bindings { get; protected set; }
+        public MultiKeyDict<String, PlayerIndex, List<IBinding>> Bindings { get; protected set; }
 
         /// <summary>
         /// The InputSettings for this InputManager (trigger thresholds, etc)
@@ -134,11 +134,23 @@ namespace Engine.Input
         }
         #endregion
 
+        #region Programmatic Key Injection
+
+        /// <summary>
+        /// bindings pressed in the previous frame
+        /// </summary>
+        public ISet<string> PreviousInjectedPresses { get; protected set; }
+
+        /// <summary>
+        /// bindings pressed in the current frame
+        /// </summary>
+        public ISet<string> CurrentInjectedPresses { get; protected set; }
+
+        #endregion
+
         #endregion
 
         #region Initialization
-        
-        static bool initialized = false;
 
         /// <summary>
         /// Create an empty InputManager.  By default, polls all devices.
@@ -146,8 +158,10 @@ namespace Engine.Input
         public DefaultInputManager()
         {
             Settings = new InputSettings(0,0);
-            Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>();
+            Bindings = new MultiKeyDict<String, PlayerIndex, List<IBinding>>();
             Modifiers = new CountedSet<IBinding>();
+            PreviousInjectedPresses = new HashSet<string>();
+            CurrentInjectedPresses = new HashSet<string>();
             BufferedText = new DoubleBuffer<char>();
             PreviousKeys = new HashSet<Keys>();
             CurrentKeys = new HashSet<Keys>();
@@ -173,7 +187,7 @@ namespace Engine.Input
             CurrentMouseState = input.CurrentMouseState;
 
             Settings = new InputSettings(input.Settings);
-            Bindings = new DefaultMultiKeyDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
+            Bindings = new MultiKeyDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
             Modifiers = new CountedSet<IBinding>(input.Modifiers);
 
             IsPollingGamePads = input.IsPollingGamePads;
@@ -183,7 +197,11 @@ namespace Engine.Input
             EventInput.KeyboardDispatcher.RegisterListener(this);
         }
 
+        #endregion
 
+        #region Static Initialization
+
+        static bool initialized = false;
         public static void Initialize(GameWindow window)
         {
             if (!initialized)
@@ -194,17 +212,6 @@ namespace Engine.Input
         }
 
         #endregion
-
-        public List<char> GetBufferedText()
-        {
-            return BufferedText.Front;
-        } 
-
-        public virtual Vector2 GetMousePosition(FrameState state)
-        {
-            MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
-            return new Vector2(mouseState.X, mouseState.Y);
-        }
 
         #region Binding Mutation
 
@@ -223,7 +230,7 @@ namespace Engine.Input
         {
             if (!ContainsBinding(bindingName, player))
                 return;
-            
+
             var bindings = Bindings[bindingName, player];
 
             if (index < 0 || index >= bindings.Count)
@@ -234,6 +241,9 @@ namespace Engine.Input
             foreach (var modifier in binding.Modifiers)
                     Modifiers.Remove(modifier); 
             bindings.RemoveAt(index);
+
+            PreviousInjectedPresses.Remove(bindingName);
+            CurrentInjectedPresses.Remove(bindingName);
         }
 
         public virtual void RemoveBinding(string bindingName, IBinding binding, PlayerIndex player)
@@ -242,12 +252,8 @@ namespace Engine.Input
                 return;
 
             var bindings = Bindings[bindingName, player];
-
-            if (bindings.Contains(binding))
-                bindings.Remove(binding);
-            
-            foreach (var modifier in binding.Modifiers)
-                Modifiers.Remove(modifier);
+            int index = bindings.IndexOf(binding);
+            RemoveBinding(bindingName, index, player);
         }
 
         public virtual bool ContainsBinding(string bindingName, PlayerIndex player)
@@ -278,10 +284,17 @@ namespace Engine.Input
         {
             if (!ContainsBinding(bindingName, player))
                 return false;
+            
+            var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
+            bool isInjected = injectedPresses.Contains(bindingName);
+            if (isInjected)
+                return true;
+            
             var bindings = Bindings[bindingName, player];
             foreach (var binding in bindings)
                 if (binding.IsActive(this, player, state) && IsModifiersActive(binding, player, state))
                     return true;
+            
             return false;
         }
 
@@ -318,6 +331,36 @@ namespace Engine.Input
 
         #endregion
 
+        #region Programmatic Binding Injection
+
+        /// <summary>
+        /// "Press" a key in a given frame.
+        /// Cannot press a binding unless it has been added to the InputManager
+        /// </summary>
+        /// <param name="bindingName">The binding to press</param>
+        /// <param name="state">The frame to press it in</param>
+        public void Press(string bindingName, PlayerIndex player, FrameState state)
+        {
+            if (!ContainsBinding(bindingName, player)) return;
+            var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
+            injectedPresses.Add(bindingName);
+        }
+
+        /// <summary>
+        /// "Release" a key in a given frame.
+        /// Cannot release a binding unless it has been added to the InputManager
+        /// </summary>
+        /// <param name="bindingName">The binding to release</param>
+        /// <param name="state">The frame to release it in</param>
+        public void Release(string bindingName, PlayerIndex player, FrameState state)
+        {
+            if (!ContainsBinding(bindingName, player)) return;
+            var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
+            injectedPresses.Remove(bindingName);
+        }
+
+        #endregion
+
         #region Manager Query
 
         public List<string> BindingsUsing(IBinding binding, PlayerIndex player = PlayerIndex.One)
@@ -336,34 +379,6 @@ namespace Engine.Input
         }
 
         #endregion
-
-        public virtual void Update()
-        {
-            BufferedText.Flip();
-
-            if (IsPollingGamePads)
-            {
-                foreach (var player in Players)
-                {
-                    PreviousGamePadStates[player] = CurrentGamePadStates[player];
-                    CurrentGamePadStates[player] = GamePad.GetState(player);
-                }
-            }
-
-            if (IsPollingMouse)
-            {
-                PreviousMouseState = CurrentMouseState;
-                CurrentMouseState = Mouse.GetState();
-            }
-
-            PreviousKeys = CurrentKeys;
-            CurrentKeys = new HashSet<Keys>();
-        }
-
-        public IEnumerable<IBinding> GetModifiers
-        {
-            get { return Modifiers; }
-        }
 
         #region IKeyboardSubscriber Interface
 
@@ -391,5 +406,47 @@ namespace Engine.Input
         public bool Selected { get; set; }
 
         #endregion
+
+        public List<char> GetBufferedText()
+        {
+            return BufferedText.Front;
+        }
+
+        public virtual Vector2 GetMousePosition(FrameState state)
+        {
+            MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
+            return new Vector2(mouseState.X, mouseState.Y);
+        }
+
+        public IEnumerable<IBinding> GetModifiers
+        {
+            get { return Modifiers; }
+        }
+
+        public virtual void Update()
+        {
+            BufferedText.Flip();
+
+            if (IsPollingGamePads)
+            {
+                foreach (var player in Players)
+                {
+                    PreviousGamePadStates[player] = CurrentGamePadStates[player];
+                    CurrentGamePadStates[player] = GamePad.GetState(player);
+                }
+            }
+
+            if (IsPollingMouse)
+            {
+                PreviousMouseState = CurrentMouseState;
+                CurrentMouseState = Mouse.GetState();
+            }
+
+            PreviousKeys = CurrentKeys;
+            CurrentKeys = new HashSet<Keys>();
+
+            PreviousInjectedPresses = CurrentInjectedPresses;
+            CurrentInjectedPresses = new HashSet<string>();
+        }
     }
 }

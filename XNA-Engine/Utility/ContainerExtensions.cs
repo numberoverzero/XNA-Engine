@@ -86,14 +86,14 @@ namespace Engine.Utility
     /// <typeparam name="TKey1">The first key type</typeparam>
     /// <typeparam name="TKey2">The second key type</typeparam>
     /// <typeparam name="TValue">The value type stored in the dictionary</typeparam>
-    public class DefaultMultiKeyDict<TKey1, TKey2, TValue> where TValue : new()
+    public class MultiKeyDict<TKey1, TKey2, TValue> where TValue : new()
     {
         DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>> dict;
 
         /// <summary>
         /// Construct an empty Double-keyed dictionary
         /// </summary>
-        public DefaultMultiKeyDict()
+        public MultiKeyDict()
         {
             Func<TValue> DefaultInnerDictFunc = () => { return new TValue(); };
             Func<DefaultDictionary<TKey2, TValue>> DefaultDictFunc = () => { return new DefaultDictionary<TKey2, TValue>(DefaultInnerDictFunc); };
@@ -104,7 +104,7 @@ namespace Engine.Utility
         /// Copy Constructor
         /// </summary>
         /// <param name="defaultMultiKeyDict"></param>
-        public DefaultMultiKeyDict(DefaultMultiKeyDict<TKey1, TKey2, TValue> defaultMultiKeyDict)
+        public MultiKeyDict(MultiKeyDict<TKey1, TKey2, TValue> defaultMultiKeyDict)
         {
             dict = new DefaultDictionary<TKey1, DefaultDictionary<TKey2, TValue>>(defaultMultiKeyDict.dict);
         }
