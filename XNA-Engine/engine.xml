@@ -4,6 +4,53 @@
         <name>XNA-Engine</name>
     </assembly>
     <members>
+        <member name="T:Engine.Utility.FloatFn">
+            <summary>
+            A function which is closed over floats
+            (they don't necessarily make guarantees about accuracy)
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.FloatFn.At(System.Single)">
+            <summary>
+            Returns the value of the function at a given t value
+            </summary>
+            <param name="t">The point at which the function is being evaluated</param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.OscillatingFn">
+            <summary>
+            Returns values which oscillate on initial + [-mag, mag]
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.OscillatingFn.#ctor(System.Single,System.Single,System.Single)">
+            <summary>
+            Returns values which oscillate on initial + [-mag, mag]
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.OscillatingFn.At(System.Single)">
+            <summary>
+            Returns the value of the function at a given t value
+            </summary>
+            <param name="t">The point at which the function is being evaluated</param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.DecayFn">
+            <summary>
+            Returns values of the form initial + mag*e^(-d*t)
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DecayFn.#ctor(System.Single,System.Single,System.Single)">
+            <summary>
+            Returns values of the form initial + mag*e^(-d*t)
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DecayFn.At(System.Single)">
+            <summary>
+            Returns the value of the function at a given t value
+            </summary>
+            <param name="t">The point at which the function is being evaluated</param>
+            <returns></returns>
+        </member>
         <member name="T:Engine.Input.InputBinding">
             <summary>
             Supports checking if a particular input is active,
@@ -851,6 +898,12 @@
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
             </summary>
         </member>
+        <member name="T:Engine.Rendering.ColorScheme`1">
+            <summary>
+            Maps LayerTypes and <typeparamref name="T"/>s to Colors.
+            </summary>
+            <typeparam name="T">The type which maps to Colors for a certain LayerType</typeparam>
+        </member>
         <member name="F:Engine.Rendering.ColorScheme`1.colorMapping">
             <summary>
             Stores all of the [T, LayerType] => Color information
@@ -858,7 +911,7 @@
         </member>
         <member name="M:Engine.Rendering.ColorScheme`1.#ctor">
             <summary>
-            Create a new OrbColorScheme
+            Create a new ColorScheme
             </summary>
         </member>
         <member name="M:Engine.Rendering.ColorScheme`1.#ctor(Engine.Rendering.ColorScheme{`0})">
@@ -885,7 +938,7 @@
             <summary>
             Gets or sets the Color associated with the key and layer
             </summary>
-            <param name="hostility"></param>
+            <param name="t"></param>
             <param name="layer"></param>
             <returns>Color defined for specific key/layer</returns>
         </member>
@@ -1087,6 +1140,11 @@
             Set/Get the state of the Behavior.
             Enabled should be checked before applying a Behavior,
             but such a check isn't strictly required.
+            </summary>
+        </member>
+        <member name="T:Engine.Utility.Vector2Extensions">
+            <summary>
+            Adds a few handy Vector methods, such as "AsAngle" and "RotateAbout"
             </summary>
         </member>
         <member name="M:Engine.Utility.Vector2Extensions.AsAngle(Microsoft.Xna.Framework.Vector2)">
@@ -2324,6 +2382,12 @@
             Reset any state the effect might track, such as camera deltas or elapsed game time
             </summary>
         </member>
+        <member name="T:Engine.Rendering.BasicShapeRenderer">
+            <summary>
+            Useful for rendering very basic shapes with solid colors,
+            such as squares, rectangles, and outlines of said shapes
+            </summary>
+        </member>
         <member name="M:Engine.Rendering.BasicShapeRenderer.Initialize(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
             <summary>
             The BasicShapeRenderer won't actually render until it's been initialized
@@ -2348,6 +2412,17 @@
             <param name="position">Center of the Square</param>
             <param name="color">Color of the square</param>
             <param name="width">Square side length</param>
+            <param name="rotation">Rotation in radians about the center</param>
+            <param name="lineWidth">Width in pixels of the line</param>
+        </member>
+        <member name="M:Engine.Rendering.BasicShapeRenderer.DrawRectangleOutline(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Vector2,System.Single,System.Single)">
+            <summary>
+            Draws a hollow rectangle whose center is position, of width lineWidth (default 1px, does not exceed width)
+            </summary>
+            <param name="batch">SpriteBatch for drawing</param>
+            <param name="position">Center of the rectangle</param>
+            <param name="color">Color of the rectangle</param>
+            <param name="dimensions">Dimensions of the rectangle</param>
             <param name="rotation">Rotation in radians about the center</param>
             <param name="lineWidth">Width in pixels of the line</param>
         </member>

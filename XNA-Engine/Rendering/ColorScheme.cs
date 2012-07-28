@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework;
 
 namespace Engine.Rendering
 {
+    /// <summary>
+    /// Maps LayerTypes and <typeparamref name="T"/>s to Colors.
+    /// </summary>
+    /// <typeparam name="T">The type which maps to Colors for a certain LayerType</typeparam>
     public class ColorScheme<T>
     {
         /// <summary>
@@ -16,7 +20,7 @@ namespace Engine.Rendering
         Dictionary<T, Dictionary<LayerType, Color>> colorMapping;
 
         /// <summary>
-        /// Create a new OrbColorScheme
+        /// Create a new ColorScheme
         /// </summary>
         public ColorScheme()
         {
@@ -35,7 +39,7 @@ namespace Engine.Rendering
         /// <summary>
         /// Gets or sets the Color associated with the key and layer
         /// </summary>
-        /// <param name="hostility"></param>
+        /// <param name="t"></param>
         /// <param name="layer"></param>
         /// <returns>Color defined for specific key/layer</returns>
         public Color this[T t, LayerType layer]

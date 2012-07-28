@@ -8,6 +8,10 @@ using Engine.Utility;
 
 namespace Engine.Rendering
 {
+    /// <summary>
+    /// Useful for rendering very basic shapes with solid colors,
+    /// such as squares, rectangles, and outlines of said shapes
+    /// </summary>
     public static class BasicShapeRenderer
     {
         private static GraphicsDevice graphicsDevice;
@@ -60,6 +64,15 @@ namespace Engine.Rendering
             DrawRectangleOutline(batch, position, color, new Vector2(width, width), rotation, lineWidth);
         }
 
+        /// <summary>
+        /// Draws a hollow rectangle whose center is position, of width lineWidth (default 1px, does not exceed width)
+        /// </summary>
+        /// <param name="batch">SpriteBatch for drawing</param>
+        /// <param name="position">Center of the rectangle</param>
+        /// <param name="color">Color of the rectangle</param>
+        /// <param name="dimensions">Dimensions of the rectangle</param>
+        /// <param name="rotation">Rotation in radians about the center</param>
+        /// <param name="lineWidth">Width in pixels of the line</param>
         public static void DrawRectangleOutline(SpriteBatch batch, Vector2 position, Color color, Vector2 dimensions, float rotation, float lineWidth = 1)
         {
             if (!CanDraw) return;

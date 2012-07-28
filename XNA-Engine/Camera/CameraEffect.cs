@@ -125,8 +125,8 @@ namespace Engine.Camera
     /// </summary>
     public class CameraShakeEffect : DampedOscillationEffect
     {
-        protected MathFunction magFunction;
-        protected MathFunction oscillateFunction;
+        protected FloatFn magFunction;
+        protected FloatFn oscillateFunction;
 
         /// <summary>
         /// Applys a rotation effect that oscillates from -mag to +mag and decays over time.
@@ -139,8 +139,8 @@ namespace Engine.Camera
         public CameraShakeEffect(Camera camera, float dur, float decay, float mag, float freq)
             : base(camera, dur, decay, mag, freq)
         {
-            magFunction = new DecayFunction(0, 1, decay);
-            oscillateFunction = new OscillatingFunction(0, 1, freq);
+            magFunction = new DecayFn(0, 1, decay);
+            oscillateFunction = new OscillatingFn(0, 1, freq);
         }
 
         protected override float rotation()
@@ -157,8 +157,8 @@ namespace Engine.Camera
     /// </summary>
     public class CameraBounceEffect : DampedOscillationEffect
     {
-        protected MathFunction magFunction;
-        protected MathFunction oscillateFunction;
+        protected FloatFn magFunction;
+        protected FloatFn oscillateFunction;
 
         /// <summary>
         /// Applys a scale effect that oscillates from (1 - mag) to (1 + mag) and decays over time.
@@ -171,8 +171,8 @@ namespace Engine.Camera
         public CameraBounceEffect(Camera camera, float dur, float decay, float mag, float freq)
             : base(camera, dur, decay, mag, freq)
         {
-            magFunction = new DecayFunction(0, 1, decay);
-            oscillateFunction = new OscillatingFunction(0, 1, freq);
+            magFunction = new DecayFn(0, 1, decay);
+            oscillateFunction = new OscillatingFn(0, 1, freq);
         }
 
         protected override float scaleX()

@@ -5,6 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 namespace Engine.Utility
 {
+    /// <summary>
+    /// Adds a few handy Vector methods, such as "AsAngle" and "RotateAbout"
+    /// </summary>
     public static class Vector2Extensions
     {
         /// <summary>
