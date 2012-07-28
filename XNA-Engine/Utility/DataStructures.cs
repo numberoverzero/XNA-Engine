@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Engine.Utility
+namespace Engine.DataStructures
 {
     /// <summary>
     /// Extensions that make certain lookup operations easier
@@ -271,7 +271,10 @@ namespace Engine.Utility
             {
                 count[item]--;
                 if (count[item] < 1)
+                {
+                    count[item] = 0;
                     return set.Remove(item);
+                }
             }
             // If the set doesn't contain the item or there was more than one reference to the item, we didn't remove it.
             return false;
@@ -299,11 +302,14 @@ namespace Engine.Utility
     /// <typeparam name="T"></typeparam>
     public class DoubleBuffer<T>
     {
-        List<T> _buffer1, _buffer2;
         /// <summary>
         /// The current Front buffer.  Cannot be written to.
         /// </summary>
         public List<T> Front { get; protected set; }
+        
+        /// <summary>
+        /// The current Back buffer.  Can be written to.
+        /// </summary>
         protected List<T> Back { get; set; }
 
         /// <summary>
@@ -311,8 +317,8 @@ namespace Engine.Utility
         /// </summary>
         public DoubleBuffer()
         {
-            Front = _buffer1 = new List<T>();
-            Back = _buffer2 = new List<T>();
+            Front = new List<T>();
+            Back = new List<T>();
             Back.Clear();
         }
 
@@ -335,6 +341,125 @@ namespace Engine.Utility
         public void Push(T item)
         {
             Back.Add(item);
+        }
+    }
+
+    /// <summary>
+    /// A cyclic buffer - cycling will move the values in current into previous,
+    /// and clear the current buffer.
+    /// Both buffers can be written to and inspected at any time.
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    /// <typeparam name="TInnerKey"> Dictionary key type</typeparam>
+    public class CycleBuffer<TKey, TInnerKey, TValue>
+    {
+        TKey keyCurrent, keyPrevious;
+        DefaultDict<TInnerKey, HashSet<TValue>> previous { get; set; }
+        DefaultDict<TInnerKey, HashSet<TValue>> current { get; set; }
+
+        /// <summary>
+        /// Construct a CycleBuffer with the given current/previous keys
+        /// </summary>
+        /// <param name="keyCurrent"></param>
+        /// <param name="keyPrevious"></param>
+        public CycleBuffer(TKey keyCurrent, TKey keyPrevious)
+        {
+            this.keyCurrent = keyCurrent;
+            this.keyPrevious = keyPrevious;
+            previous = new DefaultDict<TInnerKey, HashSet<TValue>>();
+            current = new DefaultDict<TInnerKey, HashSet<TValue>>();
+        }
+
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="cycleBuffer"></param>
+        public CycleBuffer(CycleBuffer<TKey, TInnerKey, TValue> cycleBuffer)
+        {
+            keyCurrent = cycleBuffer.keyCurrent;
+            keyPrevious = cycleBuffer.keyPrevious;
+            previous = new DefaultDict<TInnerKey, HashSet<TValue>>(cycleBuffer.previous);
+            current = new DefaultDict<TInnerKey, HashSet<TValue>>(cycleBuffer.current);
+        }
+
+        /// <summary>
+        /// Move current values to previous and clear current
+        /// </summary>
+        public void Cycle()
+        {
+            var temp = previous;
+            previous = current;
+            current = temp;
+            current.Clear();
+        }
+
+        /// <summary>
+        /// Gets the buffer of the given key
+        /// (returns null if the given key is not keyCurrent or keyPrevious)
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public DefaultDict<TInnerKey, HashSet<TValue>> this[TKey key]
+        {
+            get { return getBuffer(key); }
+        }
+
+        /// <summary>
+        /// Gets the HashSet associated with the given keys
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="innerKey"></param>
+        /// <returns></returns>
+        public HashSet<TValue> this[TKey key, TInnerKey innerKey]
+        {
+            get
+            {
+                return getInnerBuffer(key, innerKey);
+            }
+        }
+
+        /// <summary>
+        /// Add a value to one of the buffers
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="innerKey"></param>
+        /// <param name="value"></param>
+        public void Add(TKey key, TInnerKey innerKey, TValue value)
+        {
+            var bufferSet = this[key, innerKey];
+            if (bufferSet == null) return;
+            bufferSet.Add(value);
+        }
+
+        /// <summary>
+        /// Remove a value from one of the buffers
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="innerKey"></param>
+        /// <param name="value"></param>
+        public void Remove(TKey key, TInnerKey innerKey, TValue value)
+        {
+            var bufferSet = this[key, innerKey];
+            if (bufferSet == null) return;
+            bufferSet.Remove(value);
+        }
+
+        HashSet<TValue> getInnerBuffer(TKey key, TInnerKey innerKey)
+        {
+            var buffer = getBuffer(key);
+            if (buffer == null) return null;
+            return buffer[innerKey];
+        }
+
+        DefaultDict<TInnerKey, HashSet<TValue>> getBuffer(TKey key)
+        {
+            if (key.Equals(keyCurrent))
+                return current;
+            else if (key.Equals(keyPrevious))
+                return previous;
+            else
+                return null;
         }
     }
 }

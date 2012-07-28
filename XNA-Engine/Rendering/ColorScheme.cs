@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Engine.Utility;
+using Engine.DataStructures;
 
 #endregion
 

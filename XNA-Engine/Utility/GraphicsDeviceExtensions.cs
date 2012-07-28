@@ -8,8 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Engine.Utility
+namespace Engine.DataStructures
 {
+    /// <summary>
+    /// Extensions for easily creating RenderTargets and the like
+    /// </summary>
     public static class GraphicsDeviceExtensions
     {
         /// <summary>
@@ -25,6 +28,12 @@ namespace Engine.Utility
             return CreateFullscreenRenderTarget(graphicsDevice, renderTargetUsage);
         }
 
+        /// <summary>
+        /// Create a RenderTarget with a given RenderTargetUsage
+        /// </summary>
+        /// <param name="graphicsDevice"></param>
+        /// <param name="renderTargetUsage"></param>
+        /// <returns></returns>
         public static RenderTarget2D CreateFullscreenRenderTarget(this GraphicsDevice graphicsDevice, RenderTargetUsage renderTargetUsage)
         {
             PresentationParameters pp = graphicsDevice.PresentationParameters;

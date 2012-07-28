@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-namespace Engine.Utility
+namespace Engine.DataStructures
 {
     /// <summary>
     /// Adds a few handy Vector methods, such as "AsAngle" and "RotateAbout"

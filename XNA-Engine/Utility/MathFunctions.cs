@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Engine.Utility
+namespace Engine.DataStructures
 {
     /// <summary>
     /// A function which is closed over floats
