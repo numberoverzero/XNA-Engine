@@ -13,12 +13,11 @@ namespace Engine.Input
     /// </summary>
     public class BasicInputManager : DefaultInputManager
     {
-        public BasicInputManager() : base() { }
-
         /// <summary>
         /// Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"></param>
+        /// <param name="player"></param>
         /// <param name="thumbstickDirection"></param>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
@@ -31,6 +30,7 @@ namespace Engine.Input
         /// Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"></param>
+        /// <param name="player"></param>
         /// <param name="mouseButton"></param>
         /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, PlayerIndex player, MouseButton mouseButton, params IBinding[] modifiers)
@@ -42,6 +42,7 @@ namespace Engine.Input
         /// Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"></param>
+        /// <param name="player"></param>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, PlayerIndex player, Thumbstick thumbstick, params IBinding[] modifiers)
@@ -53,6 +54,7 @@ namespace Engine.Input
         /// Add a Trigger binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"></param>
+        /// <param name="player"></param>
         /// <param name="trigger"></param>
         /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, PlayerIndex player, Trigger trigger, params IBinding[] modifiers)
@@ -64,6 +66,7 @@ namespace Engine.Input
         /// Add a Button binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"></param>
+        /// <param name="player"></param>
         /// <param name="button"></param>
         /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, PlayerIndex player, Buttons button, params IBinding[] modifiers)
@@ -75,6 +78,7 @@ namespace Engine.Input
         /// Add a key binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"></param>
+        /// <param name="player"></param>
         /// <param name="key"></param>
         /// <param name="modifiers"></param>
         public void AddBinding(string bindingName, PlayerIndex player, Keys key, params IBinding[] modifiers)

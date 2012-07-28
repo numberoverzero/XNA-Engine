@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Engine.Input
 {
+    /// <summary>
+    /// A set of limits and thresholds that some bindings must pass to be considered active
+    /// </summary>
     public struct InputSettings
     {
         /// <summary>
@@ -16,6 +19,13 @@ namespace Engine.Input
         /// </summary>
         public float ThumbstickThreshold;
 
+        /// <summary>
+        /// Construct a set of Input Settings describing certain thresholds and limits that must be met for
+        /// some bindings to be considered "active"
+        /// </summary>
+        /// <param name="triggerThreshold">The minimum value a trigger must have to be considered pulled/depressed (active)</param>
+        /// <param name="thumbstickThreshold">The minimum value a thumbstick must be moved to be considered active 
+        /// (some bindings may require this amount in a single direction)</param>
         public InputSettings(float triggerThreshold, float thumbstickThreshold)
         {
             TriggerThreshold = triggerThreshold;

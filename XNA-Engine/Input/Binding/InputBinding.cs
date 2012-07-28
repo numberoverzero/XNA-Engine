@@ -46,8 +46,10 @@ namespace Engine.Input
         /// <summary>
         /// True if the InputBinding is active in the given FrameState of the given InputManager
         /// </summary>
-        /// <param name="state">Current or Previous frame</param>
         /// <param name="manager">The manager keeping track of current/previous input states</param>
+        /// <param name="player">Player to check binding on</param>
+        /// <param name="state">Current or Previous frame</param>
+        /// <returns>True if the binding is active</returns>
         public bool IsActive(DefaultInputManager manager, PlayerIndex player, FrameState state)
         {
             var keyState = state == FrameState.Current ? manager.CurrentKeys : manager.PreviousKeys;

@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input
 {
+    /// <summary>
+    /// Allows input querying and offers hooks for event-driven keyboard input
+    /// </summary>
     public interface InputManager
     {
         /// <summary>

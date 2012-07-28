@@ -204,13 +204,38 @@ namespace Engine.Input.EventInput
         }
     }
 
+    /// <summary>
+    /// Receives event-driven input in the form of strings, characters, and Keys
+    /// </summary>
     public interface IKeyboardSubscriber
     {
-        void RecieveTextInput(char inputChar);
-        void RecieveTextInput(string text);
-        void RecieveCommandInput(char command);
-        void RecieveSpecialInput(Microsoft.Xna.Framework.Input.Keys key);
+        /// <summary>
+        /// Handle a single character of input
+        /// </summary>
+        /// <param name="inputChar"></param>
+        void ReceiveTextInput(char inputChar);
 
+        /// <summary>
+        /// Handle a string of input
+        /// </summary>
+        /// <param name="text"></param>
+        void ReceiveTextInput(string text);
+
+        /// <summary>
+        /// Handle a special command
+        /// </summary>
+        /// <param name="command"></param>
+        void ReceiveCommandInput(char command);
+
+        /// <summary>
+        /// Handle a Key input
+        /// </summary>
+        /// <param name="key"></param>
+        void ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys key);
+
+        /// <summary>
+        /// Does this Subscriber have the (possibly exclusive) focus
+        /// </summary>
         bool Selected { get; set; } //or Focused
     }
 
@@ -235,7 +260,7 @@ namespace Engine.Input.EventInput
                 return;
 
             foreach(var subscriber in _subscriber)
-                subscriber.RecieveSpecialInput(e.KeyCode);
+                subscriber.ReceiveSpecialInput(e.KeyCode);
         }
 
         static void EventInput_CharEntered(object sender, CharacterEventArgs e)
@@ -253,18 +278,18 @@ namespace Engine.Input.EventInput
                     thread.Start();
                     thread.Join();
                     foreach (var subscriber in _subscriber)
-                        subscriber.RecieveTextInput(_pasteResult);
+                        subscriber.ReceiveTextInput(_pasteResult);
                 }
                 else
                 {
                     foreach (var subscriber in _subscriber)
-                        subscriber.RecieveCommandInput(e.Character);
+                        subscriber.ReceiveCommandInput(e.Character);
                 }
             }
             else
             {
                 foreach (var subscriber in _subscriber)
-                    subscriber.RecieveTextInput(e.Character);
+                    subscriber.ReceiveTextInput(e.Character);
             }
         }
 

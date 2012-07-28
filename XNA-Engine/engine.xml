@@ -1,0 +1,1727 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>XNA-Engine</name>
+    </assembly>
+    <members>
+        <member name="T:Engine.Input.InputBinding">
+            <summary>
+            Supports checking if a particular input is active,
+            given states for keyboards, mice, and gamepads.
+            </summary>
+        </member>
+        <member name="T:Engine.Input.IBinding">
+            <summary>
+            A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.IBinding.IsActive(Engine.Input.DefaultInputManager,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+            True if the InputBinding is active in the given FrameState of the given InputManager
+            </summary>
+            <param name="manager">The manager keeping track of current/previous input states</param>
+            <param name="player">Player to check binding on</param>
+            <param name="state">Current or Previous frame</param>
+        </member>
+        <member name="P:Engine.Input.IBinding.Modifiers">
+            <summary>
+            Returns the list of modifiers necessary to be active before the binding is considered "active"
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputBinding.#ctor(Engine.Input.IBinding[])">
+            <summary>
+            Initialize an InputBinding with an optional list of required modifiers
+            </summary>
+            <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
+            
+        </member>
+        <member name="M:Engine.Input.InputBinding.#ctor(Engine.Input.InputBinding)">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Engine.Input.InputBinding.IsActive(Engine.Input.DefaultInputManager,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+            True if the InputBinding is active in the given FrameState of the given InputManager
+            </summary>
+            <param name="manager">The manager keeping track of current/previous input states</param>
+            <param name="player">Player to check binding on</param>
+            <param name="state">Current or Previous frame</param>
+            <returns>True if the binding is active</returns>
+        </member>
+        <member name="M:Engine.Input.InputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            True if the binding (without modifiers) is active
+            </summary>
+        </member>
+        <member name="P:Engine.Input.InputBinding.Modifiers">
+            <summary>
+            Any modifiers required for this binding to be considered 'active'
+            </summary>
+        </member>
+        <member name="T:Engine.Camera.CameraEffect">
+            <summary>
+            Modifies the position, scale, or rotation of a camera.
+            Care should be taken that a CameraEffect never lets net scale = 0
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.CameraEffect.scaleX">
+            <summary>
+            Always multiply by camera scale so that we don't hit a scale of 0.
+            Original equation was scale *= (1 + offsetScale)
+            New equation is scale += offsetScale
+            We can keep the functionality by ultiplying by camera scale in this equation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Camera.CameraEffect.scaleY">
+            <summary>
+            Always multiply by camera scale so that we don't hit a scale of 0.
+            Original equation was scale *= (1 + offsetScale)
+            New equation is scale += offsetScale
+            We can keep the functionality by ultiplying by camera scale in this equation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Camera.CameraEffect.t">
+            <summary>
+            Percent of effect elapsed- t in [0, 1]
+            </summary>
+        </member>
+        <member name="T:Engine.Camera.DampedOscillationEffect">
+            <summary>
+            This effect doesn't impact the camera in any way
+            However, it keeps the CameraEffect cleaner (not all effects need freq, decay, mag)
+            and prevents repitition of variables in subclasses (Shake, Bounce)
+            </summary>
+        </member>
+        <member name="T:Engine.Camera.CameraShakeEffect">
+            <summary>
+            Creates a radial shake effect, using damped oscillation
+            One pass goes from 0 -> mag -> 0 -> -mag -> 0
+            Specify the number of passes to make via frequency
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.CameraShakeEffect.#ctor(Engine.Camera.Camera,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Applys a rotation effect that oscillates from -mag to +mag and decays over time.
+            </summary>
+            <param name="camera">The camera the effect is applied to</param>
+            <param name="dur">Duration in ms for the effect to occur over</param>
+            <param name="decay">Decay coeffecient of the shaking.  Use 0 for no decay</param>
+            <param name="mag">Maximum magnitude in radians for the camera to rotate</param>
+            <param name="freq">Number of times the camera makes a full left -> right -> left pass</param>
+        </member>
+        <member name="T:Engine.Camera.CameraBounceEffect">
+            <summary>
+            Creates a 'pop' or bounce effect, using damped oscillation
+            One pass goes from 0 -> cameraScale * mag -> 0 -> -cameraScale * mag -> 0
+            Specify the number of passes to make via frequency
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.CameraBounceEffect.#ctor(Engine.Camera.Camera,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Applys a scale effect that oscillates from (1 - mag) to (1 + mag) and decays over time.
+            </summary>
+            <param name="camera">The camera the effect is applied to</param>
+            <param name="dur">Duration in ms for the effect to occur over</param>
+            <param name="decay">Decay coeffecient of the zoom.  Use 0 for no decay</param>
+            <param name="mag">Maximum magnitude in percent original zoom to move by</param>
+            <param name="freq">Number of times the camera makes a full in -> out -> in pass</param>
+        </member>
+        <member name="T:Engine.Camera.CameraFlipEffect">
+            <summary>
+            Flips the camera about its x- or y-axis, or both.
+            Because this effect modifies camera scale directly, 
+            take care when combining with other effects that modify scale.
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.GraphicsDeviceExtensions.CreateFullscreenRenderTarget(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Boolean)">
+            <summary>
+            Because this method takes a boolean, it will never pass a RenderTargetUsage of PlatformContents,
+            only PreserveContents or DiscardContents.
+            </summary>
+            <param name="graphicsDevice"></param>
+            <param name="preserveContents"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Input.BasicInputManager">
+            <summary>
+            An InjectableInputManager that has shortcut methods for 
+            adding basic input controls (thumbstickDirection, button, etc)
+            </summary>
+        </member>
+        <member name="T:Engine.Input.DefaultInputManager">
+            <summary>
+            An InputManager that supports programmatic binding presses
+            </summary>
+        </member>
+        <member name="T:Engine.Input.InputManager">
+            <summary>
+            Allows input querying and offers hooks for event-driven keyboard input
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManager.GetBufferedText">
+            <summary>
+            The buffered text input since the last frame.  This is cleared per frame,
+            regardless of whether it has been read.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManager.GetMousePosition(Engine.Input.FrameState)">
+            <summary>
+            Get the position of the mouse in the specified frame.
+            </summary>
+            <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
+            <returns>The position of the mouse in screen space</returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.AddBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Add a binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName">The string used to query the binding state</param>
+            <param name="binding">The binding to associate with the bindingName</param>
+            <param name="player">The player to add the binding for</param>
+        </member>
+        <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
+            For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
+            RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
+            This is useful when you know the index of the binding in its list of bindings
+            </summary>
+            <param name="bindingName">The string used to query the binding state</param>
+            <param name="index">The index of the binding in the list of bindings associated with the bindingName</param>
+            <param name="player">The player the binding is being removed for</param>
+        </member>
+        <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Remove a binding from the InputManager.  Removes the exact binding from the relation.
+            This can be used when you don't know the binding's index in its list of bindings.
+            </summary>
+            <param name="bindingName">The string used to query the binding state</param>
+            <param name="binding">The binding to remove from the association with the bindingName</param>
+            <param name="player">The player the binding is being removed for</param>
+        </member>
+        <member name="M:Engine.Input.InputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Check if the manager has a binding associated with a bindingName for a player
+            </summary>
+            <param name="bindingName">The name of the binding to check for</param>
+            <param name="player">The player to check the binding for</param>
+            <returns>True if there are bindings associated with the bindingName for the given player</returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Clears all bindings associated with the given bindingName for a particular player
+            </summary>
+            <param name="bindingName">The name of the binding to clear</param>
+            <param name="player">The player to clear the binding for</param>
+        </member>
+        <member name="M:Engine.Input.InputManager.ClearAllBindings">
+            <summary>
+            Clears all bindings for all players
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManager.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+            Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
+            </summary>
+            <param name="bindingName">The name of the binding to query for active state</param>
+            <param name="player">The player to check the binding's activity for</param>
+            <param name="state">The FrameState in which to check for activity</param>
+            <returns>True if any of the bindings associated with the bindingName for a given player in a given FrameState is active.</returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName">The name of the binding to query for active state</param>
+            <param name="player">The player to check the binding's activity for</param>
+            <returns>True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).</returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName">The name of the binding to query for active state</param>
+            <param name="player">The player to check the binding's activity for</param>
+            <returns>True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).</returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Gets the list of bindings associated with a particular bindingName for a given player
+            </summary>
+            <param name="bindingName">The bindingName associated with the list of Bindings</param>
+            <param name="player">The player to get the list of bindings for</param>
+            <returns>Returns a copy of the Bindings associated with the bindingName for a givem player</returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.BindingsUsing(Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Used to get a list of strings that map to the given binding for a given player.
+            This is useful when you want to unbind a key from current bindings and remap to a new binding:
+            You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
+            </summary>
+            <param name="binding">The binding to search for in the InputManager</param>
+            <param name="player">The player to search for bindings on</param>
+            <returns>A list of the bindingNames that, for a given player, track the given binding as a possible input</returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.Update">
+            <summary>
+            Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
+            </summary>
+            <remarks>
+            This should be called at the end of your update loop, so that game logic
+            uses latest values.
+            Calling update at the beginning of the update loop will clear current buffers (if any) which
+            means you will not be able to read the most recent input.
+            </remarks>
+        </member>
+        <member name="P:Engine.Input.InputManager.GetModifiers">
+            <summary>
+            All the modifiers currently being tracked.
+            </summary>
+        </member>
+        <member name="T:Engine.Input.EventInput.IKeyboardSubscriber">
+            <summary>
+            Receives event-driven input in the form of strings, characters, and Keys
+            </summary>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.Char)">
+            <summary>
+            Handle a single character of input
+            </summary>
+            <param name="inputChar"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.String)">
+            <summary>
+            Handle a string of input
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveCommandInput(System.Char)">
+            <summary>
+            Handle a special command
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Handle a Key input
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="P:Engine.Input.EventInput.IKeyboardSubscriber.Selected">
+            <summary>
+            Does this Subscriber have the (possibly exclusive) focus
+            </summary>
+        </member>
+        <member name="F:Engine.Input.DefaultInputManager.BufferedText">
+            <summary>
+            The per-frame text buffer.
+            </summary>
+        </member>
+        <member name="F:Engine.Input.DefaultInputManager.Players">
+            <summary>
+            For enumerating through player indices
+            </summary>
+        </member>
+        <member name="F:Engine.Input.DefaultInputManager.isPollingKeyboard">
+            <summary>
+            The default InputManager does not use keyboard polling
+            </summary>
+        </member>
+        <member name="F:Engine.Input.DefaultInputManager.isPollingGamePads">
+            <summary>
+            True when the InputManager is polling gamepads
+            </summary>
+        </member>
+        <member name="F:Engine.Input.DefaultInputManager.isPollingMouse">
+            <summary>
+            True when the InputManager is polling the mouse
+            </summary>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.#ctor">
+            <summary>
+            Create an empty InputManager.  By default, polls all devices.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.#ctor(Engine.Input.DefaultInputManager)">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="input"></param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.Initialize(Microsoft.Xna.Framework.GameWindow)">
+            <summary>
+            Initialize InputManager dependencies (For event-driven input)
+            </summary>
+            <param name="window"></param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.AddBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Add a binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName">The string used to query the binding state</param>
+            <param name="binding">The binding to associate with the bindingName</param>
+            <param name="player">The player to add the binding for</param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
+            For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
+            RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
+            This is useful when you know the index of the binding in its list of bindings
+            </summary>
+            <param name="bindingName">The string used to query the binding state</param>
+            <param name="index">The index of the binding in the list of bindings associated with the bindingName</param>
+            <param name="player">The player the binding is being removed for</param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.RemoveBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Remove a binding from the InputManager.  Removes the exact binding from the relation.
+            This can be used when you don't know the binding's index in its list of bindings.
+            </summary>
+            <param name="bindingName">The string used to query the binding state</param>
+            <param name="binding">The binding to remove from the association with the bindingName</param>
+            <param name="player">The player the binding is being removed for</param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Check if the manager has a binding associated with a bindingName for a player
+            </summary>
+            <param name="bindingName">The name of the binding to check for</param>
+            <param name="player">The player to check the binding for</param>
+            <returns>True if there are bindings associated with the bindingName for the given player</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Clears all bindings associated with the given bindingName for a particular player
+            </summary>
+            <param name="bindingName">The name of the binding to clear</param>
+            <param name="player">The player to clear the binding for</param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.ClearAllBindings">
+            <summary>
+            Clears all bindings for all players
+            </summary>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+            Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
+            </summary>
+            <param name="bindingName">The name of the binding to query for active state</param>
+            <param name="player">The player to check the binding's activity for</param>
+            <param name="state">The FrameState in which to check for activity</param>
+            <returns>True if any of the bindings associated with the bindingName for a given player in a given FrameState is active.</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.IsModifiersActive(Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+            Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName">The name of the binding whose modifiers are being checked</param>
+            <param name="player">The player to check the binding's modifiers for</param>
+            <param name="state">The FrameState in which to check the modifiers</param>
+            <returns>True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName">The name of the binding to query for active state</param>
+            <param name="player">The player to check the binding's activity for</param>
+            <returns>True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName">The name of the binding to query for active state</param>
+            <param name="player">The player to check the binding's activity for</param>
+            <returns>True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Gets the list of bindings associated with a particular bindingName for a given player
+            </summary>
+            <param name="bindingName">The bindingName associated with the list of Bindings</param>
+            <param name="player">The player to get the list of bindings for</param>
+            <returns>Returns a copy of the Bindings associated with the bindingName for a givem player</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.Press(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+            "Press" a key in a given frame.
+            Cannot press a binding unless it has been added to the InputManager
+            </summary>
+            <param name="bindingName">The binding to press</param>
+            <param name="player">The player to press the binding for</param>
+            <param name="state">The frame to press it in</param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.Release(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+            "Release" a key in a given frame.
+            Cannot release a binding unless it has been added to the InputManager
+            </summary>
+            <param name="bindingName">The binding to release</param>
+            <param name="player">The player to release the binding for</param>
+            <param name="state">The frame to release it in</param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.BindingsUsing(Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+            Used to get a list of strings that map to the given binding for a given player.
+            This is useful when you want to unbind a key from current bindings and remap to a new binding:
+            You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
+            </summary>
+            <param name="binding">The binding to search for in the InputManager</param>
+            <param name="player">The player to search for bindings on</param>
+            <returns>A list of the bindingNames that, for a given player, track the given binding as a possible input</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.ReceiveTextInput(System.Char)">
+            <summary>
+            Handle a single character of input
+            </summary>
+            <param name="inputChar"></param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.ReceiveTextInput(System.String)">
+            <summary>
+            Handle a string of input
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.ReceiveCommandInput(System.Char)">
+            <summary>
+            Handle a special command
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Handle a Key input
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.GetBufferedText">
+            <summary>
+            The buffered text input since the last frame.  This is cleared per frame,
+            regardless of whether it has been read.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.GetMousePosition(Engine.Input.FrameState)">
+            <summary>
+            Get the position of the mouse in the specified frame.
+            </summary>
+            <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
+            <returns>The position of the mouse in screen space</returns>
+        </member>
+        <member name="M:Engine.Input.DefaultInputManager.Update">
+            <summary>
+            Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
+            </summary>
+            <remarks>
+            This should be called at the end of your update loop, so that game logic
+            uses latest values.
+            Calling update at the beginning of the update loop will clear current buffers (if any) which
+            means you will not be able to read the most recent input.
+            </remarks>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.Bindings">
+            <summary>
+            The Bindings being tracked by the Manager
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.Settings">
+            <summary>
+            The InputSettings for this InputManager (trigger thresholds, etc)
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.Modifiers">
+            <summary>
+            A unique set of modifiers of the bindings this manager tracks.
+            Keeps track of how many bindings use this modifier; 
+                stops checking for modifiers once no bindings use that modifier
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.PreviousKeys">
+            <summary>
+            Keys pressed in the previous frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.CurrentKeys">
+            <summary>
+            Keys pressed in the current frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.PreviousGamePadStates">
+            <summary>
+            GamePadState for the previous frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.CurrentGamePadStates">
+            <summary>
+            GamePadState for the current frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.PreviousMouseState">
+            <summary>
+            MouseState for the previous frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.CurrentMouseState">
+            <summary>
+            MouseState for the current frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.IsPollingKeyboard">
+            <summary>
+            Enable/Disable grabbing keyboard state when updating the manager.
+            Disable for performance when you know the user can't use a keyboard, or no bindings will need the state of the keyboard.
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.IsPollingGamePads">
+            <summary>
+            Enable/Disable grabbing gamepad state when updating the manager.
+            Disable for performance when you know the user can't use a gamepad, or no bindings will need the state of the gamepad.
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.IsPollingMouse">
+            <summary>
+            Enable/Disable grabbing mouse state when updating the manager.
+            Disable for performance when you know the user can't use a mouse, or no bindings will need the state of the mouse.
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.PreviousInjectedPresses">
+            <summary>
+            bindings pressed in the previous frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.CurrentInjectedPresses">
+            <summary>
+            bindings pressed in the current frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.Selected">
+            <summary>
+            Does this Subscriber have the (possibly exclusive) focus
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.GetModifiers">
+            <summary>
+            All the modifiers currently being tracked.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+            <summary>
+            Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName"></param>
+            <param name="player"></param>
+            <param name="thumbstickDirection"></param>
+            <param name="thumbstick"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.MouseButton,Engine.Input.IBinding[])">
+            <summary>
+            Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName"></param>
+            <param name="player"></param>
+            <param name="mouseButton"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+            <summary>
+            Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName"></param>
+            <param name="player"></param>
+            <param name="thumbstick"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Trigger,Engine.Input.IBinding[])">
+            <summary>
+            Add a Trigger binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName"></param>
+            <param name="player"></param>
+            <param name="trigger"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Buttons,Engine.Input.IBinding[])">
+            <summary>
+            Add a Button binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName"></param>
+            <param name="player"></param>
+            <param name="button"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Keys,Engine.Input.IBinding[])">
+            <summary>
+            Add a key binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName"></param>
+            <param name="player"></param>
+            <param name="key"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Tiles.Chunk`1.UpdateTile(Microsoft.Xna.Framework.Point,`0)">
+            <summary>
+            Update the value of a single tile.
+            Location is local to the chunk coordinates
+            </summary>
+            <param name="localTilePosition">Position of the tile in chunk's coordinates</param>
+            <param name="value">New value for the tile to take</param>
+        </member>
+        <member name="M:Engine.Tiles.Chunk`1.LoadData(`0[],System.Int32)">
+            <summary>
+            Loads data from an array into the chunk.
+            Note that while this won't necessarily fill all data in the chunk,
+            it will flag the chunk as loaded.
+            </summary>
+            <param name="data"></param>
+            <param name="startIndex"></param>
+        </member>
+        <member name="M:Engine.Tiles.Chunk`1.ClearData">
+            <summary>
+            Clears the chunk's data.
+            Note that this does not actually null the values,
+            so the chunk can be used again by a tile manager.
+            Do not read values from a chunk after it has been cleared
+            until all of the values have been read over using LoadData
+            </summary>
+        </member>
+        <member name="M:Engine.Tiles.Chunk`1.SetGlobalPosition(Microsoft.Xna.Framework.Point)">
+            <summary>
+            Set the chunk's global position.  This is the position of the upper-left tile in the chunk.
+            </summary>
+            <param name="position"></param>
+        </member>
+        <member name="M:Engine.Tiles.Chunk`1.GetLocalPosition(Microsoft.Xna.Framework.Point)">
+            <summary>
+            Calculates the local position of a tile in the chunk given its global location
+            </summary>
+            <param name="globalTilePosition"></param>
+            <returns>The local coordinates of the tile in the chunk, or null if the tile is not in the chunk</returns>
+        </member>
+        <member name="M:Engine.Tiles.Chunk`1.GetGlobalPosition(Microsoft.Xna.Framework.Point)">
+            <summary>
+            Calculates the global position of a tile in the world given its local chunk location
+            </summary>
+            <param name="localTilePosition"></param>
+            <returns>The global coordinates of the tile in the world</returns>
+        </member>
+        <member name="P:Engine.Tiles.Chunk`1.Tiles">
+            <summary>
+            The values of the tiles in the chunk
+            </summary>
+        </member>
+        <member name="P:Engine.Tiles.Chunk`1.Item(System.Int32,System.Int32)">
+            <summary>
+            Set or Get a tile's value at the given local coordinates.
+            
+            </summary>
+            <param name="x">Local Chunk x-coordinate</param>
+            <param name="y">Local Chunk y-coordinate</param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Tiles.Chunk`1.GlobalPosition">
+            <summary>
+            The global position of the upper-left-most tile in the chunk
+            </summary>
+        </member>
+        <member name="P:Engine.Tiles.Chunk`1.Dimensions">
+            <summary>
+            Width and Height of the chunk
+            </summary>
+        </member>
+        <member name="P:Engine.Tiles.Chunk`1.IsLoaded">
+            <summary>
+            Whether or not the values loaded in the chunk are valid.
+            False when the chunk has been cleared, or is partially loaded.
+            </summary>
+        </member>
+        <member name="T:Engine.Input.MouseButton">
+            <summary>
+            Used to specify the left or right mouse button
+            </summary>
+        </member>
+        <member name="F:Engine.Input.MouseButton.None">
+            <summary>
+            No mouse button
+            </summary>
+        </member>
+        <member name="F:Engine.Input.MouseButton.Left">
+            <summary>
+            Left mouse button
+            </summary>
+        </member>
+        <member name="F:Engine.Input.MouseButton.Right">
+            <summary>
+            Right mouse button
+            </summary>
+        </member>
+        <member name="F:Engine.Input.MouseButton.Middle">
+            <summary>
+            Middle click (not scroll up/down)
+            </summary>
+        </member>
+        <member name="T:Engine.Input.Trigger">
+            <summary>
+            Used to specify the left or right trigger
+            </summary>
+        </member>
+        <member name="F:Engine.Input.Trigger.None">
+            <summary>
+            No trigger
+            </summary>
+        </member>
+        <member name="F:Engine.Input.Trigger.Left">
+            <summary>
+            Left trigger (as viewed from top)
+            </summary>
+        </member>
+        <member name="F:Engine.Input.Trigger.Right">
+            <summary>
+            Right trigger (as viewed from top)
+            </summary>
+        </member>
+        <member name="T:Engine.Input.Thumbstick">
+            <summary>
+            Used to specify the left or right thumbstick
+            </summary>
+        </member>
+        <member name="F:Engine.Input.Thumbstick.None">
+            <summary>
+            No thumbstick
+            </summary>
+        </member>
+        <member name="F:Engine.Input.Thumbstick.Left">
+            <summary>
+            Left thumbstick (as viewed from top)
+            </summary>
+        </member>
+        <member name="F:Engine.Input.Thumbstick.Right">
+            <summary>
+            Right thumbstick (as viewed from top)
+            </summary>
+        </member>
+        <member name="T:Engine.Input.ThumbstickDirection">
+            <summary>
+            Used to specify the direction of a thumbstick "press" (=1)
+            </summary>
+        </member>
+        <member name="F:Engine.Input.ThumbstickDirection.None">
+            <summary>
+            No direction
+            </summary>
+        </member>
+        <member name="F:Engine.Input.ThumbstickDirection.Up">
+            <summary>
+            Controller up
+            </summary>
+        </member>
+        <member name="F:Engine.Input.ThumbstickDirection.Down">
+            <summary>
+            Controller down
+            </summary>
+        </member>
+        <member name="F:Engine.Input.ThumbstickDirection.Left">
+            <summary>
+            Controller left
+            </summary>
+        </member>
+        <member name="F:Engine.Input.ThumbstickDirection.Right">
+            <summary>
+            Controller right
+            </summary>
+        </member>
+        <member name="T:Engine.Input.FrameState">
+            <summary>
+            Which frame (previous or current) you are querying.
+            Used when asking about a key's state
+            </summary>
+        </member>
+        <member name="F:Engine.Input.FrameState.Previous">
+            <summary>
+            The frame which occured before whatever is considered the "current"
+            </summary>
+        </member>
+        <member name="F:Engine.Input.FrameState.Current">
+            <summary>
+            The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.ColorScheme`1.colorMapping">
+            <summary>
+            Stores all of the [T, LayerType] => Color information
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.ColorScheme`1.#ctor">
+            <summary>
+            Create a new OrbColorScheme
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.ColorScheme`1.#ctor(Engine.Rendering.ColorScheme{`0})">
+            <summary>
+            Create a copy of another ColorScheme
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Engine.Rendering.ColorScheme`1.LoadFromFile(System.String,System.String)">
+            <summary>
+            Load a color scheme from a file
+            </summary>
+            <param name="filename">Location of the color scheme file</param>
+            <param name="profilename">The profile to load from the color scheme file</param>
+        </member>
+        <member name="M:Engine.Rendering.ColorScheme`1.SaveToFile(System.String,System.String)">
+            <summary>
+            Save a color scheme to a file
+            </summary>
+            <param name="filename">Location to save the color scheme file</param>
+            <param name="profilename">The profile to save the color scheme as, in the file</param>
+        </member>
+        <member name="P:Engine.Rendering.ColorScheme`1.Item(`0,Engine.Rendering.LayerType)">
+            <summary>
+            Gets or sets the Color associated with the key and layer
+            </summary>
+            <param name="hostility"></param>
+            <param name="layer"></param>
+            <returns>Color defined for specific key/layer</returns>
+        </member>
+        <member name="T:Engine.Entities.GameObject">
+            <summary>
+            An object that exists in the game.
+            Consists of components which are managed by component systems.
+            Most interaction should be handled by passing and receiving appropriate messages,
+                but can be handled directly using the Touch(GameObject other) method.
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.Vector2Extensions.AsAngle(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Returns the angle of the vector, counter-clockwise from +x
+            </summary>
+            <param name="direction"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.Vector2Extensions.Copy(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Returns a copy of the vector
+            </summary>
+            <param name="other">The vector to copy</param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.Vector2Extensions.RotateAbout(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,System.Single)">
+            <summary>
+            Returns a Vector2 of the given vector rotated about an origin, by an angle theta (in raidans)
+            </summary>
+            <param name="vector">The vector to rotate</param>
+            <param name="origin">The point that the given vector is rotated about</param>
+            <param name="theta">The angle (in radians) to rotate by</param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.DefaultDictionary`2">
+            <summary>
+            Uses TryGetValue for index-notation lookup
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+        </member>
+        <member name="M:Engine.Utility.DefaultDictionary`2.#ctor(System.Func{`1})">
+            <summary>
+            Construct an empty DefaultDictionary
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DefaultDictionary`2.#ctor(Engine.Utility.DefaultDictionary{`0,`1})">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="P:Engine.Utility.DefaultDictionary`2.Item(`0)">
+            <summary>
+            Gets or sets the value associated with the specified key.
+            </summary>
+            <param name="key">The key of the value to get or set.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.MultiKeyDict`3">
+            <summary>
+            A DefaultDict that supports two keys.
+            </summary>
+            <typeparam name="TKey1">The first key type</typeparam>
+            <typeparam name="TKey2">The second key type</typeparam>
+            <typeparam name="TValue">The value type stored in the dictionary</typeparam>
+        </member>
+        <member name="M:Engine.Utility.MultiKeyDict`3.#ctor">
+            <summary>
+            Construct an empty Double-keyed dictionary
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.MultiKeyDict`3.#ctor(Engine.Utility.MultiKeyDict{`0,`1,`2})">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="defaultMultiKeyDict"></param>
+        </member>
+        <member name="M:Engine.Utility.MultiKeyDict`3.Clear">
+            <summary>
+            Clear all values from the DefaultMultiKeyDict
+            </summary>
+        </member>
+        <member name="P:Engine.Utility.MultiKeyDict`3.Item(`0,`1)">
+            <summary>
+            Gets or sets the value associated with the specified keys.
+            </summary>
+            <param name="key1">The first key of the value to get or set.</param>
+            <param name="key2">The second key of the value to get or set.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Utility.MultiKeyDict`3.Keys">
+            <summary>
+            Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
+            </summary>
+        </member>
+        <member name="T:Engine.Utility.CountedSet`1">
+            <summary>
+            Provides an iterable set of unique entries.
+            Adding an item increases the count of that item by 1.
+            Removing an item decreases the count by 1.
+            When the count is zero, the value is removed from the set.
+            
+            The iterator is over unique values
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.#ctor">
+            <summary>
+            Construct an empty CountedSet
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Copy the values of an enumerable into a CountedSet.
+            Note that duplicates will increment the count, and are not included in the iterable set twice.
+            </summary>
+            <param name="enumerable"></param>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.#ctor(Engine.Utility.CountedSet{`0})">
+            <summary>
+            Copy the values of another counted set, as well as the count for each item.
+            </summary>
+            <param name="countedSet"></param>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.Add(`0)">
+            <summary>
+            Add an item to the set.  If the item is already present, simply increments that item's count.
+            </summary>
+            <param name="item">The item to add</param>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.Clear">
+            <summary>
+            Clear the set and all associated counts.
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.Contains(`0)">
+            <summary>
+            Checks if the specified item is present in the CountedSet.
+            </summary>
+            <param name="item">The item to look for.</param>
+            <returns>True if the item's count is greater than 0.</returns>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.Remove(`0)">
+            <summary>
+            Remove an item from the set.  If the item is present, simply decrements that item's count.
+            If the item's count is less than 1, the item is removed from the iterator.
+            </summary>
+            <param name="item">The item to remove</param>
+        </member>
+        <member name="M:Engine.Utility.CountedSet`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a Engine.Utility.CountedSet&lt;T&gt; object.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Utility.CountedSet`1.Count">
+            <summary>
+            Gets the number of elements that are contained in the set.
+            </summary>
+        </member>
+        <member name="T:Engine.Utility.DoubleBuffer`1">
+            <summary>
+            Provides Push, Flip, and full Front inspection.
+            Does not support Pop or buffer folding (extend front with back instead of swapping and clearing)
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Engine.Utility.DoubleBuffer`1.#ctor">
+            <summary>
+            Construct an empty DoubleBuffer
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DoubleBuffer`1.Flip">
+            <summary>
+            Flip Front and Back buffers
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DoubleBuffer`1.Push(`0)">
+            <summary>
+            Push a value onto the back buffer
+            </summary>
+            <param name="item">The item to push</param>
+        </member>
+        <member name="P:Engine.Utility.DoubleBuffer`1.Front">
+            <summary>
+            The current Front buffer.  Cannot be written to.
+            </summary>
+        </member>
+        <member name="T:Engine.Input.ThumbstickDirectionInputBinding">
+            <summary>
+            An InputBinding that checks if a certain ThumbstickDirection is active
+            (beyond some threshold as defined in an InputManager's InputSettings)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.ThumbstickDirectionInputBinding.#ctor(Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+            <summary>
+            An InputBinding wrapper for a ThumbstickDirection
+            </summary>
+            <param name="thumbstickDirection"></param>
+            <param name="thumbstick"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.ThumbstickDirectionInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            True if the  ThumbstickDirection of the specified Thumbstick is past the settings threshold
+            </summary>
+        </member>
+        <member name="P:Engine.Input.ThumbstickDirectionInputBinding.Thumbstick">
+            <summary>
+            The Thumbstick (left or right) which is checked for activity past a threshold
+            </summary>
+        </member>
+        <member name="P:Engine.Input.ThumbstickDirectionInputBinding.Direction">
+            <summary>
+            The Thumbstick Direction (up/down/left/right) which is checked for activity past a threshold
+            </summary>
+        </member>
+        <member name="T:Engine.Input.MouseInputBinding">
+            <summary>
+            An InputBinding wrapper for a Thumbstick
+            </summary>
+        </member>
+        <member name="M:Engine.Input.MouseInputBinding.#ctor(Engine.Input.MouseButton,Engine.Input.IBinding[])">
+            <summary>
+            An InputBinding wrapper for a MouseButton
+            </summary>
+            <param name="mouseButton"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.MouseInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            True if the Mouse button (without modifiers) is pressed
+            </summary>
+        </member>
+        <member name="P:Engine.Input.MouseInputBinding.Button">
+            <summary>
+            The mouse button which is checked for activity
+            </summary>
+        </member>
+        <member name="T:Engine.Input.ThumbstickInputBinding">
+            <summary>
+            An InputBinding that checks if a certain Thumbstick is active
+            (beyond some threshold as defined in an InputManager's InputSettings)
+            (direction doesn't matter)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.ThumbstickInputBinding.#ctor(Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+            <summary>
+            An InputBinding wrapper for a Thumbstick
+            </summary>
+            <param name="thumbstick"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.ThumbstickInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            True if the thumbstick (without modifiers) is past the settings threshold
+            </summary>
+        </member>
+        <member name="P:Engine.Input.ThumbstickInputBinding.Thumbstick">
+            <summary>
+            The Thumbstick (left or right) which is checked for activity past a threshold
+            </summary>
+        </member>
+        <member name="T:Engine.Input.ButtonInputBinding">
+            <summary>
+            An InputBinding wrapper for a Button
+            </summary>
+        </member>
+        <member name="M:Engine.Input.ButtonInputBinding.#ctor(Microsoft.Xna.Framework.Input.Buttons,Engine.Input.IBinding[])">
+            <summary>
+            An InputBinding wrapper for a Button
+            </summary>
+            <param name="button"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.ButtonInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            True if the Button (without modifiers) is pressed
+            </summary>
+        </member>
+        <member name="P:Engine.Input.ButtonInputBinding.Button">
+            <summary>
+            The Button which is checked for activity
+            </summary>
+        </member>
+        <member name="T:Engine.Input.KeyInputBinding">
+            <summary>
+            An InputBinding wrapper for a keyboard Key
+            </summary>
+        </member>
+        <member name="M:Engine.Input.KeyInputBinding.#ctor(Microsoft.Xna.Framework.Input.Keys,Engine.Input.IBinding[])">
+            <summary>
+            InputBinding wrapper for a keyboard Key
+            </summary>
+            <param name="key"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.KeyInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            True if the key (without modifiers) is pressed
+            </summary>
+        </member>
+        <member name="P:Engine.Input.KeyInputBinding.Key">
+            <summary>
+            The Key which is checked for activity
+            </summary>
+        </member>
+        <member name="T:Engine.Input.TriggerInputBinding">
+            <summary>
+            An InputBinding that checks if a certain Trigger is active
+            (beyond some threshold as defined in an InputManager's InputSettings)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.TriggerInputBinding.#ctor(Engine.Input.Trigger,Engine.Input.IBinding[])">
+            <summary>
+            InputBinding wrapper for GamePad triggers
+            </summary>
+            <param name="trigger"></param>
+            <param name="modifiers"></param>
+        </member>
+        <member name="M:Engine.Input.TriggerInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            True if the trigger (without modifiers) is past the settings threshold
+            </summary>
+        </member>
+        <member name="P:Engine.Input.TriggerInputBinding.Trigger">
+            <summary>
+            The left or right trigger
+            </summary>
+        </member>
+        <member name="T:Engine.Rendering.RenderPass">
+            <summary>
+            Specify which stage of rendering is occuring
+            </summary>
+        </member>
+        <member name="T:Engine.Rendering.LayerType">
+            <summary>
+            Draw layer type for an object
+            </summary>
+        </member>
+        <member name="T:Engine.Camera.CameraMode">
+            <summary>
+            The modes that a camera can be in.
+            
+            LockedPos     :: Locked to a single Vector2, does not move
+            LockedTarget  :: Locked to a single GameObject, tracks the center of the screen to GameObject.Position
+            VtTTransition :: Vector -> GameObject Transition.  Moving from a LockedPos to LockedTarget
+            TtVTransition :: GameObject -> Vector Transition.  Moving from a LockedTarget to LockedPos
+            TtTTransition :: GameObject -> GameObject Transition.  Moving from one LockedPos to another
+            VtVTransition :: Vector -> Vector Transition.  Moving from one LockedPos to another
+            </summary>
+        </member>
+        <member name="T:Engine.Input.InputSettings">
+            <summary>
+            A set of limits and thresholds that some bindings must pass to be considered active
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSettings.TriggerThreshold">
+            <summary>
+            The minimum value for a trigger to register as 'pulled'
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSettings.ThumbstickThreshold">
+            <summary>
+            The minimum value for a thumbstick (not necessarily magnitude) to register as 'pushed'
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputSettings.#ctor(System.Single,System.Single)">
+            <summary>
+            Construct a set of Input Settings describing certain thresholds and limits that must be met for
+            some bindings to be considered "active"
+            </summary>
+            <param name="triggerThreshold">The minimum value a trigger must have to be considered pulled/depressed (active)</param>
+            <param name="thumbstickThreshold">The minimum value a thumbstick must be moved to be considered active 
+            (some bindings may require this amount in a single direction)</param>
+        </member>
+        <member name="M:Engine.Input.InputSettings.#ctor(Engine.Input.InputSettings)">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="settings"></param>
+        </member>
+        <member name="F:Engine.Rendering.Pipeline.PixelShaderpipeline.RenderTarget">
+            <summary>
+            The current RenderTarget2D based on which pass the PostPipeline is in
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.LoadContent">
+            <summary>
+            Load the pipeline's content
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.UnloadContent">
+            <summary>
+            Unload the pipeline's content, 
+            and the content of any effects in the pipeline
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.Clear(Microsoft.Xna.Framework.Color)">
+            <summary>
+            Clear the screens, set background color
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.Draw">
+            <summary>
+            Draw everything to the screen
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.AddRenderEffect(Engine.Rendering.Pipeline.IRenderEffect)">
+            <summary>
+            Append a rendering effect to the pipeline
+            and load the effect's content
+            </summary>
+            <param name="effect">The effect to be added</param>
+        </member>
+        <member name="M:Engine.Rendering.Pipeline.PixelShaderpipeline.RemoveRenderEffect(Engine.Rendering.Pipeline.IRenderEffect)">
+            <summary>
+            Remove a rendering effect from the pipeline
+            Unloads that effect's content
+            </summary>
+            <param name="effect"></param>
+        </member>
+        <member name="P:Engine.Rendering.Pipeline.PixelShaderpipeline.Passes">
+            <summary>
+            Array of render passes for iteration
+            </summary>
+        </member>
+        <member name="P:Engine.Rendering.Pipeline.PixelShaderpipeline.RenderPass">
+            <summary>
+            Which RenderPass the RenderPipeline is currently processing.
+            Changing this value will trigger at least one render target switch.
+            </summary>
+        </member>
+        <member name="T:Engine.Rendering.Effects.BloomSettings">
+            <summary>
+            Class holds all the settings used to tweak the bloom effect.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomSettings.#ctor(System.String,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Constructs a new bloom settings descriptor.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.PresetSettings">
+            <summary>
+            Table of preset bloom settings, used by the sample program.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomEffect.SetBlurEffectParameters(System.Single,System.Single)">
+            <summary>
+            Computes sample weightings and texture coordinate offsets
+            for one pass of a separable gaussian blur filter.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomEffect.ComputeGaussian(System.Single)">
+            <summary>
+            Evaluates a single point on the gaussian falloff curve.
+            Used for setting up the blur filter weightings.
+            </summary>
+        </member>
+        <member name="T:Engine.Camera.Camera">
+            <summary>
+            A 2D camera with a list of effects, 
+            allows easy tracking of objects and transitions between
+            focus points.
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.isTransformDirty">
+            <summary>
+            True if information used to calc the transform matrix 
+            has changed since it was last calculated
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.transformMatrix">
+            <summary>
+            Most recently calculated transform matrix- use isTransformDirty to see if value is still correct
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.mode">
+            <summary>
+            The current camera mode for this camera.  Can be locked, transition, etc.
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.viewport">
+            <summary>
+            The viewport that this camera maps world-space to
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.target">
+            <summary>
+            The current GameObject target.  Can be null when not in LockedTarget mode
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.oldTarget">
+            <summary>
+            The GameObject the camera was last locked to.  Used for smooth transitions
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.targetPos">
+            <summary>
+            The current Vector2 target.  Can be null when not in LockedPos mode
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.oldTargetPos">
+            <summary>
+            The Vector2 the camera was last locked to.  Used for smooth transitions
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.rotation">
+            <summary>
+            Camera rotation in radians.
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.scale">
+            <summary>
+            Camera scale- 1.0 is 100%, 2.0 is 200%, etc
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.transitionTime">
+            <summary>
+            Amount of time allowed to transition between two modes
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.transitionRemaining">
+            <summary>
+            Amount of time remaining in the transition
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.transitionPos">
+            <summary>
+            The position of the camera during a transition
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.lastFramePos">
+            <summary>
+            The position of the camera in world space in the last frame
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Camera.effects">
+            <summary>
+            The camera effects currently applied to (or at least tracked by) this camera
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Camera.#ctor(Microsoft.Xna.Framework.Graphics.Viewport)">
+            <summary>
+            Create a camera with a given viewport and scale 1.
+            </summary>
+            <param name="viewport">The viewport this camera maps to</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.#ctor(Microsoft.Xna.Framework.Graphics.Viewport,Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Create a camera with a given viewport and a given scale.
+            </summary>
+            <param name="viewport">The viewport this camera maps to</param>
+            <param name="scale">Scaling factor (0.5 is 50% zoom, 2.0 is 200% zoom)</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.#ctor(Engine.Camera.Camera)">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="camera">The camera to copy</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.Update(System.Single)">
+            <summary>
+            Update camera transitions and effects
+            </summary>
+            <param name="elapsedTime"></param>
+        </member>
+        <member name="M:Engine.Camera.Camera.UpdateTransition(System.Single)">
+            <summary>
+            Update any active transitions and move between lock states
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Camera.UpdateEffects(System.Single)">
+            <summary>
+            Update camera effects, removing any that are inactive
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Camera.AdvanceFrame">
+            <summary>
+            Advances the frame, so that position delta can be known within a timeframe.
+            This method should be called as late as possible; end of draw is a good place.
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Camera.LockPosition(Microsoft.Xna.Framework.Vector2,System.Boolean)">
+            <summary>
+            Lock the camera onto the specified position.
+            </summary>
+            <param name="pos">The position "lock on" to</param>
+            <param name="immediate">If the lock is not immediate, the last transition position is saved and the transition finishes from transition position to the new position</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.LockTarget(Engine.Entities.GameObject,System.Boolean)">
+            <summary>
+            Lock the camera onto the specified target.
+            </summary>
+            <param name="target">The GameplayObject to follow or "lock on" to</param>
+            <param name="immediate">If the lock is not immediate, the last transition position is saved and the transition finishes from transition position to the new target</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.TransitionTo(Engine.Entities.GameObject,System.Single,System.Boolean)">
+            <summary>
+            Very much like LockTarget(target, immediate) except it allows a specification of duration.
+            </summary>
+            <param name="target">The GameplayObject to follow or "lock on" to</param>
+            <param name="duration">Amount of time for the transition from last target or pos, or transition position (depending on last mode)</param>
+            <param name="immediate">If the lock is not immediate, the last transition position is saved and the transition finishes from transition position to the new target</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.TransitionTo(Microsoft.Xna.Framework.Vector2,System.Single,System.Boolean)">
+            <summary>
+            Very much like LockPosition(pos, immediate) except it allows a specification of duration.
+            </summary>
+            <param name="pos">The position "lock on" to</param>
+            <param name="duration">Amount of time for the transition from last target or pos, or transition position (depending on last mode)</param>
+            <param name="immediate">If the lock is not immediate, the last transition position is saved and the transition finishes from transition position to the new position</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.FinishTransition">
+            <summary>
+            Immediately finish any transition, and copy current target information
+            to its equivalent 'old' field
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Camera.AddEffect(Engine.Camera.CameraEffect)">
+            <summary>
+            Add an effect to this camera
+            </summary>
+            <param name="effect">The CameraEffect to add</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.RemoveEffect(Engine.Camera.CameraEffect)">
+            <summary>
+            Remove an effect from this camera
+            </summary>
+            <param name="effect">The effect to remove</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.EndEffect(Engine.Camera.CameraEffect)">
+            <summary>
+            Immediately end a camera effect, regardless of its remaining duration
+            </summary>
+            <param name="effect">The effect to end</param>
+        </member>
+        <member name="M:Engine.Camera.Camera.Screen2WorldCoords(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Converts a given 2D screen coordinate into World coordinates
+            </summary>
+            <param name="screenCoords">The point (in screen coordinates) to convert to world coordinates</param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Camera.Camera.CalculateTransformMatrix">
+            <summary>
+            Calculate the Transform Matrix for the current frame
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Camera.CalculateEffectOffsets(System.Single@,System.Single@,System.Single@,System.Single@,System.Single@)">
+            <summary>
+            Sum up the offsets from active effects
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Camera.Rotation">
+            <summary>
+            Camera rotation in radians.
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Camera.Scale">
+            <summary>
+            Camera scale- 1.0 is 100%, 2.0 is 200%, etc
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Camera.LastFramePosition">
+            <summary>
+            The position of the camera in world space in the last frame
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Camera.CurrentFramePosition">
+            <summary>
+            The position of the camera in world space in the current frame
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Camera.DeltaFramePosition">
+            <summary>
+            The change in position of the camera between this frame and last frame
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Camera.Dt">
+            <summary>
+            Returns the amount of time that elapsed in the last frame, as seen by the camera.
+            </summary>
+            <remarks>
+            This is useful for effects that should be applied based on time and not frame cycle,
+            Such as blur trails.
+            </remarks>
+        </member>
+        <member name="P:Engine.Camera.Camera.TransformMatrix">
+            <summary>
+            Returns the transform matrix from world -> screen.
+            When rendering, use this transform with:
+            batch.Begin(SpriteSortMode, BlendState, SamplerState, DepthStencilState, RasterizerState, Effect, camera.TransformMatrix);
+            </summary>
+        </member>
+        <member name="T:Engine.Utility.ColorTextureGenerator">
+            <summary>
+            Creates single color textures (i.e. for drawing rectangles).
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Creates a 1x1 pixel black texture.
+            </summary>
+            <param name="graphicsDevice">The graphics device to use.</param>
+            <returns>The newly created texture.</returns>
+        </member>
+        <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Creates a 1x1 pixel texture of the specified color.
+            </summary>
+            <param name="graphicsDevice">The graphics device to use.</param>
+            <param name="color">The color to set the texture to.</param>
+            <returns>The newly created texture.</returns>
+        </member>
+        <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Int32,System.Int32,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Creates a texture of the specified color.
+            </summary>
+            <param name="graphicsDevice">The graphics device to use.</param>
+            <param name="width">The width of the texture.</param>
+            <param name="height">The height of the texture.</param>
+            <param name="color">The color to set the texture to.</param>
+            <returns>The newly created texture.</returns>
+        </member>
+        <member name="T:Engine.Tiles.TileManager`1">
+            <summary>
+            Tracks buffered chunks and point/chunk updating
+            </summary>
+        </member>
+        <member name="M:Engine.Tiles.TileManager`1.GetChunk(Microsoft.Xna.Framework.Point)">
+            <summary>
+            Gets the chunk which contains the given global tile position
+            </summary>
+            <param name="globalTilePosition">The global position of a tile which is in the desired chunk</param>
+            <returns>null if there is no such chunk</returns>
+        </member>
+        <member name="M:Engine.Tiles.TileManager`1.UpdateTile(Microsoft.Xna.Framework.Point,`0)">
+            <summary>
+            Update a single tile in a specific chunk
+            </summary>
+            <param name="globalChunkPosition">The global coordinates of the tile</param>
+            <param name="value">The value to give the specified tile</param>
+        </member>
+        <member name="M:Engine.Tiles.TileManager`1.CacheChunk(Microsoft.Xna.Framework.Point,`0[],System.Int32)">
+            <summary>
+            Loads a chunk 
+            </summary>
+            <param name="globalChunkPosition"></param>
+            <param name="data"></param>
+            <param name="startIndex"></param>
+        </member>
+        <member name="P:Engine.Tiles.TileManager`1.Chunks">
+            <summary>
+            Chunks of tiles loaded in memory
+            </summary>
+        </member>
+        <member name="P:Engine.Tiles.TileManager`1.BufferDimensions">
+            <summary>
+            The dimensions of chunks buffered.
+            </summary>
+            <example>
+            For BufferDimensions (3,3)
+            we would buffer the following:
+            .....
+            .+++.
+            .+++.
+            .+++.
+            .....
+            where   "." is unbuffered,
+                    "+" is buffered
+            </example>
+        </member>
+        <member name="P:Engine.Tiles.TileManager`1.ChunkDimensions">
+            <summary>
+            The size of a single chunk
+            </summary>
+        </member>
+        <member name="M:Engine.Input.EventInput.EventInput.Initialize(Microsoft.Xna.Framework.GameWindow)">
+            <summary>
+            Initialize the TextInput with the given GameWindow.
+            </summary>
+            <param name="window">The XNA window to which text input should be linked.</param>
+        </member>
+        <member name="E:Engine.Input.EventInput.EventInput.CharEntered">
+            <summary>
+            Event raised when a character has been entered.
+            </summary>
+        </member>
+        <member name="E:Engine.Input.EventInput.EventInput.KeyDown">
+            <summary>
+            Event raised when a key has been pressed down. May fire multiple times due to keyboard repeat.
+            </summary>
+        </member>
+        <member name="E:Engine.Input.EventInput.EventInput.KeyUp">
+            <summary>
+            Event raised when a key has been released.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BlurEffect.SetFrameDelta(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            This should most likely be called every frame, to update the change in position of the camera.
+            This will make the blur render w.r.t. the player.  Of course, you could also blur by a normal to
+            the camera delta or an oscillating angle to the player, to create different effects.
+            </summary>
+            <param name="delta">Change in position of the blur effect since the last frame.  
+                                Do not scale the offset to texture coordinates, that will be done for you.</param>
+        </member>
+        <member name="M:Engine.Rendering.BasicShapeRenderer.Initialize(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            The BasicShapeRenderer won't actually render until it's been initialized
+            </summary>
+            <param name="graphicsDevice"></param>
+        </member>
+        <member name="M:Engine.Rendering.BasicShapeRenderer.DrawSolidSquare(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,System.Single,System.Single)">
+            <summary>
+            Draws a filled square whose center is position
+            </summary>
+            <param name="batch">SpriteBatch for drawing</param>
+            <param name="position">Center of the Square</param>
+            <param name="color">Color of the square</param>
+            <param name="width">Square side length</param>
+            <param name="rotation">Rotation in radians about the center</param>
+        </member>
+        <member name="M:Engine.Rendering.BasicShapeRenderer.DrawSquareOutline(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,System.Single,System.Single,System.Single)">
+            <summary>
+            Draws a hollow square whose center is position, of width lineWidth (default 1px, does not exceed width)
+            </summary>
+            <param name="batch">SpriteBatch for drawing</param>
+            <param name="position">Center of the Square</param>
+            <param name="color">Color of the square</param>
+            <param name="width">Square side length</param>
+            <param name="rotation">Rotation in radians about the center</param>
+            <param name="lineWidth">Width in pixels of the line</param>
+        </member>
+    </members>
+</doc>
