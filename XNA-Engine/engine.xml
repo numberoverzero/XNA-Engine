@@ -904,19 +904,51 @@
             </summary>
             <typeparam name="T">The type which maps to Colors for a certain LayerType</typeparam>
         </member>
-        <member name="F:Engine.Rendering.ColorScheme`1.colorMapping">
+        <member name="T:Engine.Utility.MultiKeyDict`3">
             <summary>
-            Stores all of the [T, LayerType] => Color information
+            A DefaultDict that supports two keys.
+            </summary>
+            <typeparam name="TKey1">The first key type</typeparam>
+            <typeparam name="TKey2">The second key type</typeparam>
+            <typeparam name="TValue">The value type stored in the dictionary</typeparam>
+        </member>
+        <member name="M:Engine.Utility.MultiKeyDict`3.#ctor">
+            <summary>
+            Construct an empty Double-keyed dictionary
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.MultiKeyDict`3.#ctor(Engine.Utility.MultiKeyDict{`0,`1,`2})">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="defaultMultiKeyDict"></param>
+        </member>
+        <member name="M:Engine.Utility.MultiKeyDict`3.Clear">
+            <summary>
+            Clear all values from the DefaultMultiKeyDict
+            </summary>
+        </member>
+        <member name="P:Engine.Utility.MultiKeyDict`3.Item(`0,`1)">
+            <summary>
+            Gets or sets the value associated with the specified keys.
+            </summary>
+            <param name="key1">The first key of the value to get or set.</param>
+            <param name="key2">The second key of the value to get or set.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Utility.MultiKeyDict`3.Keys">
+            <summary>
+            Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
             </summary>
         </member>
         <member name="M:Engine.Rendering.ColorScheme`1.#ctor">
             <summary>
-            Create a new ColorScheme
+            Create an empty ColorScheme mapping
             </summary>
         </member>
         <member name="M:Engine.Rendering.ColorScheme`1.#ctor(Engine.Rendering.ColorScheme{`0})">
             <summary>
-            Create a copy of another ColorScheme
+            Copy Constructor
             </summary>
             <param name="other"></param>
         </member>
@@ -933,14 +965,6 @@
             </summary>
             <param name="filename">Location to save the color scheme file</param>
             <param name="profilename">The profile to save the color scheme as, in the file</param>
-        </member>
-        <member name="P:Engine.Rendering.ColorScheme`1.Item(`0,Engine.Rendering.LayerType)">
-            <summary>
-            Gets or sets the Color associated with the key and layer
-            </summary>
-            <param name="t"></param>
-            <param name="layer"></param>
-            <returns>Color defined for specific key/layer</returns>
         </member>
         <member name="T:Engine.Entities.GameObject">
             <summary>
@@ -1170,67 +1194,59 @@
             <param name="theta">The angle (in radians) to rotate by</param>
             <returns></returns>
         </member>
-        <member name="T:Engine.Utility.DefaultDictionary`2">
+        <member name="T:Engine.Utility.DictionaryExtensions">
+            <summary>
+            Extensions that make certain lookup operations easier
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
+            <summary>
+            Tries to get a value from the dictionary.  If the dictionary
+            returns a null value for the value, returns a default value
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,System.Func{``1})">
+            <summary>
+            Tries to get a value from the dictionary.  If the dictionary
+            returns a null value for the value, returns the value from
+            a function which provides TValue objects
+            </summary>
+        </member>
+        <member name="T:Engine.Utility.DefaultDict`2">
             <summary>
             Uses TryGetValue for index-notation lookup
             </summary>
             <typeparam name="TKey"></typeparam>
             <typeparam name="TValue"></typeparam>
         </member>
-        <member name="M:Engine.Utility.DefaultDictionary`2.#ctor(System.Func{`1})">
+        <member name="M:Engine.Utility.DefaultDict`2.#ctor">
             <summary>
-            Construct an empty DefaultDictionary
+            Construct a DefaultDict whose fallback value is the public parameterless constructor of TValue
             </summary>
         </member>
-        <member name="M:Engine.Utility.DefaultDictionary`2.#ctor(Engine.Utility.DefaultDictionary{`0,`1})">
+        <member name="M:Engine.Utility.DefaultDict`2.#ctor(System.Func{`1})">
             <summary>
-            Copy Constructor
+            Construct a DefaultDict whose fallback value is generated by the given function
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DefaultDict`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+            Construct a DefaultDict from another IDict, with a fallback value function that is the
+            public parameterless constructor of TVale
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DefaultDict`2.#ctor(Engine.Utility.DefaultDict{`0,`1})">
+            <summary>
+            Copy Constructor - copies the other DefaultDict's defaultValueFunc
             </summary>
             <param name="other"></param>
         </member>
-        <member name="P:Engine.Utility.DefaultDictionary`2.Item(`0)">
+        <member name="P:Engine.Utility.DefaultDict`2.Item(`0)">
             <summary>
             Gets or sets the value associated with the specified key.
             </summary>
             <param name="key">The key of the value to get or set.</param>
             <returns></returns>
-        </member>
-        <member name="T:Engine.Utility.MultiKeyDict`3">
-            <summary>
-            A DefaultDict that supports two keys.
-            </summary>
-            <typeparam name="TKey1">The first key type</typeparam>
-            <typeparam name="TKey2">The second key type</typeparam>
-            <typeparam name="TValue">The value type stored in the dictionary</typeparam>
-        </member>
-        <member name="M:Engine.Utility.MultiKeyDict`3.#ctor">
-            <summary>
-            Construct an empty Double-keyed dictionary
-            </summary>
-        </member>
-        <member name="M:Engine.Utility.MultiKeyDict`3.#ctor(Engine.Utility.MultiKeyDict{`0,`1,`2})">
-            <summary>
-            Copy Constructor
-            </summary>
-            <param name="defaultMultiKeyDict"></param>
-        </member>
-        <member name="M:Engine.Utility.MultiKeyDict`3.Clear">
-            <summary>
-            Clear all values from the DefaultMultiKeyDict
-            </summary>
-        </member>
-        <member name="P:Engine.Utility.MultiKeyDict`3.Item(`0,`1)">
-            <summary>
-            Gets or sets the value associated with the specified keys.
-            </summary>
-            <param name="key1">The first key of the value to get or set.</param>
-            <param name="key2">The second key of the value to get or set.</param>
-            <returns></returns>
-        </member>
-        <member name="P:Engine.Utility.MultiKeyDict`3.Keys">
-            <summary>
-            Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
-            </summary>
         </member>
         <member name="T:Engine.Utility.CountedSet`1">
             <summary>

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Engine.Utility;
 
 #endregion
 
@@ -12,49 +13,18 @@ namespace Engine.Rendering
     /// Maps LayerTypes and <typeparamref name="T"/>s to Colors.
     /// </summary>
     /// <typeparam name="T">The type which maps to Colors for a certain LayerType</typeparam>
-    public class ColorScheme<T>
+    public class ColorScheme<T> : MultiKeyDict<T, LayerType, Color>
     {
         /// <summary>
-        /// Stores all of the [T, LayerType] => Color information
+        /// Create an empty ColorScheme mapping
         /// </summary>
-        Dictionary<T, Dictionary<LayerType, Color>> colorMapping;
+        public ColorScheme() : base() { }
 
         /// <summary>
-        /// Create a new ColorScheme
-        /// </summary>
-        public ColorScheme()
-        {
-            colorMapping = new Dictionary<T, Dictionary<LayerType, Color>>();
-        }
-
-        /// <summary>
-        /// Create a copy of another ColorScheme
+        /// Copy Constructor
         /// </summary>
         /// <param name="other"></param>
-        public ColorScheme(ColorScheme<T> other)
-        {
-            colorMapping = new Dictionary<T, Dictionary<LayerType, Color>>(other.colorMapping);
-        }
-
-        /// <summary>
-        /// Gets or sets the Color associated with the key and layer
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="layer"></param>
-        /// <returns>Color defined for specific key/layer</returns>
-        public Color this[T t, LayerType layer]
-        {
-            get{
-                if (colorMapping.ContainsKey(t) && colorMapping[t].ContainsKey(layer))
-                    return colorMapping[t][layer];
-                return default(Color);
-            }
-            set{
-                if (!colorMapping.ContainsKey(t))
-                    colorMapping[t] = new Dictionary<LayerType, Color>();
-                colorMapping[t][layer] = value;
-            }
-        }   
+        public ColorScheme(ColorScheme<T> other) : base(other) { }
 
         /// <summary>
         /// Load a color scheme from a file
