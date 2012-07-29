@@ -137,7 +137,7 @@
     <Compile Include="TileEngine\Chunk.cs" />
     <Compile Include="TileEngine\TileManager.cs" />
     <Compile Include="Utility\ColorTextureGenerator.cs" />
-    <Compile Include="Utility\DataStructures.cs" />
+    <Compile Include="DataStructures\DataStructures.cs" />
     <Compile Include="Utility\Extensions.cs" />
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
     <Compile Include="Utility\MathFunctions.cs" />
