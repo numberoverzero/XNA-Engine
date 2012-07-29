@@ -13,7 +13,7 @@ namespace Engine.Rendering
     /// Maps LayerTypes and <typeparamref name="T"/>s to Colors.
     /// </summary>
     /// <typeparam name="T">The type which maps to Colors for a certain LayerType</typeparam>
-    public class ColorScheme<T> : MultiKeyDict<T, LayerType, Color>
+    public class ColorScheme<T> : MultiKeyObjDict<T, LayerType, Color>
     {
         /// <summary>
         /// Create an empty ColorScheme mapping

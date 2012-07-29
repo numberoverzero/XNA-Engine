@@ -44,7 +44,7 @@ namespace Engine.DataStructures
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class DefaultDict<TKey, TValue> : Dictionary<TKey, TValue> where TValue : new()
+    public class DefaultDict<TKey, TValue> : Dictionary<TKey, TValue>
     {
         Func<TValue> defaultValueFunc;
 
@@ -96,7 +96,7 @@ namespace Engine.DataStructures
                 if (value == null)
                 {
                     if (defaultValueFunc == null)
-                        value = new TValue();
+                        value = default(TValue);
                     else
                         value = defaultValueFunc();
                     base[key] = value;
@@ -116,14 +116,14 @@ namespace Engine.DataStructures
     /// <typeparam name="TKey1">The first key type</typeparam>
     /// <typeparam name="TKey2">The second key type</typeparam>
     /// <typeparam name="TValue">The value type stored in the dictionary</typeparam>
-    public class MultiKeyDict<TKey1, TKey2, TValue> where TValue : new()
+    public class MultiKeyObjDict<TKey1, TKey2, TValue> where TValue : new()
     {
         DefaultDict<TKey1, DefaultDict<TKey2, TValue>> dict;
 
         /// <summary>
         /// Construct an empty Double-keyed dictionary
         /// </summary>
-        public MultiKeyDict()
+        public MultiKeyObjDict()
         {
             Func<TValue> DefaultInnerDictFunc = () => { return new TValue(); };
             Func<DefaultDict<TKey2, TValue>> DefaultDictFunc = () => { return new DefaultDict<TKey2, TValue>(DefaultInnerDictFunc); };
@@ -134,7 +134,7 @@ namespace Engine.DataStructures
         /// Copy Constructor
         /// </summary>
         /// <param name="defaultMultiKeyDict"></param>
-        public MultiKeyDict(MultiKeyDict<TKey1, TKey2, TValue> defaultMultiKeyDict)
+        public MultiKeyObjDict(MultiKeyObjDict<TKey1, TKey2, TValue> defaultMultiKeyDict)
         {
             dict = new DefaultDict<TKey1, DefaultDict<TKey2, TValue>>(defaultMultiKeyDict.dict);
         }
@@ -345,18 +345,23 @@ namespace Engine.DataStructures
     }
 
     /// <summary>
-    /// A cyclic buffer - cycling will move the values in current into previous,
-    /// and clear the current buffer.
+    /// A cyclic buffer - cycling will move the values in Current into Previous,
+    /// and clear the Current buffer.
     /// Both buffers can be written to and inspected at any time.
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    /// <typeparam name="TInnerKey"> Dictionary key type</typeparam>
-    public class CycleBuffer<TKey, TInnerKey, TValue>
+    public class CycleBuffer<TKey, TValue>
     {
         TKey keyCurrent, keyPrevious;
-        DefaultDict<TInnerKey, HashSet<TValue>> previous { get; set; }
-        DefaultDict<TInnerKey, HashSet<TValue>> current { get; set; }
+        /// <summary>
+        /// Previous values (will be cleared on next Cycle)
+        /// </summary>
+        public ISet<TValue> Previous { get; protected set; }
+        /// <summary>
+        /// Current values (will be moved to Previous on next Cycle)
+        /// </summary>
+        public ISet<TValue> Current { get; protected set; }
 
         /// <summary>
         /// Construct a CycleBuffer with the given current/previous keys
@@ -367,55 +372,37 @@ namespace Engine.DataStructures
         {
             this.keyCurrent = keyCurrent;
             this.keyPrevious = keyPrevious;
-            previous = new DefaultDict<TInnerKey, HashSet<TValue>>();
-            current = new DefaultDict<TInnerKey, HashSet<TValue>>();
+            Previous = new HashSet<TValue>();
+            Current = new HashSet<TValue>();
         }
 
         /// <summary>
         /// Copy Constructor
         /// </summary>
         /// <param name="cycleBuffer"></param>
-        public CycleBuffer(CycleBuffer<TKey, TInnerKey, TValue> cycleBuffer)
+        public CycleBuffer(CycleBuffer<TKey, TValue> cycleBuffer)
         {
             keyCurrent = cycleBuffer.keyCurrent;
             keyPrevious = cycleBuffer.keyPrevious;
-            previous = new DefaultDict<TInnerKey, HashSet<TValue>>(cycleBuffer.previous);
-            current = new DefaultDict<TInnerKey, HashSet<TValue>>(cycleBuffer.current);
+            Previous = new HashSet<TValue>(cycleBuffer.Previous);
+            Current = new HashSet<TValue>(cycleBuffer.Current);
         }
 
         /// <summary>
-        /// Move current values to previous and clear current
-        /// </summary>
-        public void Cycle()
-        {
-            var temp = previous;
-            previous = current;
-            current = temp;
-            current.Clear();
-        }
-
-        /// <summary>
-        /// Gets the buffer of the given key
-        /// (returns null if the given key is not keyCurrent or keyPrevious)
+        /// Returns the requested buffer
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public DefaultDict<TInnerKey, HashSet<TValue>> this[TKey key]
-        {
-            get { return getBuffer(key); }
-        }
-
-        /// <summary>
-        /// Gets the HashSet associated with the given keys
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="innerKey"></param>
-        /// <returns></returns>
-        public HashSet<TValue> this[TKey key, TInnerKey innerKey]
+        public ISet<TValue> this[TKey key]
         {
             get
             {
-                return getInnerBuffer(key, innerKey);
+                if (key.Equals(keyCurrent))
+                    return Current;
+                else if (key.Equals(keyPrevious))
+                    return Previous;
+                else
+                    return null;
             }
         }
 
@@ -423,43 +410,157 @@ namespace Engine.DataStructures
         /// Add a value to one of the buffers
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="innerKey"></param>
         /// <param name="value"></param>
-        public void Add(TKey key, TInnerKey innerKey, TValue value)
+        public void Add(TKey key, TValue value)
         {
-            var bufferSet = this[key, innerKey];
-            if (bufferSet == null) return;
-            bufferSet.Add(value);
+            var buffer = this[key];
+            if (buffer == null) return;
+            buffer.Add(value);
+        }
+
+        /// <summary>
+        /// Clear both buffers
+        /// </summary>
+        public void Clear()
+        {
+            Current.Clear();
+            Previous.Clear();
+        }
+
+        /// <summary>
+        /// Move current values to previous and clear current
+        /// </summary>
+        public void Cycle()
+        {
+            var temp = Previous;
+            Previous = Current;
+            Current = temp;
+            Current.Clear();
         }
 
         /// <summary>
         /// Remove a value from one of the buffers
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="innerKey"></param>
         /// <param name="value"></param>
-        public void Remove(TKey key, TInnerKey innerKey, TValue value)
+        public void Remove(TKey key, TValue value)
         {
-            var bufferSet = this[key, innerKey];
-            if (bufferSet == null) return;
-            bufferSet.Remove(value);
+            var buffer = this[key];
+            if (buffer == null) return;
+            buffer.Remove(value);
+        }
+    }
+
+    /// <summary>
+    /// A cyclic buffer - cycling will move the values in Current into Previous,
+    /// and clear the Current buffer.
+    /// Both buffers can be written to and inspected at any time.
+    /// </summary>
+    /// <typeparam name="TBufferKey"></typeparam>
+    /// <typeparam name="TBufferInnerKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    public class CycleBuffer<TBufferKey, TBufferInnerKey, TValue>
+    {
+        TBufferKey keyCurrent, keyPrevious; 
+        Func<List<TValue>> defaultValueFunc = () => { return new List<TValue>(); };
+        
+        /// <summary>
+        /// Previous values (will be cleared on next Cycle)
+        /// </summary>
+        public DefaultDict<TBufferInnerKey, List<TValue>> Previous { get; protected set; }
+        /// <summary>
+        /// Current values (will be moved to Previous on next Cycle)
+        /// </summary>
+        public DefaultDict<TBufferInnerKey, List<TValue>> Current { get; protected set; }
+
+        /// <summary>
+        /// Construct a CycleBuffer with the given current/previous keys
+        /// </summary>
+        /// <param name="keyCurrent"></param>
+        /// <param name="keyPrevious"></param>
+        public CycleBuffer(TBufferKey keyCurrent, TBufferKey keyPrevious)
+        {
+            this.keyCurrent = keyCurrent;
+            this.keyPrevious = keyPrevious;
+            Previous = new DefaultDict<TBufferInnerKey, List<TValue>>(defaultValueFunc);
+            Current = new DefaultDict<TBufferInnerKey, List<TValue>>(defaultValueFunc);
         }
 
-        HashSet<TValue> getInnerBuffer(TKey key, TInnerKey innerKey)
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="cycleBuffer"></param>
+        public CycleBuffer(CycleBuffer<TBufferKey, TBufferInnerKey, TValue> cycleBuffer)
         {
-            var buffer = getBuffer(key);
-            if (buffer == null) return null;
-            return buffer[innerKey];
+            keyCurrent = cycleBuffer.keyCurrent;
+            keyPrevious = cycleBuffer.keyPrevious;
+            Previous = new DefaultDict<TBufferInnerKey, List<TValue>>(cycleBuffer.Previous);
+            Current = new DefaultDict<TBufferInnerKey, List<TValue>>(cycleBuffer.Current);
         }
 
-        DefaultDict<TInnerKey, HashSet<TValue>> getBuffer(TKey key)
+        /// <summary>
+        /// Returns the requested buffer
+        /// </summary>
+        /// <param name="key1"></param>
+        /// <param name="key2"></param>
+        /// <returns></returns>
+        public IList<TValue> this[TBufferKey key1, TBufferInnerKey key2]
         {
-            if (key.Equals(keyCurrent))
-                return current;
-            else if (key.Equals(keyPrevious))
-                return previous;
-            else
-                return null;
+            get
+            {
+                if (key1.Equals(keyCurrent))
+                    return Current[key2];
+                else if (key1.Equals(keyPrevious))
+                    return Previous[key2];
+                else
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// Add a value to one of the buffers
+        /// </summary>
+        /// <param name="key1"></param>
+        /// <param name="key2"></param>
+        /// <param name="value"></param>
+        public void Add(TBufferKey key1, TBufferInnerKey key2, TValue value)
+        {
+            var buffer = this[key1, key2];
+            if (buffer == null) return;
+            buffer.Add(value);
+        }
+
+        /// <summary>
+        /// Clear both buffers
+        /// </summary>
+        public void Clear()
+        {
+            Current.Clear();
+            Previous.Clear();
+        }
+
+        /// <summary>
+        /// Move current values to previous and clear current
+        /// </summary>
+        public void Cycle()
+        {
+            var temp = Previous;
+            Previous = Current;
+            Current = temp;
+            Current.Clear();
+        }
+
+        /// <summary>
+        /// Remove a value from one of the buffers
+        /// </summary>
+        /// <param name="key1"></param>
+        /// <param name="key2"></param>
+        /// <param name="value"></param>
+        public void Remove(TBufferKey key1, TBufferInnerKey key2, TValue value)
+        {
+            var buffer = this[key1, key2];
+            if (buffer == null) return;
+            buffer.Remove(value);
         }
     }
 }

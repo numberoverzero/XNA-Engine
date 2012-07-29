@@ -584,6 +584,11 @@
             The Bindings being tracked by the Manager
             </summary>
         </member>
+        <member name="P:Engine.Input.DefaultInputManager.InjectedPressedKeys">
+            <summary>
+            Programmatically injected binding presses
+            </summary>
+        </member>
         <member name="P:Engine.Input.DefaultInputManager.Settings">
             <summary>
             The InputSettings for this InputManager (trigger thresholds, etc)
@@ -596,14 +601,9 @@
                 stops checking for modifiers once no bindings use that modifier
             </summary>
         </member>
-        <member name="P:Engine.Input.DefaultInputManager.PreviousKeys">
+        <member name="P:Engine.Input.DefaultInputManager.PressedKeys">
             <summary>
-            Keys pressed in the previous frame
-            </summary>
-        </member>
-        <member name="P:Engine.Input.DefaultInputManager.CurrentKeys">
-            <summary>
-            Keys pressed in the current frame
+            Keys pressed in the current/previous frames
             </summary>
         </member>
         <member name="P:Engine.Input.DefaultInputManager.PreviousGamePadStates">
@@ -642,11 +642,6 @@
             <summary>
             Enable/Disable grabbing mouse state when updating the manager.
             Disable for performance when you know the user can't use a mouse, or no bindings will need the state of the mouse.
-            </summary>
-        </member>
-        <member name="P:Engine.Input.DefaultInputManager.InjectedPresses">
-            <summary>
-            Programmatically injected binding presses
             </summary>
         </member>
         <member name="P:Engine.Input.DefaultInputManager.Selected">
@@ -907,7 +902,7 @@
             </summary>
             <typeparam name="T">The type which maps to Colors for a certain LayerType</typeparam>
         </member>
-        <member name="T:Engine.DataStructures.MultiKeyDict`3">
+        <member name="T:Engine.DataStructures.MultiKeyObjDict`3">
             <summary>
             A DefaultDict that supports two keys.
             </summary>
@@ -915,23 +910,23 @@
             <typeparam name="TKey2">The second key type</typeparam>
             <typeparam name="TValue">The value type stored in the dictionary</typeparam>
         </member>
-        <member name="M:Engine.DataStructures.MultiKeyDict`3.#ctor">
+        <member name="M:Engine.DataStructures.MultiKeyObjDict`3.#ctor">
             <summary>
             Construct an empty Double-keyed dictionary
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.MultiKeyDict`3.#ctor(Engine.DataStructures.MultiKeyDict{`0,`1,`2})">
+        <member name="M:Engine.DataStructures.MultiKeyObjDict`3.#ctor(Engine.DataStructures.MultiKeyObjDict{`0,`1,`2})">
             <summary>
             Copy Constructor
             </summary>
             <param name="defaultMultiKeyDict"></param>
         </member>
-        <member name="M:Engine.DataStructures.MultiKeyDict`3.Clear">
+        <member name="M:Engine.DataStructures.MultiKeyObjDict`3.Clear">
             <summary>
             Clear all values from the DefaultMultiKeyDict
             </summary>
         </member>
-        <member name="P:Engine.DataStructures.MultiKeyDict`3.Item(`0,`1)">
+        <member name="P:Engine.DataStructures.MultiKeyObjDict`3.Item(`0,`1)">
             <summary>
             Gets or sets the value associated with the specified keys.
             </summary>
@@ -939,7 +934,7 @@
             <param name="key2">The second key of the value to get or set.</param>
             <returns></returns>
         </member>
-        <member name="P:Engine.DataStructures.MultiKeyDict`3.Keys">
+        <member name="P:Engine.DataStructures.MultiKeyObjDict`3.Keys">
             <summary>
             Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
             </summary>
@@ -1412,6 +1407,288 @@
             Any rendering done on top of the base
             </summary>
         </member>
+        <member name="T:Engine.DataStructures.DictionaryExtensions">
+            <summary>
+            Extensions that make certain lookup operations easier
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
+            <summary>
+            Tries to get a value from the dictionary.  If the dictionary
+            returns a null value for the value, returns a default value
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,System.Func{``1})">
+            <summary>
+            Tries to get a value from the dictionary.  If the dictionary
+            returns a null value for the value, returns the value from
+            a function which provides TValue objects
+            </summary>
+        </member>
+        <member name="T:Engine.DataStructures.DefaultDict`2">
+            <summary>
+            Uses TryGetValue for index-notation lookup
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor">
+            <summary>
+            Construct a DefaultDict whose fallback value is the public parameterless constructor of TValue
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor(System.Func{`1})">
+            <summary>
+            Construct a DefaultDict whose fallback value is generated by the given function
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+            Construct a DefaultDict from another IDict, with a fallback value function that is the
+            public parameterless constructor of TVale
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor(Engine.DataStructures.DefaultDict{`0,`1})">
+            <summary>
+            Copy Constructor - copies the other DefaultDict's defaultValueFunc
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="P:Engine.DataStructures.DefaultDict`2.Item(`0)">
+            <summary>
+            Gets or sets the value associated with the specified key.
+            </summary>
+            <param name="key">The key of the value to get or set.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.DataStructures.CountedSet`1">
+            <summary>
+            Provides an iterable set of unique entries.
+            Adding an item increases the count of that item by 1.
+            Removing an item decreases the count by 1.
+            When the count is zero, the value is removed from the set.
+            
+            The iterator is over unique values
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.#ctor">
+            <summary>
+            Construct an empty CountedSet
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Copy the values of an enumerable into a CountedSet.
+            Note that duplicates will increment the count, and are not included in the iterable set twice.
+            </summary>
+            <param name="enumerable"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.#ctor(Engine.DataStructures.CountedSet{`0})">
+            <summary>
+            Copy the values of another counted set, as well as the count for each item.
+            </summary>
+            <param name="countedSet"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.Add(`0)">
+            <summary>
+            Add an item to the set.  If the item is already present, simply increments that item's count.
+            </summary>
+            <param name="item">The item to add</param>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.Clear">
+            <summary>
+            Clear the set and all associated counts.
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.Contains(`0)">
+            <summary>
+            Checks if the specified item is present in the CountedSet.
+            </summary>
+            <param name="item">The item to look for.</param>
+            <returns>True if the item's count is greater than 0.</returns>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.Remove(`0)">
+            <summary>
+            Remove an item from the set.  If the item is present, simply decrements that item's count.
+            If the item's count is less than 1, the item is removed from the iterator.
+            </summary>
+            <param name="item">The item to remove</param>
+        </member>
+        <member name="M:Engine.DataStructures.CountedSet`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a Engine.Utility.CountedSet&lt;T&gt; object.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.DataStructures.CountedSet`1.Count">
+            <summary>
+            Gets the number of elements that are contained in the set.
+            </summary>
+        </member>
+        <member name="T:Engine.DataStructures.DoubleBuffer`1">
+            <summary>
+            Provides Push, Flip, and full Front inspection.
+            Does not support Pop or buffer folding (extend front with back instead of swapping and clearing)
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.DoubleBuffer`1.#ctor">
+            <summary>
+            Construct an empty DoubleBuffer
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DoubleBuffer`1.Flip">
+            <summary>
+            Flip Front and Back buffers
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DoubleBuffer`1.Push(`0)">
+            <summary>
+            Push a value onto the back buffer
+            </summary>
+            <param name="item">The item to push</param>
+        </member>
+        <member name="P:Engine.DataStructures.DoubleBuffer`1.Front">
+            <summary>
+            The current Front buffer.  Cannot be written to.
+            </summary>
+        </member>
+        <member name="P:Engine.DataStructures.DoubleBuffer`1.Back">
+            <summary>
+            The current Back buffer.  Can be written to.
+            </summary>
+        </member>
+        <member name="T:Engine.DataStructures.CycleBuffer`2">
+            <summary>
+            A cyclic buffer - cycling will move the values in Current into Previous,
+            and clear the Current buffer.
+            Both buffers can be written to and inspected at any time.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`2.#ctor(`0,`0)">
+            <summary>
+            Construct a CycleBuffer with the given current/previous keys
+            </summary>
+            <param name="keyCurrent"></param>
+            <param name="keyPrevious"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`2.#ctor(Engine.DataStructures.CycleBuffer{`0,`1})">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="cycleBuffer"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`2.Add(`0,`1)">
+            <summary>
+            Add a value to one of the buffers
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`2.Clear">
+            <summary>
+            Clear both buffers
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`2.Cycle">
+            <summary>
+            Move current values to previous and clear current
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`2.Remove(`0,`1)">
+            <summary>
+            Remove a value from one of the buffers
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="P:Engine.DataStructures.CycleBuffer`2.Previous">
+            <summary>
+            Previous values (will be cleared on next Cycle)
+            </summary>
+        </member>
+        <member name="P:Engine.DataStructures.CycleBuffer`2.Current">
+            <summary>
+            Current values (will be moved to Previous on next Cycle)
+            </summary>
+        </member>
+        <member name="P:Engine.DataStructures.CycleBuffer`2.Item(`0)">
+            <summary>
+            Returns the requested buffer
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.DataStructures.CycleBuffer`3">
+            <summary>
+            A cyclic buffer - cycling will move the values in Current into Previous,
+            and clear the Current buffer.
+            Both buffers can be written to and inspected at any time.
+            </summary>
+            <typeparam name="TBufferKey"></typeparam>
+            <typeparam name="TBufferInnerKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`3.#ctor(`0,`0)">
+            <summary>
+            Construct a CycleBuffer with the given current/previous keys
+            </summary>
+            <param name="keyCurrent"></param>
+            <param name="keyPrevious"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`3.#ctor(Engine.DataStructures.CycleBuffer{`0,`1,`2})">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="cycleBuffer"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`3.Add(`0,`1,`2)">
+            <summary>
+            Add a value to one of the buffers
+            </summary>
+            <param name="key1"></param>
+            <param name="key2"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`3.Clear">
+            <summary>
+            Clear both buffers
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`3.Cycle">
+            <summary>
+            Move current values to previous and clear current
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CycleBuffer`3.Remove(`0,`1,`2)">
+            <summary>
+            Remove a value from one of the buffers
+            </summary>
+            <param name="key1"></param>
+            <param name="key2"></param>
+            <param name="value"></param>
+        </member>
+        <member name="P:Engine.DataStructures.CycleBuffer`3.Previous">
+            <summary>
+            Previous values (will be cleared on next Cycle)
+            </summary>
+        </member>
+        <member name="P:Engine.DataStructures.CycleBuffer`3.Current">
+            <summary>
+            Current values (will be moved to Previous on next Cycle)
+            </summary>
+        </member>
+        <member name="P:Engine.DataStructures.CycleBuffer`3.Item(`0,`1)">
+            <summary>
+            Returns the requested buffer
+            </summary>
+            <param name="key1"></param>
+            <param name="key2"></param>
+            <returns></returns>
+        </member>
         <member name="T:Engine.Rendering.Pipeline.IRenderEffect">
             <summary>
             Renders an effect on a preEffect texture, out to a postEffect texture.
@@ -1442,6 +1719,81 @@
         <member name="M:Engine.Rendering.Pipeline.IRenderEffect.Reset">
             <summary>
             Reset any state the effect might track, such as camera deltas or elapsed game time
+            </summary>
+        </member>
+        <member name="T:Engine.Rendering.Effects.BloomSettings">
+            <summary>
+            Class holds all the settings used to tweak the bloom effect.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.Name">
+            <summary>
+            Name of a preset bloom setting, for display to the user.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomThreshold">
+            <summary>
+            Controls how bright a pixel needs to be before it will bloom.
+            Zero makes everything bloom equally, while higher values select
+            only brighter colors. Somewhere between 0.25 and 0.5 is good.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BlurAmount">
+            <summary>
+            Controls how much blurring is applied to the bloom image.
+            The typical range is from 1 up to 10 or so.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomIntensity">
+            <summary>
+            Controls the amount of the bloom and base images that
+            will be mixed into the final scene. Range 0 to 1.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BaseIntensity">
+            <summary>
+            Controls the amount of the bloom and base images that
+            will be mixed into the final scene. Range 0 to 1.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomSaturation">
+            <summary>
+            Independently control the color saturation of the bloom and
+            base images. Zero is totally desaturated, 1.0 leaves saturation
+            unchanged, while higher values increase the saturation level.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.BaseSaturation">
+            <summary>
+            Independently control the color saturation of the bloom and
+            base images. Zero is totally desaturated, 1.0 leaves saturation
+            unchanged, while higher values increase the saturation level.
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.Effects.BloomSettings.#ctor(System.String,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Constructs a new bloom settings descriptor.
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.Effects.BloomSettings.PresetSettings">
+            <summary>
+            Table of preset bloom settings, used by the sample program.
+            </summary>
+        </member>
+        <member name="T:Engine.Utility.EnumUtil">
+            <summary>
+            Provides iteration over the values of an enumeration
+            </summary>
+        </member>
+        <member name="T:Engine.Utility.Globals">
+            <summary>
+            Variables useful for enumeration and compatability
+            across various systems
+            </summary>
+        </member>
+        <member name="F:Engine.Utility.Globals.Players">
+            <summary>
+            Provides an in-order [1-4] list of PlayerIndex for loops
             </summary>
         </member>
         <member name="T:Engine.Camera.CameraMode">
@@ -2297,293 +2649,6 @@
             <param name="dimensions">Dimensions of the rectangle</param>
             <param name="rotation">Rotation in radians about the center</param>
             <param name="lineWidth">Width in pixels of the line</param>
-        </member>
-        <member name="T:Engine.Rendering.Effects.BloomSettings">
-            <summary>
-            Class holds all the settings used to tweak the bloom effect.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.Name">
-            <summary>
-            Name of a preset bloom setting, for display to the user.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomThreshold">
-            <summary>
-            Controls how bright a pixel needs to be before it will bloom.
-            Zero makes everything bloom equally, while higher values select
-            only brighter colors. Somewhere between 0.25 and 0.5 is good.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.BlurAmount">
-            <summary>
-            Controls how much blurring is applied to the bloom image.
-            The typical range is from 1 up to 10 or so.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomIntensity">
-            <summary>
-            Controls the amount of the bloom and base images that
-            will be mixed into the final scene. Range 0 to 1.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.BaseIntensity">
-            <summary>
-            Controls the amount of the bloom and base images that
-            will be mixed into the final scene. Range 0 to 1.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.BloomSaturation">
-            <summary>
-            Independently control the color saturation of the bloom and
-            base images. Zero is totally desaturated, 1.0 leaves saturation
-            unchanged, while higher values increase the saturation level.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.BaseSaturation">
-            <summary>
-            Independently control the color saturation of the bloom and
-            base images. Zero is totally desaturated, 1.0 leaves saturation
-            unchanged, while higher values increase the saturation level.
-            </summary>
-        </member>
-        <member name="M:Engine.Rendering.Effects.BloomSettings.#ctor(System.String,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
-            <summary>
-            Constructs a new bloom settings descriptor.
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.Effects.BloomSettings.PresetSettings">
-            <summary>
-            Table of preset bloom settings, used by the sample program.
-            </summary>
-        </member>
-        <member name="T:Engine.DataStructures.DictionaryExtensions">
-            <summary>
-            Extensions that make certain lookup operations easier
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
-            <summary>
-            Tries to get a value from the dictionary.  If the dictionary
-            returns a null value for the value, returns a default value
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,System.Func{``1})">
-            <summary>
-            Tries to get a value from the dictionary.  If the dictionary
-            returns a null value for the value, returns the value from
-            a function which provides TValue objects
-            </summary>
-        </member>
-        <member name="T:Engine.DataStructures.DefaultDict`2">
-            <summary>
-            Uses TryGetValue for index-notation lookup
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-        </member>
-        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor">
-            <summary>
-            Construct a DefaultDict whose fallback value is the public parameterless constructor of TValue
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor(System.Func{`1})">
-            <summary>
-            Construct a DefaultDict whose fallback value is generated by the given function
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
-            <summary>
-            Construct a DefaultDict from another IDict, with a fallback value function that is the
-            public parameterless constructor of TVale
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DefaultDict`2.#ctor(Engine.DataStructures.DefaultDict{`0,`1})">
-            <summary>
-            Copy Constructor - copies the other DefaultDict's defaultValueFunc
-            </summary>
-            <param name="other"></param>
-        </member>
-        <member name="P:Engine.DataStructures.DefaultDict`2.Item(`0)">
-            <summary>
-            Gets or sets the value associated with the specified key.
-            </summary>
-            <param name="key">The key of the value to get or set.</param>
-            <returns></returns>
-        </member>
-        <member name="T:Engine.DataStructures.CountedSet`1">
-            <summary>
-            Provides an iterable set of unique entries.
-            Adding an item increases the count of that item by 1.
-            Removing an item decreases the count by 1.
-            When the count is zero, the value is removed from the set.
-            
-            The iterator is over unique values
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.#ctor">
-            <summary>
-            Construct an empty CountedSet
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Copy the values of an enumerable into a CountedSet.
-            Note that duplicates will increment the count, and are not included in the iterable set twice.
-            </summary>
-            <param name="enumerable"></param>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.#ctor(Engine.DataStructures.CountedSet{`0})">
-            <summary>
-            Copy the values of another counted set, as well as the count for each item.
-            </summary>
-            <param name="countedSet"></param>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Add(`0)">
-            <summary>
-            Add an item to the set.  If the item is already present, simply increments that item's count.
-            </summary>
-            <param name="item">The item to add</param>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Clear">
-            <summary>
-            Clear the set and all associated counts.
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Contains(`0)">
-            <summary>
-            Checks if the specified item is present in the CountedSet.
-            </summary>
-            <param name="item">The item to look for.</param>
-            <returns>True if the item's count is greater than 0.</returns>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Remove(`0)">
-            <summary>
-            Remove an item from the set.  If the item is present, simply decrements that item's count.
-            If the item's count is less than 1, the item is removed from the iterator.
-            </summary>
-            <param name="item">The item to remove</param>
-        </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through a Engine.Utility.CountedSet&lt;T&gt; object.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:Engine.DataStructures.CountedSet`1.Count">
-            <summary>
-            Gets the number of elements that are contained in the set.
-            </summary>
-        </member>
-        <member name="T:Engine.DataStructures.DoubleBuffer`1">
-            <summary>
-            Provides Push, Flip, and full Front inspection.
-            Does not support Pop or buffer folding (extend front with back instead of swapping and clearing)
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Engine.DataStructures.DoubleBuffer`1.#ctor">
-            <summary>
-            Construct an empty DoubleBuffer
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DoubleBuffer`1.Flip">
-            <summary>
-            Flip Front and Back buffers
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DoubleBuffer`1.Push(`0)">
-            <summary>
-            Push a value onto the back buffer
-            </summary>
-            <param name="item">The item to push</param>
-        </member>
-        <member name="P:Engine.DataStructures.DoubleBuffer`1.Front">
-            <summary>
-            The current Front buffer.  Cannot be written to.
-            </summary>
-        </member>
-        <member name="P:Engine.DataStructures.DoubleBuffer`1.Back">
-            <summary>
-            The current Back buffer.  Can be written to.
-            </summary>
-        </member>
-        <member name="T:Engine.DataStructures.CycleBuffer`3">
-            <summary>
-            A cyclic buffer - cycling will move the values in current into previous,
-            and clear the current buffer.
-            Both buffers can be written to and inspected at any time.
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <typeparam name="TInnerKey"> Dictionary key type</typeparam>
-        </member>
-        <member name="M:Engine.DataStructures.CycleBuffer`3.#ctor(`0,`0)">
-            <summary>
-            Construct a CycleBuffer with the given current/previous keys
-            </summary>
-            <param name="keyCurrent"></param>
-            <param name="keyPrevious"></param>
-        </member>
-        <member name="M:Engine.DataStructures.CycleBuffer`3.#ctor(Engine.DataStructures.CycleBuffer{`0,`1,`2})">
-            <summary>
-            Copy Constructor
-            </summary>
-            <param name="cycleBuffer"></param>
-        </member>
-        <member name="M:Engine.DataStructures.CycleBuffer`3.Cycle">
-            <summary>
-            Move current values to previous and clear current
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.CycleBuffer`3.Add(`0,`1,`2)">
-            <summary>
-            Add a value to one of the buffers
-            </summary>
-            <param name="key"></param>
-            <param name="innerKey"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:Engine.DataStructures.CycleBuffer`3.Remove(`0,`1,`2)">
-            <summary>
-            Remove a value from one of the buffers
-            </summary>
-            <param name="key"></param>
-            <param name="innerKey"></param>
-            <param name="value"></param>
-        </member>
-        <member name="P:Engine.DataStructures.CycleBuffer`3.Item(`0)">
-            <summary>
-            Gets the buffer of the given key
-            (returns null if the given key is not keyCurrent or keyPrevious)
-            </summary>
-            <param name="key"></param>
-            <returns></returns>
-        </member>
-        <member name="P:Engine.DataStructures.CycleBuffer`3.Item(`0,`1)">
-            <summary>
-            Gets the HashSet associated with the given keys
-            </summary>
-            <param name="key"></param>
-            <param name="innerKey"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Engine.Utility.EnumUtil">
-            <summary>
-            Provides iteration over the values of an enumeration
-            </summary>
-        </member>
-        <member name="T:Engine.Utility.Globals">
-            <summary>
-            Variables useful for enumeration and compatability
-            across various systems
-            </summary>
-        </member>
-        <member name="F:Engine.Utility.Globals.Players">
-            <summary>
-            Provides an in-order [1-4] list of PlayerIndex for loops
-            </summary>
         </member>
     </members>
 </doc>

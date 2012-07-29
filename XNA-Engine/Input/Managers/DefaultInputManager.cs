@@ -21,7 +21,12 @@ namespace Engine.Input
         /// <summary>
         /// The Bindings being tracked by the Manager
         /// </summary>
-        public MultiKeyDict<String, PlayerIndex, List<IBinding>> Bindings { get; protected set; }
+        public MultiKeyObjDict<String, PlayerIndex, List<IBinding>> Bindings { get; protected set; }
+
+        /// <summary>
+        /// Programmatically injected binding presses
+        /// </summary>
+        public CycleBuffer<FrameState, PlayerIndex, string> InjectedPressedKeys { get; protected set; }
 
         /// <summary>
         /// The InputSettings for this InputManager (trigger thresholds, etc)
@@ -43,14 +48,9 @@ namespace Engine.Input
         #region Previous/Current States
 
         /// <summary>
-        /// Keys pressed in the previous frame
+        /// Keys pressed in the current/previous frames
         /// </summary>
-        public ISet<Keys> PreviousKeys { get; protected set; }
-
-        /// <summary>
-        /// Keys pressed in the current frame
-        /// </summary>
-        public ISet<Keys> CurrentKeys { get; protected set; }
+        public CycleBuffer<FrameState, Keys> PressedKeys { get; protected set; }
 
         /// <summary>
         /// GamePadState for the previous frame
@@ -142,15 +142,6 @@ namespace Engine.Input
         }
         #endregion
 
-        #region Programmatic Key Injection
-
-        /// <summary>
-        /// Programmatically injected binding presses
-        /// </summary>
-        public CycleBuffer<FrameState, PlayerIndex, string> InjectedPresses { get; protected set; }
-
-        #endregion
-
         #endregion
 
         #region Initialization
@@ -161,13 +152,15 @@ namespace Engine.Input
         public DefaultInputManager()
         {
             Settings = new InputSettings(0,0);
-            Bindings = new MultiKeyDict<String, PlayerIndex, List<IBinding>>();
+            Bindings = new MultiKeyObjDict<String, PlayerIndex, List<IBinding>>();
             Modifiers = new CountedSet<IBinding>();
-            
-            InjectedPresses = new CycleBuffer<FrameState, PlayerIndex, string>(FrameState.Current, FrameState.Previous);
+
+            InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(FrameState.Current, FrameState.Previous);
             BufferedText = new DoubleBuffer<char>();
-            PreviousKeys = new HashSet<Keys>();
-            CurrentKeys = new HashSet<Keys>();
+            //PreviousKeys = new HashSet<Keys>();
+            //CurrentKeys = new HashSet<Keys>();
+            PressedKeys = new CycleBuffer<FrameState, Keys>(FrameState.Current, FrameState.Previous);
+
             IsPollingGamePads = IsPollingMouse = true;
             isPollingKeyboard = false;
             EventInput.KeyboardDispatcher.RegisterListener(this);
@@ -179,8 +172,9 @@ namespace Engine.Input
         /// <param name="input"></param>
         public DefaultInputManager(DefaultInputManager input)
         {
-            PreviousKeys = new HashSet<Keys>(input.PreviousKeys);
-            CurrentKeys = new HashSet<Keys>(input.CurrentKeys);
+            //PreviousKeys = new HashSet<Keys>(input.PreviousKeys);
+            //CurrentKeys = new HashSet<Keys>(input.CurrentKeys);
+            PressedKeys = new CycleBuffer<FrameState, Microsoft.Xna.Framework.Input.Keys>(input.PressedKeys);
 
             PreviousGamePadStates = new Dictionary<PlayerIndex, GamePadState>(input.PreviousGamePadStates);
             CurrentGamePadStates = new Dictionary<PlayerIndex, GamePadState>(input.CurrentGamePadStates);
@@ -190,10 +184,10 @@ namespace Engine.Input
             CurrentMouseState = input.CurrentMouseState;
 
             Settings = new InputSettings(input.Settings);
-            Bindings = new MultiKeyDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
+            Bindings = new MultiKeyObjDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
             Modifiers = new CountedSet<IBinding>(input.Modifiers);
 
-            InjectedPresses = new CycleBuffer<FrameState, PlayerIndex, string>(input.InjectedPresses);
+            InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(input.InjectedPressedKeys);
 
             IsPollingGamePads = input.IsPollingGamePads;
             isPollingKeyboard = input.isPollingKeyboard;
@@ -268,8 +262,9 @@ namespace Engine.Input
 
             if (bindings.Count == 0)
             {
-                InjectedPresses.Remove(FrameState.Current, player, bindingName);
-                InjectedPresses.Remove(FrameState.Previous, player, bindingName);
+                InjectedPressedKeys[FrameState.Current, player].Remove(bindingName);
+                InjectedPressedKeys[FrameState.Previous, player].Remove(bindingName);
+                
             }
             
         }
@@ -342,7 +337,7 @@ namespace Engine.Input
                 return false;
             
             //var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
-            var injectedPresses = InjectedPresses[state, player];
+            var injectedPresses = InjectedPressedKeys[state, player];
             bool isInjected = injectedPresses.Contains(bindingName);
             if (isInjected)
                 return true;
@@ -425,7 +420,8 @@ namespace Engine.Input
         public void Press(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player)) return;
-            InjectedPresses.Add(state, player, bindingName);
+            //InjectedPresses.Add(state, player, bindingName);
+            InjectedPressedKeys[state, player].Add(bindingName);
         }
 
         /// <summary>
@@ -438,7 +434,7 @@ namespace Engine.Input
         public void Release(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player)) return;
-            InjectedPresses.Remove(state, player, bindingName);
+            InjectedPressedKeys[state, player].Remove(bindingName);
         }
 
         #endregion
@@ -506,7 +502,7 @@ namespace Engine.Input
         /// <param name="key"></param>
         public void ReceiveSpecialInput(Keys key)
         {
-            CurrentKeys.Add(key);
+            PressedKeys[FrameState.Current].Add(key);
         }
 
         /// <summary>
@@ -555,8 +551,6 @@ namespace Engine.Input
         /// </remarks>
         public virtual void Update()
         {
-            BufferedText.Flip();
-
             if (IsPollingGamePads)
             {
                 foreach (var player in Globals.Players)
@@ -572,12 +566,9 @@ namespace Engine.Input
                 CurrentMouseState = Mouse.GetState();
             }
 
-            var temp = PreviousKeys;
-            PreviousKeys = CurrentKeys;
-            CurrentKeys = PreviousKeys;
-            CurrentKeys.Clear();
-
-            InjectedPresses.Cycle();
+            InjectedPressedKeys.Cycle();
+            PressedKeys.Cycle();
+            BufferedText.Flip();
         }
     }
 }
