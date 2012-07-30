@@ -4,47 +4,47 @@
         <name>Engine</name>
     </assembly>
     <members>
-        <member name="T:Engine.DataStructures.FloatFn">
+        <member name="T:Engine.Utility.FloatFn">
             <summary>
             A function which is closed over floats
             (they don't necessarily make guarantees about accuracy)
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.FloatFn.At(System.Single)">
+        <member name="M:Engine.Utility.FloatFn.At(System.Single)">
             <summary>
             Returns the value of the function at a given t value
             </summary>
             <param name="t">The point at which the function is being evaluated</param>
             <returns></returns>
         </member>
-        <member name="T:Engine.DataStructures.OscillatingFn">
+        <member name="T:Engine.Utility.OscillatingFn">
             <summary>
             Returns values which oscillate on initial + [-mag, mag]
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.OscillatingFn.#ctor(System.Single,System.Single,System.Single)">
+        <member name="M:Engine.Utility.OscillatingFn.#ctor(System.Single,System.Single,System.Single)">
             <summary>
             Returns values which oscillate on initial + [-mag, mag]
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.OscillatingFn.At(System.Single)">
+        <member name="M:Engine.Utility.OscillatingFn.At(System.Single)">
             <summary>
             Returns the value of the function at a given t value
             </summary>
             <param name="t">The point at which the function is being evaluated</param>
             <returns></returns>
         </member>
-        <member name="T:Engine.DataStructures.DecayFn">
+        <member name="T:Engine.Utility.DecayFn">
             <summary>
             Returns values of the form initial + mag*e^(-d*t)
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.DecayFn.#ctor(System.Single,System.Single,System.Single)">
+        <member name="M:Engine.Utility.DecayFn.#ctor(System.Single,System.Single,System.Single)">
             <summary>
             Returns values of the form initial + mag*e^(-d*t)
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.DecayFn.At(System.Single)">
+        <member name="M:Engine.Utility.DecayFn.At(System.Single)">
             <summary>
             Returns the value of the function at a given t value
             </summary>
@@ -107,89 +107,12 @@
             Any modifiers required for this binding to be considered 'active'
             </summary>
         </member>
-        <member name="T:Engine.Camera.CameraEffect">
-            <summary>
-            Modifies the position, scale, or rotation of a camera.
-            Care should be taken that a CameraEffect never lets net scale = 0
-            </summary>
-        </member>
-        <member name="M:Engine.Camera.CameraEffect.scaleX">
-            <summary>
-            Always multiply by camera scale so that we don't hit a scale of 0.
-            Original equation was scale *= (1 + offsetScale)
-            New equation is scale += offsetScale
-            We can keep the functionality by ultiplying by camera scale in this equation
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Camera.CameraEffect.scaleY">
-            <summary>
-            Always multiply by camera scale so that we don't hit a scale of 0.
-            Original equation was scale *= (1 + offsetScale)
-            New equation is scale += offsetScale
-            We can keep the functionality by ultiplying by camera scale in this equation
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:Engine.Camera.CameraEffect.t">
-            <summary>
-            Percent of effect elapsed- t in [0, 1]
-            </summary>
-        </member>
-        <member name="T:Engine.Camera.DampedOscillationEffect">
-            <summary>
-            This effect doesn't impact the camera in any way
-            However, it keeps the CameraEffect cleaner (not all effects need freq, decay, mag)
-            and prevents repitition of variables in subclasses (Shake, Bounce)
-            </summary>
-        </member>
-        <member name="T:Engine.Camera.CameraShakeEffect">
-            <summary>
-            Creates a radial shake effect, using damped oscillation
-            One pass goes from 0 -> mag -> 0 -> -mag -> 0
-            Specify the number of passes to make via frequency
-            </summary>
-        </member>
-        <member name="M:Engine.Camera.CameraShakeEffect.#ctor(Engine.Camera.Camera,System.Single,System.Single,System.Single,System.Single)">
-            <summary>
-            Applys a rotation effect that oscillates from -mag to +mag and decays over time.
-            </summary>
-            <param name="camera">The camera the effect is applied to</param>
-            <param name="dur">Duration in ms for the effect to occur over</param>
-            <param name="decay">Decay coeffecient of the shaking.  Use 0 for no decay</param>
-            <param name="mag">Maximum magnitude in radians for the camera to rotate</param>
-            <param name="freq">Number of times the camera makes a full left -> right -> left pass</param>
-        </member>
-        <member name="T:Engine.Camera.CameraBounceEffect">
-            <summary>
-            Creates a 'pop' or bounce effect, using damped oscillation
-            One pass goes from 0 -> cameraScale * mag -> 0 -> -cameraScale * mag -> 0
-            Specify the number of passes to make via frequency
-            </summary>
-        </member>
-        <member name="M:Engine.Camera.CameraBounceEffect.#ctor(Engine.Camera.Camera,System.Single,System.Single,System.Single,System.Single)">
-            <summary>
-            Applys a scale effect that oscillates from (1 - mag) to (1 + mag) and decays over time.
-            </summary>
-            <param name="camera">The camera the effect is applied to</param>
-            <param name="dur">Duration in ms for the effect to occur over</param>
-            <param name="decay">Decay coeffecient of the zoom.  Use 0 for no decay</param>
-            <param name="mag">Maximum magnitude in percent original zoom to move by</param>
-            <param name="freq">Number of times the camera makes a full in -> out -> in pass</param>
-        </member>
-        <member name="T:Engine.Camera.CameraFlipEffect">
-            <summary>
-            Flips the camera about its x- or y-axis, or both.
-            Because this effect modifies camera scale directly, 
-            take care when combining with other effects that modify scale.
-            </summary>
-        </member>
-        <member name="T:Engine.DataStructures.GraphicsDeviceExtensions">
+        <member name="T:Engine.Utility.GraphicsDeviceExtensions">
             <summary>
             Extensions for easily creating RenderTargets and the like
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.GraphicsDeviceExtensions.CreateFullscreenRenderTarget(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Boolean)">
+        <member name="M:Engine.Utility.GraphicsDeviceExtensions.CreateFullscreenRenderTarget(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Boolean)">
             <summary>
             Because this method takes a boolean, it will never pass a RenderTargetUsage of PlatformContents,
             only PreserveContents or DiscardContents.
@@ -198,7 +121,7 @@
             <param name="preserveContents"></param>
             <returns></returns>
         </member>
-        <member name="M:Engine.DataStructures.GraphicsDeviceExtensions.CreateFullscreenRenderTarget(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.RenderTargetUsage)">
+        <member name="M:Engine.Utility.GraphicsDeviceExtensions.CreateFullscreenRenderTarget(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Graphics.RenderTargetUsage)">
             <summary>
             Create a RenderTarget with a given RenderTargetUsage
             </summary>
@@ -1164,26 +1087,26 @@
             but such a check isn't strictly required.
             </summary>
         </member>
-        <member name="T:Engine.DataStructures.Vector2Extensions">
+        <member name="T:Engine.Utility.Vector2Extensions">
             <summary>
             Adds a few handy Vector methods, such as "AsAngle" and "RotateAbout"
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.Vector2Extensions.AsAngle(Microsoft.Xna.Framework.Vector2)">
+        <member name="M:Engine.Utility.Vector2Extensions.AsAngle(Microsoft.Xna.Framework.Vector2)">
             <summary>
             Returns the angle of the vector, counter-clockwise from +x
             </summary>
             <param name="direction"></param>
             <returns></returns>
         </member>
-        <member name="M:Engine.DataStructures.Vector2Extensions.Copy(Microsoft.Xna.Framework.Vector2)">
+        <member name="M:Engine.Utility.Vector2Extensions.Copy(Microsoft.Xna.Framework.Vector2)">
             <summary>
             Returns a copy of the vector
             </summary>
             <param name="other">The vector to copy</param>
             <returns></returns>
         </member>
-        <member name="M:Engine.DataStructures.Vector2Extensions.RotateAbout(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,System.Single)">
+        <member name="M:Engine.Utility.Vector2Extensions.RotateAbout(Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,System.Single)">
             <summary>
             Returns a Vector2 of the given vector rotated about an origin, by an angle theta (in raidans)
             </summary>
@@ -1907,19 +1830,19 @@
             to its equivalent 'old' field
             </summary>
         </member>
-        <member name="M:Engine.Camera.Camera.AddEffect(Engine.Camera.CameraEffect)">
+        <member name="M:Engine.Camera.Camera.AddEffect(Engine.Camera.Effects.CameraEffect)">
             <summary>
             Add an effect to this camera
             </summary>
             <param name="effect">The CameraEffect to add</param>
         </member>
-        <member name="M:Engine.Camera.Camera.RemoveEffect(Engine.Camera.CameraEffect)">
+        <member name="M:Engine.Camera.Camera.RemoveEffect(Engine.Camera.Effects.CameraEffect)">
             <summary>
             Remove an effect from this camera
             </summary>
             <param name="effect">The effect to remove</param>
         </member>
-        <member name="M:Engine.Camera.Camera.EndEffect(Engine.Camera.CameraEffect)">
+        <member name="M:Engine.Camera.Camera.EndEffect(Engine.Camera.Effects.CameraEffect)">
             <summary>
             Immediately end a camera effect, regardless of its remaining duration
             </summary>
@@ -1983,19 +1906,19 @@
             batch.Begin(SpriteSortMode, BlendState, SamplerState, DepthStencilState, RasterizerState, Effect, camera.TransformMatrix);
             </summary>
         </member>
-        <member name="T:Engine.DataStructures.ColorTextureGenerator">
+        <member name="T:Engine.Utility.ColorTextureGenerator">
             <summary>
             Creates single color textures (i.e. for drawing rectangles).
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+        <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
             <summary>
             Creates a 1x1 pixel black texture.
             </summary>
             <param name="graphicsDevice">The graphics device to use.</param>
             <returns>The newly created texture.</returns>
         </member>
-        <member name="M:Engine.DataStructures.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Color)">
+        <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Color)">
             <summary>
             Creates a 1x1 pixel texture of the specified color.
             </summary>
@@ -2003,7 +1926,7 @@
             <param name="color">The color to set the texture to.</param>
             <returns>The newly created texture.</returns>
         </member>
-        <member name="M:Engine.DataStructures.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Int32,System.Int32,Microsoft.Xna.Framework.Color)">
+        <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Int32,System.Int32,Microsoft.Xna.Framework.Color)">
             <summary>
             Creates a texture of the specified color.
             </summary>
@@ -2070,6 +1993,24 @@
         <member name="M:Engine.Rendering.Effects.RepeaterEffect.Reset">
             <summary>
             Reset any state the effect might track, such as camera deltas or elapsed game time
+            </summary>
+        </member>
+        <member name="T:Engine.DataStructures.DictionaryExtensions">
+            <summary>
+            Extensions that make certain lookup operations easier
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
+            <summary>
+            Tries to get a value from the dictionary.  If the dictionary
+            returns a null value for the value, returns a default value
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,System.Func{``1})">
+            <summary>
+            Tries to get a value from the dictionary.  If the dictionary
+            returns a null value for the value, returns the value from
+            a function which provides TValue objects
             </summary>
         </member>
         <member name="T:Engine.Tiles.TileManager`1">
@@ -2368,24 +2309,6 @@
             <param name="rotation">Rotation in radians about the center</param>
             <param name="lineWidth">Width in pixels of the line</param>
         </member>
-        <member name="T:Engine.DataStructures.DictionaryExtensions">
-            <summary>
-            Extensions that make certain lookup operations easier
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
-            <summary>
-            Tries to get a value from the dictionary.  If the dictionary
-            returns a null value for the value, returns a default value
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.DictionaryExtensions.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,System.Func{``1})">
-            <summary>
-            Tries to get a value from the dictionary.  If the dictionary
-            returns a null value for the value, returns the value from
-            a function which provides TValue objects
-            </summary>
-        </member>
         <member name="T:Engine.DataStructures.DefaultDict`2">
             <summary>
             Uses TryGetValue for index-notation lookup
@@ -2649,6 +2572,149 @@
             <param name="key1"></param>
             <param name="key2"></param>
             <returns></returns>
+        </member>
+        <member name="T:Engine.Camera.Effects.CameraEffect">
+            <summary>
+            Modifies the position, scale, or rotation of a camera.
+            Care should be taken that a CameraEffect never lets net scale = 0
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Effects.CameraEffect.camera">
+            <summary>
+            The Camera the effect is being applied to
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Effects.CameraEffect.elapsed">
+            <summary>
+            Elapsed time in seconds of the effect
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.Effects.CameraEffect.dur">
+            <summary>
+            Duration in seconds of the effect
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.#ctor(Engine.Camera.Camera,System.Single)">
+            <summary>
+            Construct a camera effect on the target camera for dur seconds
+            </summary>
+            <param name="camera"></param>
+            <param name="dur"></param>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.Update(System.Single)">
+            <summary>
+            Update the camera effect - elapsed time may be incremented past duration
+            </summary>
+            <param name="dt"></param>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.Reset">
+            <summary>
+            Reset the camera effect to its original state
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.End">
+            <summary>
+            End the camera effect immediately.
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.offsetX">
+            <summary>
+            x pos offset of the camera caused by the effect
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.offsetY">
+            <summary>
+            y pos offset of the camera caused by the effect
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.scaleX">
+            <summary>
+            Always multiply by camera scale so that we don't hit a scale of 0.
+            Original equation was scale *= (1 + offsetScale)
+            New equation is scale += offsetScale
+            We can keep the functionality by ultiplying by camera scale in this equation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.scaleY">
+            <summary>
+            Always multiply by camera scale so that we don't hit a scale of 0.
+            Original equation was scale *= (1 + offsetScale)
+            New equation is scale += offsetScale
+            We can keep the functionality by multiplying by camera scale in this equation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraEffect.rotation">
+            <summary>
+            Rotation of the camera caused by the effect
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Camera.Effects.CameraEffect.t">
+            <summary>
+            Percent of effect elapsed- t in [0, 1]
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Effects.CameraEffect.IsActive">
+            <summary>
+            True if 0 &lt; dur &lt;= elapsed
+            </summary>
+        </member>
+        <member name="P:Engine.Camera.Effects.CameraEffect.Offsets">
+            <summary>
+            Returns the offsets used in calculating the camera transform matrix
+            </summary>
+        </member>
+        <member name="T:Engine.Camera.Effects.DampedOscillationEffect">
+            <summary>
+            This effect doesn't impact the camera in any way
+            However, it keeps the CameraEffect cleaner (not all effects need freq, decay, mag)
+            and prevents repitition of variables in subclasses (Shake, Bounce)
+            </summary>
+        </member>
+        <member name="T:Engine.Camera.Effects.CameraShakeEffect">
+            <summary>
+            Creates a radial shake effect, using damped oscillation
+            One pass goes from 0 -> mag -> 0 -> -mag -> 0
+            Specify the number of passes to make via frequency
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraShakeEffect.#ctor(Engine.Camera.Camera,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Applys a rotation effect that oscillates from -mag to +mag and decays over time.
+            </summary>
+            <param name="camera">The camera the effect is applied to</param>
+            <param name="dur">Duration in ms for the effect to occur over</param>
+            <param name="decay">Decay coeffecient of the shaking.  Use 0 for no decay</param>
+            <param name="mag">Maximum magnitude in radians for the camera to rotate</param>
+            <param name="freq">Number of times the camera makes a full left -> right -> left pass</param>
+        </member>
+        <member name="T:Engine.Camera.Effects.CameraBounceEffect">
+            <summary>
+            Creates a 'pop' or bounce effect, using damped oscillation
+            One pass goes from 0 -> cameraScale * mag -> 0 -> -cameraScale * mag -> 0
+            Specify the number of passes to make via frequency
+            </summary>
+        </member>
+        <member name="M:Engine.Camera.Effects.CameraBounceEffect.#ctor(Engine.Camera.Camera,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Applys a scale effect that oscillates from (1 - mag) to (1 + mag) and decays over time.
+            </summary>
+            <param name="camera">The camera the effect is applied to</param>
+            <param name="dur">Duration in ms for the effect to occur over</param>
+            <param name="decay">Decay coeffecient of the zoom.  Use 0 for no decay</param>
+            <param name="mag">Maximum magnitude in percent original zoom to move by</param>
+            <param name="freq">Number of times the camera makes a full in -> out -> in pass</param>
+        </member>
+        <member name="T:Engine.Camera.Effects.CameraFlipEffect">
+            <summary>
+            Flips the camera about its x- or y-axis, or both.
+            Because this effect modifies camera scale directly, 
+            take care when combining with other effects that modify scale.
+            </summary>
         </member>
     </members>
 </doc>

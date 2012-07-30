@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Engine.DataStructures;
+using Engine.Utility;
 
 namespace Engine.Entities.Behaviors
 {

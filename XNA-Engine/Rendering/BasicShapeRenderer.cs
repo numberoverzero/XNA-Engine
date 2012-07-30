@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Engine.DataStructures;
+using Engine.Utility;
 
 namespace Engine.Rendering
 {

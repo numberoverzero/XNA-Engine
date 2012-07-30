@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Engine.Rendering.Pipeline;
-using Engine.DataStructures;
+using Engine.Utility;
 
 namespace Engine.Rendering.Effects
 {

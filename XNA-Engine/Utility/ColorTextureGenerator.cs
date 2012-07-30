@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Engine.DataStructures
+namespace Engine.Utility
 {
     /// <summary>
     /// Creates single color textures (i.e. for drawing rectangles).

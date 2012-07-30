@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Engine.Entities;
+using Engine.Camera.Effects;
 
 #endregion
 
@@ -334,8 +335,7 @@ namespace Engine.Camera
             foreach (var effect in deadEffects)
             {
                 // Give the effect a chance to clean up
-                effect.End();
-                effects.Remove(effect);
+                RemoveEffect(effect);
             }
         }
 

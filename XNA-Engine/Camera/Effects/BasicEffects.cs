@@ -3,107 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Engine.DataStructures;
+using Engine.Utility;
 
-namespace Engine.Camera
+namespace Engine.Camera.Effects
 {
-    #region CameraEffects
-
-    /// <summary>
-    /// Modifies the position, scale, or rotation of a camera.
-    /// Care should be taken that a CameraEffect never lets net scale = 0
-    /// </summary>
-    public class CameraEffect
-    {
-        protected Camera camera;
-        protected float elapsed;
-        protected float dur;
-
-        /// <summary>
-        /// Percent of effect elapsed- t in [0, 1]
-        /// </summary>
-        protected float t
-        {
-            get
-            {
-                if (dur == 0)
-                    return 0;
-                return MathHelper.Clamp(elapsed / dur, 0, 1);
-            }
-        }
-
-        public bool IsActive
-        {
-            get { return dur > 0 && elapsed <= dur; }
-        }
-
-        public CameraEffect(Camera camera, float dur)
-        {
-            elapsed = 0;
-            this.camera = camera;
-            this.dur = dur / 1000f;
-        }
-
-        public virtual void Update(float dt)
-        {
-            elapsed += dt;
-        }
-
-        public virtual void Reset()
-        {
-            elapsed = 0;
-        }
-
-        public virtual void End()
-        {
-            elapsed = dur = 0;
-            camera = null;
-        }
-
-        public float[] Offsets
-        {
-            get
-            {
-                float[] offsets = new float[5];
-                offsets[0] = offsetX();
-                offsets[1] = offsetY();
-                offsets[2] = rotation();
-                offsets[3] = scaleX();
-                offsets[4] = scaleY();
-                return offsets;
-            }
-        }
-
-        protected virtual float offsetX() { return 0; }
-        protected virtual float offsetY() { return 0; }
-
-        /// <summary>
-        /// Always multiply by camera scale so that we don't hit a scale of 0.
-        /// Original equation was scale *= (1 + offsetScale)
-        /// New equation is scale += offsetScale
-        /// We can keep the functionality by ultiplying by camera scale in this equation
-        /// </summary>
-        /// <returns></returns>
-        protected virtual float scaleX() { return 0; }
-
-        /// <summary>
-        /// Always multiply by camera scale so that we don't hit a scale of 0.
-        /// Original equation was scale *= (1 + offsetScale)
-        /// New equation is scale += offsetScale
-        /// We can keep the functionality by ultiplying by camera scale in this equation
-        /// </summary>
-        /// <returns></returns>
-        protected virtual float scaleY() { return 0; }
-
-        protected virtual float rotation() { return 0; }
-    }
-
     /// <summary>
     /// This effect doesn't impact the camera in any way
     /// However, it keeps the CameraEffect cleaner (not all effects need freq, decay, mag)
     /// and prevents repitition of variables in subclasses (Shake, Bounce)
     /// </summary>
-    public class DampedOscillationEffect : CameraEffect
+    public abstract class DampedOscillationEffect : CameraEffect
     {
         protected float decay;
         protected float mag;
@@ -228,6 +137,4 @@ namespace Engine.Camera
             camera.Scale = tempScale;
         }
     }
-
-    #endregion
 }

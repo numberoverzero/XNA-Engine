@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 #endregion
 
-namespace Engine.DataStructures
+namespace Engine.Utility
 {
     /// <summary>
     /// Extensions for easily creating RenderTargets and the like
