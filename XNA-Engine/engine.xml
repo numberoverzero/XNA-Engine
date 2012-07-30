@@ -107,6 +107,67 @@
             Any modifiers required for this binding to be considered 'active'
             </summary>
         </member>
+        <member name="T:Engine.Events.GameObjectEvents.GameObjectDestroyedEvent">
+            <summary>
+            Event when a GameObject is destroyed
+            </summary>
+        </member>
+        <member name="T:Engine.Events.GameEvent">
+            <summary>
+            An event fired relating to some change in game state.
+            Can be used for signaling changes in state, units,
+            environment, etc
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEvent.src">
+            <summary>
+            The firing GameObject (may be null)
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEvent.dst">
+            <summary>
+            The receiving GameObject (may be null)
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEvent.args">
+            <summary>
+            Any arguments related to the event
+            </summary>
+        </member>
+        <member name="M:Engine.Events.GameEvent.#ctor(Engine.Entities.GameObject,Engine.Entities.GameObject,Engine.Events.GameEventArgs,System.Single)">
+            <summary>
+            Construct a GameEvent that will be fired after timeToSend has elapsed
+            </summary>
+            <param name="src"></param>
+            <param name="dst"></param>
+            <param name="args"></param>
+            <param name="timeToSend"></param>
+        </member>
+        <member name="M:Engine.Events.GameEvent.Update(System.Single)">
+            <summary>
+            Update the GameEvent, and fire it if the elapsed time since creation
+            is >= timeToSend
+            </summary>
+            <param name="dt"></param>
+        </member>
+        <member name="P:Engine.Events.GameEvent.HasFired">
+            <summary>
+            Whether or not the event has been fired
+            (at least once)
+            </summary>
+        </member>
+        <member name="M:Engine.Events.GameObjectEvents.GameObjectDestroyedEvent.#ctor(Engine.Entities.GameObject)">
+            <summary>
+            Construct an event when a GameObject is destroyed.
+            It is not required that object destruction fire an event
+            </summary>
+            <param name="src"></param>
+        </member>
+        <member name="P:Engine.Events.GameObjectEvents.GameObjectDestroyedEvent.GameObject">
+            <summary>
+            The GameObject destroyed
+            </summary>
+        </member>
         <member name="T:Engine.DataStructures.DefaultDict`2">
             <summary>
             Uses TryGetValue for index-notation lookup
@@ -164,6 +225,27 @@
             <param name="graphicsDevice"></param>
             <param name="renderTargetUsage"></param>
             <returns></returns>
+        </member>
+        <member name="T:Engine.Events.GameEventArgs">
+            <summary>
+            The arguments of a GameEvent
+            </summary>
+        </member>
+        <member name="M:Engine.Events.GameEventArgs.#ctor">
+            <summary>
+            Empty GameEvent
+            </summary>
+        </member>
+        <member name="M:Engine.Events.GameEventArgs.#ctor(System.String)">
+            <summary>
+            GameEvent with a given message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="P:Engine.Events.GameEventArgs.msg">
+            <summary>
+            Message describing the event or providing additional metadata
+            </summary>
         </member>
         <member name="T:Engine.Input.BasicInputManager">
             <summary>
@@ -667,6 +749,25 @@
             <param name="player"></param>
             <param name="key"></param>
             <param name="modifiers"></param>
+        </member>
+        <member name="T:Engine.Events.EventWatchers.IEventWatcher">
+            <summary>
+            Watches events and reacts to them.
+            
+            Can respond to events when they are created, when they're fired, when they die, etc...
+            </summary>
+        </member>
+        <member name="M:Engine.Events.EventWatchers.IEventWatcher.GetWatchTiming">
+            <summary>
+            The time in an even'ts life which the watcher is interested in
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Events.EventWatchers.IEventWatcher.InspectEvent(Engine.Events.GameEvent)">
+            <summary>
+            Inspect an event and possibly react to it.
+            </summary>
+            <param name="gameEvent"></param>
         </member>
         <member name="T:Engine.Camera.Effects.CameraEffect">
             <summary>
@@ -1338,6 +1439,23 @@
             Any rendering done on top of the base
             </summary>
         </member>
+        <member name="T:Engine.Events.GameObjectEvents.GameObjectCreatedEvent">
+            <summary>
+            Event when a GameObject is created
+            </summary>
+        </member>
+        <member name="M:Engine.Events.GameObjectEvents.GameObjectCreatedEvent.#ctor(Engine.Entities.GameObject)">
+            <summary>
+            Construct an event when a GameObject is created.
+            It is not required that object creation fire an event
+            </summary>
+            <param name="src"></param>
+        </member>
+        <member name="P:Engine.Events.GameObjectEvents.GameObjectCreatedEvent.GameObject">
+            <summary>
+            The GameObject created
+            </summary>
+        </member>
         <member name="T:Engine.DataStructures.CountedSet`1">
             <summary>
             Provides an iterable set of unique entries.
@@ -1492,6 +1610,80 @@
         <member name="F:Engine.Rendering.Effects.BloomSettings.PresetSettings">
             <summary>
             Table of preset bloom settings, used by the sample program.
+            </summary>
+        </member>
+        <member name="T:Engine.Events.GameEventManager">
+            <summary>
+            Manages and dispatches game events, and
+            notifies any interested watchers
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEventManager.isUpdating">
+            <summary>
+            Used to make sure we don't try to add events to the queue as we're processing it.
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEventManager.events">
+            <summary>
+            Events tracked by the Manager
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEventManager.queuedEvents">
+            <summary>
+            Events added during the update loop that should be processed
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEventManager.completedEvents">
+            <summary>
+            Events that have fired and can be removed from the manager at the end of the update loop
+            </summary>
+        </member>
+        <member name="F:Engine.Events.GameEventManager.watchers">
+            <summary>
+            Watchers that should be notified of different event states (Create, Fire)
+            </summary>
+        </member>
+        <member name="M:Engine.Events.GameEventManager.#ctor">
+            <summary>
+            Create a default GameEventManager
+            </summary>
+        </member>
+        <member name="M:Engine.Events.GameEventManager.AddEvent(Engine.Events.GameEvent)">
+            <summary>
+            Add an event to the manager.  If called during an update loop, the event will be added to the list of
+            queued events, and will be updated with a time delta of 0 at the end of the current loop.
+            </summary>
+            <param name="gameEvent"></param>
+        </member>
+        <member name="M:Engine.Events.GameEventManager.RemoveEvent(Engine.Events.GameEvent)">
+            <summary>
+            Remove an event from the Manager
+            </summary>
+            <param name="gameEvent"></param>
+        </member>
+        <member name="M:Engine.Events.GameEventManager.AddWatcher(Engine.Events.EventWatchers.IEventWatcher)">
+            <summary>
+            Add a watcher to the manager
+            </summary>
+            <param name="watcher"></param>
+        </member>
+        <member name="M:Engine.Events.GameEventManager.RemoveWatcher(Engine.Events.EventWatchers.IEventWatcher)">
+            <summary>
+            Remove a watcher from the manager
+            </summary>
+            <param name="watcher"></param>
+        </member>
+        <member name="M:Engine.Events.GameEventManager.Update(System.Single)">
+            <summary>
+            Update the manager, updating any tracked events, firing any that need to, and removing fired events
+            </summary>
+            <param name="dt"></param>
+        </member>
+        <member name="P:Engine.Events.GameEventManager.GlobalEventManager">
+            <summary>
+            A default GameEventManager.  Its use is discouraged
+            except for those things which are guaranteed to only ever
+            happen in one context (such as game state changes between menus, etc)
             </summary>
         </member>
         <member name="T:Engine.Utility.EnumUtil">
