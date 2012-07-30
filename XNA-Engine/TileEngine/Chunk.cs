@@ -6,6 +6,11 @@ using Microsoft.Xna.Framework;
 
 namespace Engine.Tiles
 {
+    /// <summary>
+    /// A section of items that can be loaded from or saved to disk
+    /// (or another resource, such as a network connection)
+    /// </summary>
+    /// <typeparam name="TValue"></typeparam>
     public class Chunk<TValue>
     {
         /// <summary>
@@ -58,6 +63,13 @@ namespace Engine.Tiles
         /// </summary>
         public bool IsLoaded { get; protected set; }
 
+        /// <summary>
+        /// Creates a chunk whose top left corner is at x, y and with dimensions width x height
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public Chunk(int x, int y, int width, int height){
             globalX = x;
             globalY = y;
@@ -66,6 +78,11 @@ namespace Engine.Tiles
             IsLoaded = false;
         }
 
+        /// <summary>
+        /// Create a chunk whose top left corner is at position, with the given dimensions
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="dimensions"></param>
         public Chunk(Point position, Point dimensions) 
             :this(position.X, position.Y, dimensions.X, dimensions.Y) { }
 

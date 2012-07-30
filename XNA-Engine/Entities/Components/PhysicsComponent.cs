@@ -7,25 +7,57 @@ using Engine.Utility;
 
 namespace Engine.Entities.Components
 {
+    /// <summary>
+    /// Handles all physics interactions of a GameObject
+    /// - or a piece or collection of (a) GameObject(s).
+    /// </summary>
     public class PhysicsComponent
     {
         #region Fields
 
         const float DEFAULT_ACCEL_DECAY = 0.0f;
-        
+        /// <summary>
+        /// Dimensions of the AABB of the component
+        /// </summary>
         public Vector2 Dimensions { get; protected set; }
+        /// <summary>
+        /// Position of the component (depending on implementation,
+        /// can be center or corner of component)
+        /// </summary>
         public Vector2 Position { get; set; }
+        /// <summary>
+        /// Velocity of the component
+        /// </summary>
         public Vector2 Velocity { get; set; }
+        /// <summary>
+        /// Acceleration of the component
+        /// </summary>
         public Vector2 Acceleration { get; set; }
+        /// <summary>
+        /// Percent of acceleration that decays per second
+        /// </summary>
         public Vector2 DecayAcceleration { get; protected set; }
+        /// <summary>
+        /// Mass of the component
+        /// (objects are usually treated as point masses)
+        /// </summary>
         public float Mass { get; protected set; }
+        /// <summary>
+        /// Maximum magnitude of the component
+        /// </summary>
         public float MaxSpeed { get; protected set; }
+        /// <summary>
+        /// Rotation (counter-clockwise from +x) of the component
+        /// </summary>
         public double Rotation { get; set; }
 
         #endregion
 
         #region Initialization
 
+        /// <summary>
+        /// Create a default Phyics Component
+        /// </summary>
         public PhysicsComponent()
         {
             Position = Vector2.Zero;
@@ -38,6 +70,10 @@ namespace Engine.Entities.Components
             MaxSpeed = float.MaxValue;
         }
 
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other"></param>
         public PhysicsComponent(PhysicsComponent other)
         {
             Position = other.Position.Copy();

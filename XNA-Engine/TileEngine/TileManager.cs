@@ -44,6 +44,12 @@ namespace Engine.Tiles
 
         #region Initialization
 
+        /// <summary>
+        /// Create a TileManager which tracks n chunks, where n is the product of the buffer dimensions.
+        /// Each chunk has m tiles, where m is the product of the chunk dimensions
+        /// </summary>
+        /// <param name="bufferDimensions"></param>
+        /// <param name="chunkDimensions"></param>
         public TileManager(Point bufferDimensions, Point chunkDimensions)
         {
             BufferDimensions = bufferDimensions; 
@@ -74,7 +80,7 @@ namespace Engine.Tiles
         /// <summary>
         /// Update a single tile in a specific chunk
         /// </summary>
-        /// <param name="globalChunkPosition">The global coordinates of the tile</param>
+        /// <param name="globalTilePosition">The global coordinates of the tile</param>
         /// <param name="value">The value to give the specified tile</param>
         public void UpdateTile(Point globalTilePosition, TValue value)
         {

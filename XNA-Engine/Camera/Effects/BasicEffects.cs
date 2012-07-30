@@ -14,16 +14,48 @@ namespace Engine.Camera.Effects
     /// </summary>
     public abstract class DampedOscillationEffect : CameraEffect
     {
+        #region Fields
+
+        /// <summary>
+        /// Decay coeffecient in expoenential decay function of magnitude
+        /// </summary>
         protected float decay;
+        /// <summary>
+        /// Magnitude
+        /// </summary>
         protected float mag;
+        /// <summary>
+        /// Oscillation frequency
+        /// </summary>
         protected float freq;
 
+        /// <summary>
+        /// A function that modifies the magnitude of the bounce over time
+        /// </summary>
+        protected FloatFn magFunction;
+        /// <summary>
+        /// A function that describes the oscillation of the bounce over time
+        /// </summary>
+        protected FloatFn oscillateFunction;
+
+        #endregion
+
+        /// <summary>
+        /// An effect which oscillates between [-mag, +mag] and whose mag decays over time
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <param name="dur"></param>
+        /// <param name="decay"></param>
+        /// <param name="mag"></param>
+        /// <param name="freq"></param>
         public DampedOscillationEffect(Camera camera, float dur, float decay, float mag, float freq)
             : base(camera, dur)
         {
             this.decay = decay;
             this.mag = mag;
             this.freq = freq;
+            magFunction = new DecayFn(0, 1, decay);
+            oscillateFunction = new OscillatingFn(0, 1, freq);
         }
     }
 
@@ -34,9 +66,6 @@ namespace Engine.Camera.Effects
     /// </summary>
     public class CameraShakeEffect : DampedOscillationEffect
     {
-        protected FloatFn magFunction;
-        protected FloatFn oscillateFunction;
-
         /// <summary>
         /// Applys a rotation effect that oscillates from -mag to +mag and decays over time.
         /// </summary>
@@ -46,12 +75,12 @@ namespace Engine.Camera.Effects
         /// <param name="mag">Maximum magnitude in radians for the camera to rotate</param>
         /// <param name="freq">Number of times the camera makes a full left -> right -> left pass</param>
         public CameraShakeEffect(Camera camera, float dur, float decay, float mag, float freq)
-            : base(camera, dur, decay, mag, freq)
-        {
-            magFunction = new DecayFn(0, 1, decay);
-            oscillateFunction = new OscillatingFn(0, 1, freq);
-        }
+            : base(camera, dur, decay, mag, freq) { }
 
+        /// <summary>
+        /// Camera's rotation offset
+        /// </summary>
+        /// <returns></returns>
         protected override float rotation()
         {
             return mag * magFunction.At(t) * oscillateFunction.At(t);
@@ -66,9 +95,6 @@ namespace Engine.Camera.Effects
     /// </summary>
     public class CameraBounceEffect : DampedOscillationEffect
     {
-        protected FloatFn magFunction;
-        protected FloatFn oscillateFunction;
-
         /// <summary>
         /// Applys a scale effect that oscillates from (1 - mag) to (1 + mag) and decays over time.
         /// </summary>
@@ -78,63 +104,29 @@ namespace Engine.Camera.Effects
         /// <param name="mag">Maximum magnitude in percent original zoom to move by</param>
         /// <param name="freq">Number of times the camera makes a full in -> out -> in pass</param>
         public CameraBounceEffect(Camera camera, float dur, float decay, float mag, float freq)
-            : base(camera, dur, decay, mag, freq)
-        {
-            magFunction = new DecayFn(0, 1, decay);
-            oscillateFunction = new OscillatingFn(0, 1, freq);
-        }
+            : base(camera, dur, decay, mag, freq) { }
 
+        /// <summary>
+        /// Camera's horizontal scale offset
+        /// </summary>
+        /// <returns></returns>
         protected override float scaleX()
         {
             return camera.Scale.X * scale();
         }
+
+        /// <summary>
+        /// Camera's vertical scale offset
+        /// </summary>
+        /// <returns></returns>
         protected override float scaleY()
         {
             return camera.Scale.Y * scale();
         }
+
         private float scale()
         {
             return mag * magFunction.At(t) * oscillateFunction.At(t);
-        }
-
-    }
-
-    /// <summary>
-    /// Flips the camera about its x- or y-axis, or both.
-    /// Because this effect modifies camera scale directly, 
-    /// take care when combining with other effects that modify scale.
-    /// </summary>
-    public class CameraFlipEffect : CameraEffect
-    {
-        protected Vector2 tempScale;
-        protected bool flipX, flipY;
-        protected float adjust;
-
-        public CameraFlipEffect(Camera camera, float dur, bool flipX, bool flipY)
-            : base(camera, dur)
-        {
-            adjust = -1f;
-
-            this.flipX = flipX;
-            this.flipY = flipY;
-
-            SetScale(adjust);
-        }
-
-        public override void End()
-        {
-            SetScale(1 / adjust);
-            base.End();
-        }
-
-        private void SetScale(float scale)
-        {
-            tempScale = camera.Scale;
-            if (flipX)
-                tempScale.X *= scale;
-            if (flipY)
-                tempScale.Y *= scale;
-            camera.Scale = tempScale;
         }
     }
 }

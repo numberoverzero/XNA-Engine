@@ -124,7 +124,7 @@ namespace Engine.Camera.Effects
         /// Always multiply by camera scale so that we don't hit a scale of 0.
         /// Original equation was scale *= (1 + offsetScale)
         /// New equation is scale += offsetScale
-        /// We can keep the functionality by ultiplying by camera scale in this equation
+        /// We can keep the functionality by multiplying by camera scale in this equation
         /// </summary>
         /// <returns></returns>
         protected virtual float scaleX() { return 0; }

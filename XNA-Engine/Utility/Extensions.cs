@@ -12,6 +12,11 @@ namespace Engine.Utility
     /// </summary>
     public static class EnumUtil
     {
+        /// <summary>
+        /// An iterator over the values of an enumeration
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static IEnumerable<T> GetValues<T>()
         {
             return Enum.GetValues(typeof(T)).Cast<T>();
