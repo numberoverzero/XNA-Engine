@@ -38,7 +38,7 @@ namespace Engine.Input
         /// Keeps track of how many bindings use this modifier; 
         ///     stops checking for modifiers once no bindings use that modifier
         /// </summary>
-        public CountedSet<IBinding> Modifiers { get; protected set; }
+        public ICollection<IBinding> Modifiers { get; protected set; }
 
         /// <summary>
         /// The per-frame text buffer.
@@ -153,7 +153,7 @@ namespace Engine.Input
         {
             Settings = new InputSettings(0,0);
             Bindings = new MultiKeyObjDict<String, PlayerIndex, List<IBinding>>();
-            Modifiers = new CountedSet<IBinding>();
+            Modifiers = new CountedCollection<IBinding>();
 
             InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(FrameState.Current, FrameState.Previous);
             BufferedText = new DoubleBuffer<char>();
@@ -185,7 +185,7 @@ namespace Engine.Input
 
             Settings = new InputSettings(input.Settings);
             Bindings = new MultiKeyObjDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
-            Modifiers = new CountedSet<IBinding>(input.Modifiers);
+            Modifiers = new CountedCollection<IBinding>(input.Modifiers);
 
             InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(input.InjectedPressedKeys);
 

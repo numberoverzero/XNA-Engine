@@ -247,6 +247,41 @@
             Message describing the event or providing additional metadata
             </summary>
         </member>
+        <member name="T:Engine.Entities.Hostility">
+            <summary>
+            Describes the hostility relation between GameObject(s)
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.None">
+            <summary>
+            There is no defined relation between the object(s)
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Any">
+            <summary>
+            All relations apply between the object(s)
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Player">
+            <summary>
+            The object(s) are player controlled or can be considered part of the player
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Friend">
+            <summary>
+            The object(s) are friendly with each other
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Neutral">
+            <summary>
+            The object(s) are neutral with each other
+            </summary>
+        </member>
+        <member name="F:Engine.Entities.Hostility.Unfriendly">
+            <summary>
+            The object(s) are unfriendly with each other
+            </summary>
+        </member>
         <member name="T:Engine.Input.BasicInputManager">
             <summary>
             An InjectableInputManager that has shortcut methods for 
@@ -1456,7 +1491,7 @@
             The GameObject created
             </summary>
         </member>
-        <member name="T:Engine.DataStructures.CountedSet`1">
+        <member name="T:Engine.DataStructures.CountedCollection`1">
             <summary>
             Provides an iterable set of unique entries.
             Adding an item increases the count of that item by 1.
@@ -1467,58 +1502,64 @@
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.#ctor">
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor">
             <summary>
             Construct an empty CountedSet
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
             <summary>
             Copy the values of an enumerable into a CountedSet.
             Note that duplicates will increment the count, and are not included in the iterable set twice.
             </summary>
             <param name="enumerable"></param>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.#ctor(Engine.DataStructures.CountedSet{`0})">
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(Engine.DataStructures.CountedCollection{`0})">
             <summary>
             Copy the values of another counted set, as well as the count for each item.
             </summary>
             <param name="countedSet"></param>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Add(`0)">
+        <member name="T:Engine.Camera.CameraMode">
             <summary>
-            Add an item to the set.  If the item is already present, simply increments that item's count.
+            The modes that a camera can be in.
+            
+            LockedPos     :: Locked to a single Vector2, does not move
+            LockedTarget  :: Locked to a single GameObject, tracks the center of the screen to GameObject.Position
+            VtTTransition :: Vector -> GameObject Transition.  Moving from a LockedPos to LockedTarget
+            TtVTransition :: GameObject -> Vector Transition.  Moving from a LockedTarget to LockedPos
+            TtTTransition :: GameObject -> GameObject Transition.  Moving from one LockedPos to another
+            VtVTransition :: Vector -> Vector Transition.  Moving from one LockedPos to another
             </summary>
-            <param name="item">The item to add</param>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Clear">
+        <member name="F:Engine.Camera.CameraMode.LockedPos">
             <summary>
-            Clear the set and all associated counts.
+            Locked to a single position
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Contains(`0)">
+        <member name="F:Engine.Camera.CameraMode.LockedTarget">
             <summary>
-            Checks if the specified item is present in the CountedSet.
+            Locked to a single GameObject, following that object's position
             </summary>
-            <param name="item">The item to look for.</param>
-            <returns>True if the item's count is greater than 0.</returns>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.Remove(`0)">
+        <member name="F:Engine.Camera.CameraMode.VtTTransition">
             <summary>
-            Remove an item from the set.  If the item is present, simply decrements that item's count.
-            If the item's count is less than 1, the item is removed from the iterator.
+            Transitioning from a fixed position to tracking a GameObject
             </summary>
-            <param name="item">The item to remove</param>
         </member>
-        <member name="M:Engine.DataStructures.CountedSet`1.GetEnumerator">
+        <member name="F:Engine.Camera.CameraMode.TtVTransition">
             <summary>
-            Returns an enumerator that iterates through a Engine.Utility.CountedSet&lt;T&gt; object.
+            Transitioning from tracking a GameObject to a fixed position
             </summary>
-            <returns></returns>
         </member>
-        <member name="P:Engine.DataStructures.CountedSet`1.Count">
+        <member name="F:Engine.Camera.CameraMode.TtTTransition">
             <summary>
-            Gets the number of elements that are contained in the set.
+            Transitioning from a fixed position to a different fixed position
+            </summary>
+        </member>
+        <member name="F:Engine.Camera.CameraMode.VtVTransition">
+            <summary>
+            Transitioning from tracking a GameObject to tracking a different GameObject
             </summary>
         </member>
         <member name="T:Engine.Rendering.Pipeline.IRenderEffect">
@@ -2418,6 +2459,33 @@
             Reset any state the effect might track, such as camera deltas or elapsed game time
             </summary>
         </member>
+        <member name="T:Engine.Events.EventWatchers.EventWatchTiming">
+            <summary>
+            Describes at which point in an event's lifetime a watcher would want to be notified
+            of the event.
+            </summary>
+        </member>
+        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.None">
+            <summary>
+            The watcher doesn't want to know about events
+            </summary>
+        </member>
+        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.OnCreate">
+            <summary>
+            When the event is created
+            </summary>
+        </member>
+        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.OnFire">
+            <summary>
+            When the event is fired by an event manager
+            </summary>
+        </member>
+        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.Any">
+            <summary>
+            The watcher wants to be notified at any time.
+            (This will either notifiy at every stage, or the first, depending on implementation
+            </summary>
+        </member>
         <member name="T:Engine.Camera.Effects.DampedOscillationEffect">
             <summary>
             This effect doesn't impact the camera in any way
@@ -3004,109 +3072,58 @@
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
             </summary>
         </member>
-        <member name="T:Engine.Events.EventWatchers.EventWatchTiming">
+        <member name="T:Engine.Utility.StringAndRegexExtensions">
             <summary>
-            Describes at which point in an event's lifetime a watcher would want to be notified
-            of the event.
+            Adds a few handy methods for dealing with strings and regex
             </summary>
         </member>
-        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.None">
+        <member name="M:Engine.Utility.StringAndRegexExtensions.MatchNamedCaptures(System.Text.RegularExpressions.Regex,System.String)">
             <summary>
-            The watcher doesn't want to know about events
+            Returns a Dictionary&lt;CapturingGroupName, CapturedGroupValue&gt;
+            of the regex of the input string
+            </summary>
+            <param name="regex"></param>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.HasNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
+            <summary>
+            Checks if the regex has a named group for the given input string
+            </summary>
+            <param name="regex"></param>
+            <param name="input"></param>
+            <param name="groupname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.GetNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
+            <summary>
+            If the regex has a named group for the given input string, returns the value of that groupname.
+            Otherwise, returns null.
+            </summary>
+            <param name="regex"></param>
+            <param name="input"></param>
+            <param name="groupname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.ReadLines(System.String)">
+            <summary>
+            Generator that yields each line of a file
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.CollectionExtensions">
+            <summary>
+            Extensions for commonly used collection patterns
             </summary>
         </member>
-        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.OnCreate">
+        <member name="M:Engine.Utility.CollectionExtensions.PopRandomElement``1(System.Collections.Generic.ICollection{``0})">
             <summary>
-            When the event is created
+            Selects a random element from the collection, removes and returns it
             </summary>
-        </member>
-        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.OnFire">
-            <summary>
-            When the event is fired by an event manager
-            </summary>
-        </member>
-        <member name="F:Engine.Events.EventWatchers.EventWatchTiming.Any">
-            <summary>
-            The watcher wants to be notified at any time.
-            (This will either notifiy at every stage, or the first, depending on implementation
-            </summary>
-        </member>
-        <member name="T:Engine.Entities.Hostility">
-            <summary>
-            Describes the hostility relation between GameObject(s)
-            </summary>
-        </member>
-        <member name="F:Engine.Entities.Hostility.None">
-            <summary>
-            There is no defined relation between the object(s)
-            </summary>
-        </member>
-        <member name="F:Engine.Entities.Hostility.Any">
-            <summary>
-            All relations apply between the object(s)
-            </summary>
-        </member>
-        <member name="F:Engine.Entities.Hostility.Player">
-            <summary>
-            The object(s) are player controlled or can be considered part of the player
-            </summary>
-        </member>
-        <member name="F:Engine.Entities.Hostility.Friend">
-            <summary>
-            The object(s) are friendly with each other
-            </summary>
-        </member>
-        <member name="F:Engine.Entities.Hostility.Neutral">
-            <summary>
-            The object(s) are neutral with each other
-            </summary>
-        </member>
-        <member name="F:Engine.Entities.Hostility.Unfriendly">
-            <summary>
-            The object(s) are unfriendly with each other
-            </summary>
-        </member>
-        <member name="T:Engine.Camera.CameraMode">
-            <summary>
-            The modes that a camera can be in.
-            
-            LockedPos     :: Locked to a single Vector2, does not move
-            LockedTarget  :: Locked to a single GameObject, tracks the center of the screen to GameObject.Position
-            VtTTransition :: Vector -> GameObject Transition.  Moving from a LockedPos to LockedTarget
-            TtVTransition :: GameObject -> Vector Transition.  Moving from a LockedTarget to LockedPos
-            TtTTransition :: GameObject -> GameObject Transition.  Moving from one LockedPos to another
-            VtVTransition :: Vector -> Vector Transition.  Moving from one LockedPos to another
-            </summary>
-        </member>
-        <member name="F:Engine.Camera.CameraMode.LockedPos">
-            <summary>
-            Locked to a single position
-            </summary>
-        </member>
-        <member name="F:Engine.Camera.CameraMode.LockedTarget">
-            <summary>
-            Locked to a single GameObject, following that object's position
-            </summary>
-        </member>
-        <member name="F:Engine.Camera.CameraMode.VtTTransition">
-            <summary>
-            Transitioning from a fixed position to tracking a GameObject
-            </summary>
-        </member>
-        <member name="F:Engine.Camera.CameraMode.TtVTransition">
-            <summary>
-            Transitioning from tracking a GameObject to a fixed position
-            </summary>
-        </member>
-        <member name="F:Engine.Camera.CameraMode.TtTTransition">
-            <summary>
-            Transitioning from a fixed position to a different fixed position
-            </summary>
-        </member>
-        <member name="F:Engine.Camera.CameraMode.VtVTransition">
-            <summary>
-            Transitioning from tracking a GameObject to tracking a different GameObject
-            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="collection"></param>
+            <returns></returns>
         </member>
     </members>
 </doc>

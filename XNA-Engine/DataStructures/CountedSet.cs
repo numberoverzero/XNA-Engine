@@ -15,7 +15,7 @@ namespace Engine.DataStructures
     /// The iterator is over unique values
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CountedSet<T> : IEnumerable<T>
+    public class CountedCollection<T> : ICollection<T>
     {
         private HashSet<T> set;
         private DefaultDict<T, int> count;
@@ -23,7 +23,7 @@ namespace Engine.DataStructures
         /// <summary>
         /// Construct an empty CountedSet
         /// </summary>
-        public CountedSet()
+        public CountedCollection()
         {
             set = new HashSet<T>();
             count = new DefaultDict<T, int>();
@@ -34,67 +34,57 @@ namespace Engine.DataStructures
         /// Note that duplicates will increment the count, and are not included in the iterable set twice.
         /// </summary>
         /// <param name="enumerable"></param>
-        public CountedSet(IEnumerable<T> enumerable)
+        public CountedCollection(IEnumerable<T> enumerable)
             : this()
         {
             foreach (T item in enumerable)
-                Add(item);
+                ((ICollection<T>)this).Add(item);
         }
 
         /// <summary>
         /// Copy the values of another counted set, as well as the count for each item.
         /// </summary>
         /// <param name="countedSet"></param>
-        public CountedSet(CountedSet<T> countedSet)
+        public CountedCollection(CountedCollection<T> countedSet)
         {
             set = new HashSet<T>(countedSet.set);
             count = new DefaultDict<T, int>(countedSet.count);
         }
 
-        /// <summary>
-        /// Add an item to the set.  If the item is already present, simply increments that item's count.
-        /// </summary>
-        /// <param name="item">The item to add</param>
-        public void Add(T item)
+        void ICollection<T>.Add(T item)
         {
             if (count[item] <= 0)
                 set.Add(item);
             count[item]++;
         }
 
-        /// <summary>
-        /// Clear the set and all associated counts.
-        /// </summary>
-        public void Clear()
+        void ICollection<T>.Clear()
         {
             set.Clear();
             count.Clear();
         }
 
-        /// <summary>
-        /// Checks if the specified item is present in the CountedSet.
-        /// </summary>
-        /// <param name="item">The item to look for.</param>
-        /// <returns>True if the item's count is greater than 0.</returns>
-        public bool Contains(T item)
+        bool ICollection<T>.Contains(T item)
         {
             return set.Contains(item);
         }
 
-        /// <summary>
-        /// Gets the number of elements that are contained in the set.
-        /// </summary>
-        public int Count
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        {
+            set.CopyTo(array, arrayIndex);
+        }
+
+        int ICollection<T>.Count
         {
             get { return set.Count; }
         }
 
-        /// <summary>
-        /// Remove an item from the set.  If the item is present, simply decrements that item's count.
-        /// If the item's count is less than 1, the item is removed from the iterator.
-        /// </summary>
-        /// <param name="item">The item to remove</param>
-        public bool Remove(T item)
+        bool ICollection<T>.IsReadOnly
+        {
+            get { return false; }
+        }
+
+        bool ICollection<T>.Remove(T item)
         {
             if (set.Contains(item))
             {
@@ -109,18 +99,14 @@ namespace Engine.DataStructures
             return false;
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through a Engine.Utility.CountedSet&lt;T&gt; object.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             return set.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return ((IEnumerable<T>)this).GetEnumerator();
         }
     }
 }
