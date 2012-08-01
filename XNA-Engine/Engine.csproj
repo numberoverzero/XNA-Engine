@@ -145,7 +145,7 @@
     <Compile Include="Utility\CollectionExtensions.cs" />
     <Compile Include="Utility\ColorTextureGenerator.cs" />
     <Compile Include="DataStructures\DataStructures.cs" />
-    <Compile Include="Utility\Extensions.cs" />
+    <Compile Include="Globals.cs" />
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
     <Compile Include="Utility\MathFunctions.cs" />
     <Compile Include="Utility\StringAndRegexExtensions.cs" />

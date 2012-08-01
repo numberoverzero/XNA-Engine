@@ -5,24 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 
 
-namespace Engine.Utility
+namespace Engine
 {
-    /// <summary>
-    /// Provides iteration over the values of an enumeration
-    /// </summary>
-    public static class EnumUtil
-    {
-        /// <summary>
-        /// An iterator over the values of an enumeration
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IEnumerable<T> GetValues<T>()
-        {
-            return Enum.GetValues(typeof(T)).Cast<T>();
-        }
-    }
-
     /// <summary>
     /// Variables useful for enumeration and compatability
     /// across various systems

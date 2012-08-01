@@ -72,5 +72,17 @@ namespace Engine.Utility
             }
         }
 
+        /// <summary>
+        /// Takes an enumerable and returns the string such that each element is printed,
+        /// separated by the given separator.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumerable"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        public static string Join<T>(this string separator, IEnumerable<T> enumerable)
+        {
+            return enumerable.PrettyPrint(separator);
+        }
     }
 }

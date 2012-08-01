@@ -899,6 +899,56 @@
             Returns the offsets used in calculating the camera transform matrix
             </summary>
         </member>
+        <member name="T:Engine.Utility.StringAndRegexExtensions">
+            <summary>
+            Adds a few handy methods for dealing with strings and regex
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.MatchNamedCaptures(System.Text.RegularExpressions.Regex,System.String)">
+            <summary>
+            Returns a Dictionary&lt;CapturingGroupName, CapturedGroupValue&gt;
+            of the regex of the input string
+            </summary>
+            <param name="regex"></param>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.HasNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
+            <summary>
+            Checks if the regex has a named group for the given input string
+            </summary>
+            <param name="regex"></param>
+            <param name="input"></param>
+            <param name="groupname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.GetNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
+            <summary>
+            If the regex has a named group for the given input string, returns the value of that groupname.
+            Otherwise, returns null.
+            </summary>
+            <param name="regex"></param>
+            <param name="input"></param>
+            <param name="groupname"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.ReadLines(System.String)">
+            <summary>
+            Generator that yields each line of a file
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.Join``1(System.String,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Takes an enumerable and returns the string such that each element is printed,
+            separated by the given separator.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="enumerable"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
         <member name="T:Engine.Tiles.Chunk`1">
             <summary>
             A section of items that can be loaded from or saved to disk
@@ -1727,29 +1777,6 @@
             happen in one context (such as game state changes between menus, etc)
             </summary>
         </member>
-        <member name="T:Engine.Utility.EnumUtil">
-            <summary>
-            Provides iteration over the values of an enumeration
-            </summary>
-        </member>
-        <member name="M:Engine.Utility.EnumUtil.GetValues``1">
-            <summary>
-            An iterator over the values of an enumeration
-            </summary>
-            <typeparam name="T"></typeparam>
-            <returns></returns>
-        </member>
-        <member name="T:Engine.Utility.Globals">
-            <summary>
-            Variables useful for enumeration and compatability
-            across various systems
-            </summary>
-        </member>
-        <member name="F:Engine.Utility.Globals.Players">
-            <summary>
-            Provides an in-order [1-4] list of PlayerIndex for loops
-            </summary>
-        </member>
         <member name="T:Engine.Input.InputSettings">
             <summary>
             A set of limits and thresholds that some bindings must pass to be considered active
@@ -1942,6 +1969,17 @@
             <param name="key1"></param>
             <param name="key2"></param>
             <returns></returns>
+        </member>
+        <member name="T:Engine.Globals">
+            <summary>
+            Variables useful for enumeration and compatability
+            across various systems
+            </summary>
+        </member>
+        <member name="F:Engine.Globals.Players">
+            <summary>
+            Provides an in-order [1-4] list of PlayerIndex for loops
+            </summary>
         </member>
         <member name="T:Engine.Rendering.Pipeline.PixelShaderPipeline">
             <summary>
@@ -2797,6 +2835,41 @@
             </summary>
             <param name="subscriber"></param>
         </member>
+        <member name="T:Engine.Utility.EnumUtil">
+            <summary>
+            Provides iteration over the values of an enumeration
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.EnumUtil.GetValues``1">
+            <summary>
+            An iterator over the values of an enumeration
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.CollectionExtensions">
+            <summary>
+            Extensions for commonly used collection patterns
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.CollectionExtensions.PrettyPrint``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            Takes an enumerable and returns the string such that each element is printed,
+            separated by the given separator.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="enumerable"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.CollectionExtensions.PopRandomElement``1(System.Collections.Generic.ICollection{``0})">
+            <summary>
+            Selects a random element from the collection, removes and returns it
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="collection"></param>
+            <returns></returns>
+        </member>
         <member name="T:Engine.Entities.Components.PhysicsComponent">
             <summary>
             Handles all physics interactions of a GameObject
@@ -3071,59 +3144,6 @@
             <summary>
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
             </summary>
-        </member>
-        <member name="T:Engine.Utility.StringAndRegexExtensions">
-            <summary>
-            Adds a few handy methods for dealing with strings and regex
-            </summary>
-        </member>
-        <member name="M:Engine.Utility.StringAndRegexExtensions.MatchNamedCaptures(System.Text.RegularExpressions.Regex,System.String)">
-            <summary>
-            Returns a Dictionary&lt;CapturingGroupName, CapturedGroupValue&gt;
-            of the regex of the input string
-            </summary>
-            <param name="regex"></param>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Utility.StringAndRegexExtensions.HasNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
-            <summary>
-            Checks if the regex has a named group for the given input string
-            </summary>
-            <param name="regex"></param>
-            <param name="input"></param>
-            <param name="groupname"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Utility.StringAndRegexExtensions.GetNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
-            <summary>
-            If the regex has a named group for the given input string, returns the value of that groupname.
-            Otherwise, returns null.
-            </summary>
-            <param name="regex"></param>
-            <param name="input"></param>
-            <param name="groupname"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Utility.StringAndRegexExtensions.ReadLines(System.String)">
-            <summary>
-            Generator that yields each line of a file
-            </summary>
-            <param name="file"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Engine.Utility.CollectionExtensions">
-            <summary>
-            Extensions for commonly used collection patterns
-            </summary>
-        </member>
-        <member name="M:Engine.Utility.CollectionExtensions.PopRandomElement``1(System.Collections.Generic.ICollection{``0})">
-            <summary>
-            Selects a random element from the collection, removes and returns it
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="collection"></param>
-            <returns></returns>
         </member>
     </members>
 </doc>
