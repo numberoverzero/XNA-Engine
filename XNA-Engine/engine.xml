@@ -809,6 +809,35 @@
             </summary>
             <param name="gameEvent"></param>
         </member>
+        <member name="T:Engine.DataStructures.CountedCollection`1">
+            <summary>
+            Provides an iterable set of unique entries.
+            Adding an item increases the count of that item by 1.
+            Removing an item decreases the count by 1.
+            When the count is zero, the value is removed from the set.
+            
+            The iterator is over unique values
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor">
+            <summary>
+            Construct an empty CountedSet
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Copy the values of an enumerable into a CountedSet.
+            Note that duplicates will increment the count, and are not included in the iterable set twice.
+            </summary>
+            <param name="enumerable"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(Engine.DataStructures.CountedCollection{`0})">
+            <summary>
+            Copy the values of another counted set, as well as the count for each item.
+            </summary>
+            <param name="countedSet"></param>
+        </member>
         <member name="T:Engine.Camera.Effects.CameraEffect">
             <summary>
             Modifies the position, scale, or rotation of a camera.
@@ -952,6 +981,15 @@
             <typeparam name="T"></typeparam>
             <param name="enumerable"></param>
             <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.TrimEnd(System.String,System.String)">
+            <summary>
+            Removes any occurrences of the character sequence trim from the end of the string.
+            Uses repeated substring and assignment - do not use for heavy lifting.
+            </summary>
+            <param name="source"></param>
+            <param name="trim"></param>
             <returns></returns>
         </member>
         <member name="T:Engine.Tiles.Chunk`1">
@@ -1753,6 +1791,18 @@
             happen in one context (such as game state changes between menus, etc)
             </summary>
         </member>
+        <member name="T:Engine.Utility.ThreadExtensions">
+            <summary>
+            Extensions for thread actions
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.ThreadExtensions.Kill(System.Threading.Thread,System.Int32)">
+            <summary>
+            Abort a thread if it doesn't join n milliseconds after an interrupt.
+            </summary>
+            <param name="thread"></param>
+            <param name="millisecondsTimeout"></param>
+        </member>
         <member name="T:Engine.Input.InputSettings">
             <summary>
             A set of limits and thresholds that some bindings must pass to be considered active
@@ -1782,6 +1832,31 @@
             Copy Constructor
             </summary>
             <param name="settings"></param>
+        </member>
+        <member name="M:Engine.Networking.Server.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
+            <summary>
+            Set up a server to receive and broadcast messages
+            Use Server.Start() to begin handling messages
+            </summary>
+            <param name="serverAddress"></param>
+            <param name="serverPort"></param>
+            <param name="maxConnections"></param>
+        </member>
+        <member name="M:Engine.Networking.Server.Start">
+            <summary>
+            Starts the listener and kills any active listeners
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.Stop">
+            <summary>
+            Stops the listener and kills any active listeners
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server._startProcessing">
+            <summary>
+            Starts processing requests.  Can also be considered Restart,
+            if called when the listener is already started.
+            </summary>
         </member>
         <member name="T:Engine.DataStructures.DoubleBuffer`1">
             <summary>
@@ -2473,6 +2548,40 @@
             Reset any state the effect might track, such as camera deltas or elapsed game time
             </summary>
         </member>
+        <member name="T:Engine.Input.InputSnapshot">
+            <summary>
+            A snapshot of the polled input devices so that method signatures don't get too cluttered
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.KeyboardState">
+            <summary>
+            The KeyboardState at the time of snapshotting
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.GamePadState">
+            <summary>
+            The GamePadState at the time of snapshotting
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.MouseState">
+            <summary>
+            The MouseState at the time of snapshotting
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.InputSettings">
+            <summary>
+            The InputSettings at the time of snapshotting
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputSnapshot.#ctor(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            Snapshot a set of input device states
+            </summary>
+            <param name="keyboardState"></param>
+            <param name="gamePadState"></param>
+            <param name="mouseState"></param>
+            <param name="inputSettings"></param>
+        </member>
         <member name="T:Engine.Events.EventWatchers.EventWatchTiming">
             <summary>
             Describes at which point in an event's lifetime a watcher would want to be notified
@@ -3121,68 +3230,17 @@
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
             </summary>
         </member>
-        <member name="T:Engine.DataStructures.CountedCollection`1">
+        <member name="T:Engine.Utility.NetworkingExtensions">
             <summary>
-            Provides an iterable set of unique entries.
-            Adding an item increases the count of that item by 1.
-            Removing an item decreases the count by 1.
-            When the count is zero, the value is removed from the set.
-            
-            The iterator is over unique values
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor">
-            <summary>
-            Construct an empty CountedSet
+            Extensions for networking stuff
             </summary>
         </member>
-        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:Engine.Utility.NetworkingExtensions.SafeRead(System.Net.Sockets.NetworkStream)">
             <summary>
-            Copy the values of an enumerable into a CountedSet.
-            Note that duplicates will increment the count, and are not included in the iterable set twice.
+            Reads data from the NetworkStream without throwing errors or crashing if the remote shuts down
             </summary>
-            <param name="enumerable"></param>
-        </member>
-        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(Engine.DataStructures.CountedCollection{`0})">
-            <summary>
-            Copy the values of another counted set, as well as the count for each item.
-            </summary>
-            <param name="countedSet"></param>
-        </member>
-        <member name="T:Engine.Input.InputSnapshot">
-            <summary>
-            A snapshot of the polled input devices so that method signatures don't get too cluttered
-            </summary>
-        </member>
-        <member name="F:Engine.Input.InputSnapshot.KeyboardState">
-            <summary>
-            The KeyboardState at the time of snapshotting
-            </summary>
-        </member>
-        <member name="F:Engine.Input.InputSnapshot.GamePadState">
-            <summary>
-            The GamePadState at the time of snapshotting
-            </summary>
-        </member>
-        <member name="F:Engine.Input.InputSnapshot.MouseState">
-            <summary>
-            The MouseState at the time of snapshotting
-            </summary>
-        </member>
-        <member name="F:Engine.Input.InputSnapshot.InputSettings">
-            <summary>
-            The InputSettings at the time of snapshotting
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputSnapshot.#ctor(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
-            <summary>
-            Snapshot a set of input device states
-            </summary>
-            <param name="keyboardState"></param>
-            <param name="gamePadState"></param>
-            <param name="mouseState"></param>
-            <param name="inputSettings"></param>
+            <param name="stream"></param>
+            <returns></returns>
         </member>
     </members>
 </doc>

@@ -37,7 +37,7 @@
     <OutputPath>bin\x86\Release</OutputPath>
     <DefineConstants>WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
@@ -126,6 +126,8 @@
     <Compile Include="Input\InputSnapshot.cs" />
     <Compile Include="Input\Managers\BasicInputManager.cs" />
     <Compile Include="Input\Managers\InputManager.cs" />
+    <Compile Include="Networking\DoCommunicate.cs" />
+    <Compile Include="Networking\Server.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
     <Compile Include="Rendering\Effects\BloomSettings.cs" />
@@ -149,12 +151,18 @@
     <Compile Include="Globals.cs" />
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
     <Compile Include="Utility\MathFunctions.cs" />
+    <Compile Include="Utility\NetworkingExtensions.cs" />
     <Compile Include="Utility\StringAndRegexExtensions.cs" />
+    <Compile Include="Utility\ThreadExtensions.cs" />
     <Compile Include="Utility\Vector2Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Screens\" />
     <Folder Include="Testing\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.txt" />
+    <Content Include="Networking\License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

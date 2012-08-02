@@ -84,5 +84,21 @@ namespace Engine.Utility
         {
             return enumerable.PrettyPrint(separator);
         }
+
+        /// <summary>
+        /// Removes any occurrences of the character sequence trim from the end of the string.
+        /// Uses repeated substring and assignment - do not use for heavy lifting.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="trim"></param>
+        /// <returns></returns>
+        public static string TrimEnd(this string source, string trim)
+        {
+            while (source.EndsWith(trim))
+            {
+                source = source.Substring(0, source.Length - trim.Length);
+            }
+            return source;
+        }
     }
 }
