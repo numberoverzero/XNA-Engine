@@ -48,9 +48,13 @@ namespace Engine.Input
         #region Previous/Current States
 
         /// <summary>
-        /// Keys pressed in the current/previous frames
+        /// KeyboardState for the previous frame
         /// </summary>
-        public CycleBuffer<FrameState, Keys> PressedKeys { get; protected set; }
+        public KeyboardState PreviousKeyboardState { get; protected set; }
+        /// <summary>
+        /// KeyboardState for the current frame
+        /// </summary>
+        public KeyboardState CurrentKeyboardState { get; protected set; }
 
         /// <summary>
         /// GamePadState for the previous frame
@@ -75,7 +79,7 @@ namespace Engine.Input
         #region Device Polling
 
         /// <summary>
-        /// The default InputManager does not use keyboard polling
+        /// True when the InputManager is polling the keyboard
         /// </summary>
         protected bool isPollingKeyboard;
         /// <summary>
@@ -87,8 +91,12 @@ namespace Engine.Input
             get { return isPollingKeyboard; }
             set
             {
-                isPollingKeyboard = false;
-                throw new NotSupportedException("DefaultInputManagers do not support keyboard polling.");
+                isPollingKeyboard = value;
+                if (value)
+                {
+                    PreviousKeyboardState = new KeyboardState();
+                    CurrentKeyboardState = new KeyboardState();
+                }
             }
         }
 
@@ -157,12 +165,8 @@ namespace Engine.Input
 
             InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(FrameState.Current, FrameState.Previous);
             BufferedText = new DoubleBuffer<char>();
-            //PreviousKeys = new HashSet<Keys>();
-            //CurrentKeys = new HashSet<Keys>();
-            PressedKeys = new CycleBuffer<FrameState, Keys>(FrameState.Current, FrameState.Previous);
-
-            IsPollingGamePads = IsPollingMouse = true;
-            isPollingKeyboard = false;
+            
+            IsPollingKeyboard = IsPollingGamePads = IsPollingMouse = true;
             EventInput.KeyboardDispatcher.RegisterListener(this);
         }
 
@@ -172,13 +176,11 @@ namespace Engine.Input
         /// <param name="input"></param>
         public DefaultInputManager(DefaultInputManager input)
         {
-            //PreviousKeys = new HashSet<Keys>(input.PreviousKeys);
-            //CurrentKeys = new HashSet<Keys>(input.CurrentKeys);
-            PressedKeys = new CycleBuffer<FrameState, Microsoft.Xna.Framework.Input.Keys>(input.PressedKeys);
-
             PreviousGamePadStates = new Dictionary<PlayerIndex, GamePadState>(input.PreviousGamePadStates);
             CurrentGamePadStates = new Dictionary<PlayerIndex, GamePadState>(input.CurrentGamePadStates);
-            
+
+            PreviousKeyboardState = input.PreviousKeyboardState;
+            CurrentKeyboardState = input.CurrentKeyboardState;
 
             PreviousMouseState = input.PreviousMouseState;
             CurrentMouseState = input.CurrentMouseState;
@@ -502,7 +504,7 @@ namespace Engine.Input
         /// <param name="key"></param>
         public void ReceiveSpecialInput(Keys key)
         {
-            PressedKeys[FrameState.Current].Add(key);
+            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -551,6 +553,12 @@ namespace Engine.Input
         /// </remarks>
         public virtual void Update()
         {
+            if (IsPollingKeyboard)
+            {
+                PreviousKeyboardState = CurrentKeyboardState;
+                CurrentKeyboardState = Keyboard.GetState();
+            }
+
             if (IsPollingGamePads)
             {
                 foreach (var player in Globals.Players)
@@ -567,7 +575,6 @@ namespace Engine.Input
             }
 
             InjectedPressedKeys.Cycle();
-            PressedKeys.Cycle();
             BufferedText.Flip();
         }
     }

@@ -97,7 +97,7 @@
             <param name="state">Current or Previous frame</param>
             <returns>True if the binding is active</returns>
         </member>
-        <member name="M:Engine.Input.InputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="M:Engine.Input.InputBinding.IsRawBindingActive(Engine.Input.InputSnapshot)">
             <summary>
             True if the binding (without modifiers) is active
             </summary>
@@ -459,7 +459,7 @@
         </member>
         <member name="F:Engine.Input.DefaultInputManager.isPollingKeyboard">
             <summary>
-            The default InputManager does not use keyboard polling
+            True when the InputManager is polling the keyboard
             </summary>
         </member>
         <member name="F:Engine.Input.DefaultInputManager.isPollingGamePads">
@@ -677,9 +677,14 @@
                 stops checking for modifiers once no bindings use that modifier
             </summary>
         </member>
-        <member name="P:Engine.Input.DefaultInputManager.PressedKeys">
+        <member name="P:Engine.Input.DefaultInputManager.PreviousKeyboardState">
             <summary>
-            Keys pressed in the current/previous frames
+            KeyboardState for the previous frame
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.CurrentKeyboardState">
+            <summary>
+            KeyboardState for the current frame
             </summary>
         </member>
         <member name="P:Engine.Input.DefaultInputManager.PreviousGamePadStates">
@@ -1323,7 +1328,7 @@
             <param name="thumbstick"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.ThumbstickDirectionInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="M:Engine.Input.ThumbstickDirectionInputBinding.IsRawBindingActive(Engine.Input.InputSnapshot)">
             <summary>
             True if the  ThumbstickDirection of the specified Thumbstick is past the settings threshold
             </summary>
@@ -1350,7 +1355,7 @@
             <param name="mouseButton"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.MouseInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="M:Engine.Input.MouseInputBinding.IsRawBindingActive(Engine.Input.InputSnapshot)">
             <summary>
             True if the Mouse button (without modifiers) is pressed
             </summary>
@@ -1374,7 +1379,7 @@
             <param name="thumbstick"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.ThumbstickInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="M:Engine.Input.ThumbstickInputBinding.IsRawBindingActive(Engine.Input.InputSnapshot)">
             <summary>
             True if the thumbstick (without modifiers) is past the settings threshold
             </summary>
@@ -1396,7 +1401,7 @@
             <param name="button"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.ButtonInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="M:Engine.Input.ButtonInputBinding.IsRawBindingActive(Engine.Input.InputSnapshot)">
             <summary>
             True if the Button (without modifiers) is pressed
             </summary>
@@ -1418,7 +1423,7 @@
             <param name="key"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.KeyInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="M:Engine.Input.KeyInputBinding.IsRawBindingActive(Engine.Input.InputSnapshot)">
             <summary>
             True if the key (without modifiers) is pressed
             </summary>
@@ -1441,7 +1446,7 @@
             <param name="trigger"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.TriggerInputBinding.IsRawBindingActive(System.Collections.Generic.ISet{Microsoft.Xna.Framework.Input.Keys},Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="M:Engine.Input.TriggerInputBinding.IsRawBindingActive(Engine.Input.InputSnapshot)">
             <summary>
             True if the trigger (without modifiers) is past the settings threshold
             </summary>
@@ -1540,35 +1545,6 @@
             <summary>
             The GameObject created
             </summary>
-        </member>
-        <member name="T:Engine.DataStructures.CountedCollection`1">
-            <summary>
-            Provides an iterable set of unique entries.
-            Adding an item increases the count of that item by 1.
-            Removing an item decreases the count by 1.
-            When the count is zero, the value is removed from the set.
-            
-            The iterator is over unique values
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor">
-            <summary>
-            Construct an empty CountedSet
-            </summary>
-        </member>
-        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Copy the values of an enumerable into a CountedSet.
-            Note that duplicates will increment the count, and are not included in the iterable set twice.
-            </summary>
-            <param name="enumerable"></param>
-        </member>
-        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(Engine.DataStructures.CountedCollection{`0})">
-            <summary>
-            Copy the values of another counted set, as well as the count for each item.
-            </summary>
-            <param name="countedSet"></param>
         </member>
         <member name="T:Engine.Camera.CameraMode">
             <summary>
@@ -3144,6 +3120,69 @@
             <summary>
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
             </summary>
+        </member>
+        <member name="T:Engine.DataStructures.CountedCollection`1">
+            <summary>
+            Provides an iterable set of unique entries.
+            Adding an item increases the count of that item by 1.
+            Removing an item decreases the count by 1.
+            When the count is zero, the value is removed from the set.
+            
+            The iterator is over unique values
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor">
+            <summary>
+            Construct an empty CountedSet
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Copy the values of an enumerable into a CountedSet.
+            Note that duplicates will increment the count, and are not included in the iterable set twice.
+            </summary>
+            <param name="enumerable"></param>
+        </member>
+        <member name="M:Engine.DataStructures.CountedCollection`1.#ctor(Engine.DataStructures.CountedCollection{`0})">
+            <summary>
+            Copy the values of another counted set, as well as the count for each item.
+            </summary>
+            <param name="countedSet"></param>
+        </member>
+        <member name="T:Engine.Input.InputSnapshot">
+            <summary>
+            A snapshot of the polled input devices so that method signatures don't get too cluttered
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.KeyboardState">
+            <summary>
+            The KeyboardState at the time of snapshotting
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.GamePadState">
+            <summary>
+            The GamePadState at the time of snapshotting
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.MouseState">
+            <summary>
+            The MouseState at the time of snapshotting
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InputSnapshot.InputSettings">
+            <summary>
+            The InputSettings at the time of snapshotting
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputSnapshot.#ctor(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+            <summary>
+            Snapshot a set of input device states
+            </summary>
+            <param name="keyboardState"></param>
+            <param name="gamePadState"></param>
+            <param name="mouseState"></param>
+            <param name="inputSettings"></param>
         </member>
     </members>
 </doc>

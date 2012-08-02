@@ -43,9 +43,11 @@ namespace Engine.Input
         /// <summary>
         /// True if the  ThumbstickDirection of the specified Thumbstick is past the settings threshold
         /// </summary>
-        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
         {
-            Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
+            var settings = inputSnapshot.InputSettings;
+            var gamePadState = inputSnapshot.GamePadState;
+            Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
             bool isActive = false;
             switch (Direction)
             {
@@ -92,8 +94,9 @@ namespace Engine.Input
         /// <summary>
         /// True if the Mouse button (without modifiers) is pressed
         /// </summary>
-        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
         {
+            var mouseState = inputSnapshot.MouseState;
             ButtonState buttonState;
             switch (Button)
             {
@@ -140,10 +143,11 @@ namespace Engine.Input
         /// <summary>
         /// True if the thumbstick (without modifiers) is past the settings threshold
         /// </summary>
-        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
         {
-            Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamepadState.ThumbSticks.Left : gamepadState.ThumbSticks.Right;
-            return gamepadThumbstickMag.Length() >= settings.ThumbstickThreshold;
+            var gamePadState = inputSnapshot.GamePadState;
+            Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
+            return gamepadThumbstickMag.Length() >= inputSnapshot.InputSettings.ThumbstickThreshold;
         }
     }
 
@@ -171,9 +175,9 @@ namespace Engine.Input
         /// <summary>
         /// True if the Button (without modifiers) is pressed
         /// </summary>
-        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
         {
-            return gamepadState.IsButtonDown(Button);
+            return inputSnapshot.GamePadState.IsButtonDown(Button);
         }
     }
 
@@ -201,9 +205,9 @@ namespace Engine.Input
         /// <summary>
         /// True if the key (without modifiers) is pressed
         /// </summary>
-        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
         {
-            return keyState.Contains(Key);
+            return inputSnapshot.KeyboardState.IsKeyDown(Key);
         }
     }
 
@@ -232,10 +236,11 @@ namespace Engine.Input
         /// <summary>
         /// True if the trigger (without modifiers) is past the settings threshold
         /// </summary>
-        protected override bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
         {
-            float triggerMag = Trigger == Trigger.Left ? gamepadState.Triggers.Left : gamepadState.Triggers.Right;
-            return triggerMag >= settings.TriggerThreshold;
+            var gamePadState = inputSnapshot.GamePadState;
+            float triggerMag = Trigger == Trigger.Left ? gamePadState.Triggers.Left : gamePadState.Triggers.Right;
+            return triggerMag >= inputSnapshot.InputSettings.TriggerThreshold;
         }
     }
 }

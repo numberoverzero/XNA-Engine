@@ -52,16 +52,17 @@ namespace Engine.Input
         /// <returns>True if the binding is active</returns>
         public bool IsActive(DefaultInputManager manager, PlayerIndex player, FrameState state)
         {
-            var keyState = manager.PressedKeys[state];
-            GamePadState gamepadState = state == FrameState.Current ? manager.CurrentGamePadStates[player] : manager.PreviousGamePadStates[player];
+            var keyboardState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.PreviousKeyboardState;
+            GamePadState gamePadState = state == FrameState.Current ? manager.CurrentGamePadStates[player] : manager.PreviousGamePadStates[player];
             MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.PreviousMouseState;
-            return IsRawBindingActive(keyState, gamepadState, mouseState, manager.Settings);
+            var inputSnapshot = new InputSnapshot(keyboardState, gamePadState, mouseState, manager.Settings);
+            return IsRawBindingActive(inputSnapshot);
         }
 
         /// <summary>
         /// True if the binding (without modifiers) is active
         /// </summary>
-        protected virtual bool IsRawBindingActive(ISet<Keys> keyState, GamePadState gamepadState, MouseState mouseState, InputSettings settings)
+        protected virtual bool IsRawBindingActive(InputSnapshot inputSnapshot)
         {
             return false;
         }

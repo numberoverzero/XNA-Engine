@@ -103,7 +103,7 @@
     <Compile Include="Camera\Effects\BasicEffects.cs" />
     <Compile Include="Camera\Effects\CameraEffect.cs" />
     <Compile Include="Camera\Enums.cs" />
-    <Compile Include="DataStructures\CountedSet.cs" />
+    <Compile Include="DataStructures\CountedCollection.cs" />
     <Compile Include="DataStructures\CycleBuffer.cs" />
     <Compile Include="DataStructures\DefaultDict.cs" />
     <Compile Include="DataStructures\DoubleBuffer.cs" />
@@ -123,6 +123,7 @@
     <Compile Include="Input\Binding\IBinding.cs" />
     <Compile Include="Input\Binding\InputBinding.cs" />
     <Compile Include="Input\EventInput.cs" />
+    <Compile Include="Input\InputSnapshot.cs" />
     <Compile Include="Input\Managers\BasicInputManager.cs" />
     <Compile Include="Input\Managers\InputManager.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
