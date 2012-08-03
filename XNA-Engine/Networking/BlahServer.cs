@@ -42,7 +42,7 @@ using Engine.Utility;
 
 namespace Engine.Networking
 {
-    public class Server
+    public class BlahServer
     {
         int maxConnections;
         int serverPort;
@@ -60,7 +60,7 @@ namespace Engine.Networking
         /// <param name="serverAddress"></param>
         /// <param name="serverPort"></param>
         /// <param name="maxConnections"></param>
-        public Server(IPAddress serverAddress, int serverPort, int maxConnections)
+        public BlahServer(IPAddress serverAddress, int serverPort, int maxConnections)
         {
             this.maxConnections = maxConnections;
             this.serverAddress = serverAddress;
@@ -100,10 +100,12 @@ namespace Engine.Networking
             processingThread = new Thread(() => 
             {
                 while (true)
+                    Thread.Sleep(500);
                     if(listener.Pending())
                     {
                         Chat.Sockets.TcpClient client = listener.AcceptTcpClient();
                         DoCommunicate comm = new DoCommunicate(this, client);
+                        Console.WriteLine(String.Format("New connection request: {0}", getip(client)));
                     }
             });
             listener.Start();
@@ -212,6 +214,7 @@ namespace Engine.Networking
             nickNamesByConnect.Add(client, nickName);
             SendMsg(String.Format("Nickname {0} accepted.", nickName), nickName);
             SendMsg(String.Format("Let's all welcome {0} to the chat.", nickName));
+            Console.WriteLine(String.Format("JOINED: {0} (client: {1})", nickName, getip(client)));
         }
 
         public void OnPlayerLeave(string nickName, Chat.Sockets.TcpClient client)
@@ -220,11 +223,16 @@ namespace Engine.Networking
             nickNames.Remove(nickName);
             nickNamesByConnect.Remove(client);
             SendMsg(String.Format("{0} was a whore anyway ({0} left.)", nickName));
+            Console.WriteLine(String.Format("LEFT: {0} (client: {1})", nickName, getip(client)));
         }
 
         protected void SendMsgException(string msg, string nickName, Chat.Sockets.TcpClient client)
         {
             OnPlayerLeave(nickName, client);
+        }
+        private string getip(Chat.Sockets.TcpClient client)
+        {
+            return ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
         }
     }
 }

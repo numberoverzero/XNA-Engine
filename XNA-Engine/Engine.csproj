@@ -37,7 +37,7 @@
     <OutputPath>bin\x86\Release</OutputPath>
     <DefineConstants>WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
+    <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
@@ -103,6 +103,7 @@
     <Compile Include="Camera\Effects\BasicEffects.cs" />
     <Compile Include="Camera\Effects\CameraEffect.cs" />
     <Compile Include="Camera\Enums.cs" />
+    <Compile Include="DataStructures\BidirectionalDict.cs" />
     <Compile Include="DataStructures\CountedCollection.cs" />
     <Compile Include="DataStructures\CycleBuffer.cs" />
     <Compile Include="DataStructures\DefaultDict.cs" />
@@ -126,8 +127,11 @@
     <Compile Include="Input\InputSnapshot.cs" />
     <Compile Include="Input\Managers\BasicInputManager.cs" />
     <Compile Include="Input\Managers\InputManager.cs" />
+    <Compile Include="Networking\BasicServer.cs" />
+    <Compile Include="Networking\ServerEventArgs.cs" />
     <Compile Include="Networking\DoCommunicate.cs" />
-    <Compile Include="Networking\Server.cs" />
+    <Compile Include="Networking\BlahServer.cs" />
+    <Compile Include="Networking\IServer.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
     <Compile Include="Rendering\Effects\BloomSettings.cs" />
@@ -149,6 +153,7 @@
     <Compile Include="Utility\ColorTextureGenerator.cs" />
     <Compile Include="DataStructures\DataStructures.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="Utility\DictionaryExtensions.cs" />
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
     <Compile Include="Utility\MathFunctions.cs" />
     <Compile Include="Utility\NetworkingExtensions.cs" />

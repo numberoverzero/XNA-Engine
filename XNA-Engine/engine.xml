@@ -1833,31 +1833,6 @@
             </summary>
             <param name="settings"></param>
         </member>
-        <member name="M:Engine.Networking.Server.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
-            <summary>
-            Set up a server to receive and broadcast messages
-            Use Server.Start() to begin handling messages
-            </summary>
-            <param name="serverAddress"></param>
-            <param name="serverPort"></param>
-            <param name="maxConnections"></param>
-        </member>
-        <member name="M:Engine.Networking.Server.Start">
-            <summary>
-            Starts the listener and kills any active listeners
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Server.Stop">
-            <summary>
-            Stops the listener and kills any active listeners
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Server._startProcessing">
-            <summary>
-            Starts processing requests.  Can also be considered Restart,
-            if called when the listener is already started.
-            </summary>
-        </member>
         <member name="T:Engine.DataStructures.DoubleBuffer`1">
             <summary>
             Provides Push, Flip, and full Front inspection.
@@ -2099,6 +2074,18 @@
             <summary>
             Always updates the PhysicsComponent's rotation to align with the object's velocity
             </summary>
+        </member>
+        <member name="T:Engine.Utility.NetworkingExtensions">
+            <summary>
+            Extensions for networking stuff
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.NetworkingExtensions.SafeRead(System.Net.Sockets.NetworkStream)">
+            <summary>
+            Reads data from the NetworkStream without throwing errors or crashing if the remote shuts down
+            </summary>
+            <param name="stream"></param>
+            <returns></returns>
         </member>
         <member name="T:Engine.Rendering.Effects.BloomEffect">
             <summary>
@@ -3230,16 +3217,488 @@
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
             </summary>
         </member>
-        <member name="T:Engine.Utility.NetworkingExtensions">
+        <member name="M:Engine.Networking.BlahServer.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
             <summary>
-            Extensions for networking stuff
+            Set up a server to receive and broadcast messages
+            Use Server.Start() to begin handling messages
+            </summary>
+            <param name="serverAddress"></param>
+            <param name="serverPort"></param>
+            <param name="maxConnections"></param>
+        </member>
+        <member name="M:Engine.Networking.BlahServer.Start">
+            <summary>
+            Starts the listener and kills any active listeners
             </summary>
         </member>
-        <member name="M:Engine.Utility.NetworkingExtensions.SafeRead(System.Net.Sockets.NetworkStream)">
+        <member name="M:Engine.Networking.BlahServer.Stop">
             <summary>
-            Reads data from the NetworkStream without throwing errors or crashing if the remote shuts down
+            Stops the listener and kills any active listeners
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BlahServer._startProcessing">
+            <summary>
+            Starts processing requests.  Can also be considered Restart,
+            if called when the listener is already started.
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.ServerEventArgs">
+            <summary>
+            Events passed when an authentication attempt occurs.
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,System.Net.Sockets.TcpClient)">
+            <summary>
+            Initialize a set of parameterless server interaction args at the current time
+            </summary>
+            <param name="success"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,System.Net.Sockets.TcpClient,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Initialize a set of server interaction args at the current time with the given parameters
+            </summary>
+            <param name="success"></param>
+            <param name="client"></param>
+            <param name="parameters"></param>
+        </member>
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,System.Net.Sockets.TcpClient,System.Collections.Generic.IDictionary{System.String,System.String},System.DateTime)">
+            <summary>
+            Initialize a set of server interaction args at the given time with the given parameters
+            </summary>
+            <param name="success"></param>
+            <param name="client"></param>
+            <param name="parameters"></param>
+            <param name="time"></param>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Success">
+            <summary>
+            Was the interaction successful
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Client">
+            <summary>
+            The TcpClient that interacted
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Time">
+            <summary>
+            When the interaction occured
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Parameters">
+            <summary>
+            Keyed values that the client provided to the server during the interaction
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.BasicServer">
+            <summary>
+            A basic implementation of the <see cref="T:Engine.Networking.IServer"/> interface
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.IServer">
+            <summary>
+            Receives and Sends messages, handles Connect/Disconnect and Auth
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.IServer.Start">
+            <summary>
+            Start the server.  Until the server is started, it cannot handle messages
+            Cannot be started after Shutdown
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.IServer.Stop">
+            <summary>
+            Stop handling messages.
+            Can be resumed with Start
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.IServer.Shutdown(System.Boolean)">
+            <summary>
+            Completely release all clients and stop handling messages.
+            Cannot be started after a shutdown.
+            Sends a shutdown message to clients unless immediate is true
+            </summary>
+            <param name="immediate"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.Connect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Tries to connect a client to the Server.
+            Fires OnConnect, even if client does not successfully connect
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.Disconnect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Tries to disconnect a client to the Server.
+            Fires OnDisconnect, even if client does not successfully disconnect
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.Authenticate(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Tries to authenticate a client.
+            Fires OnAuthenticate, even if client does not successfully authenticate
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.ReceiveMsg(System.String,System.Net.Sockets.TcpClient)">
+            <summary>
+            Receives a message from a client
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.SendMsg(System.String,System.Net.Sockets.TcpClient[])">
+            <summary>
+            Sends a message to a specific group of clients.
+            Sends to all connected clients if the list is empty
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClientString(System.Net.Sockets.TcpClient)">
+            <summary>
+            Gets the string that uniquely identifies the client
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClient(System.String)">
+            <summary>
+            Gets a client from a given string that uniquely identifies the client
+            </summary>
+            <param name="clientString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClientStrings(System.Net.Sockets.TcpClient[])">
+            <summary>
+            Gets the strings that uniquely identify the clients
+            </summary>
+            <param name="clients"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClients(System.String[])">
+            <summary>
+            Gets the clients from the given strings that uniquely identify the clients
+            </summary>
+            <param name="clientStrings"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Networking.IServer.IsRunning">
+            <summary>
+            If the server has been started, returns true.
+            Returns false if the server is stopped or shutdown.
+            A server cannot be started from shutdown.
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnStart">
+            <summary>
+            Fired when the server is started
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnStop">
+            <summary>
+            Fired when the server is stopped
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnShutdown">
+            <summary>
+            Fired when the server is shut down
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnConnect">
+            <summary>
+            Fired when a client attempts to connect to the server
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnDisconnect">
+            <summary>
+            Fired when a client attempts to disconnect to the server
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnAuthenticate">
+            <summary>
+            Fired when a client attempts to authenticate
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32)">
+            <summary>
+            Construct a basic server such that it is ready to be started.
+            </summary>
+            <param name="localaddr"></param>
+            <param name="port"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.Boolean)">
+            <summary>
+            Construct a basic server such that it is ready to be started, and possibly using the default connect
+            behavior.
+            </summary>
+            <param name="localaddr"></param>
+            <param name="port"></param>
+            <param name="useDefaultConnectBehavior"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.PollForClients">
+            <summary>
+            Checks listener forever and adds new clients as they try to connect
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Start">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Start"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Stop">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Stop"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Shutdown(System.Boolean)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Shutdown(System.Boolean)"/>
+            </summary>
+            <param name="immediate"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Connect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Connect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Handle_OnConnect(System.Object,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Default handler for the OnConnect event.
+            Registers the client in the clientTable, registers a new thread in the clientThread table,
+            and starts that thread.  The thread calls DefaultClientThreadFunction
+            </summary>
+            <param name="sender"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.DefaultClientThreadFunction(Engine.Networking.ServerEventArgs)">
+            <summary>
+            Constantly checks a client for incoming messages
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.ClientReadLine(System.Net.Sockets.NetworkStream)">
+            <summary>
+            Attempts to read for a client
             </summary>
             <param name="stream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,System.Net.Sockets.TcpClient)">
+            <summary>
+            Called when we try to read from a client stream and fail.
+            </summary>
+            <param name="reason"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Disconnect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Disconnect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Authenticate(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Authenticate(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.ReceiveMsg(System.String,System.Net.Sockets.TcpClient)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.ReceiveMsg(System.String,System.Net.Sockets.TcpClient)"/>
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.SendMsg(System.String,System.Net.Sockets.TcpClient[])">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.SendMsg(System.String,System.Net.Sockets.TcpClient[])"/>
+            </summary>
+            <param name="msg"></param>
+            <param name="clients"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.WriteMsg(System.String,System.Net.Sockets.TcpClient)">
+            <summary>
+            Tries to write a message to a client
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.OnSendMsgException(System.String,System.String,System.Net.Sockets.TcpClient)">
+            <summary>
+            Called when we try to send a message to a client but that send fails.
+            </summary>
+            <param name="msg"></param>
+            <param name="reason"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClientString(System.Net.Sockets.TcpClient)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClientString(System.Net.Sockets.TcpClient)"/>
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClient(System.String)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClient(System.String)"/>
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClientStrings(System.Net.Sockets.TcpClient[])">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClientStrings(System.Net.Sockets.TcpClient[])"/>
+            </summary>
+            <param name="clients"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClients(System.String[])">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClients(System.String[])"/>
+            </summary>
+            <param name="clients"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Networking.BasicServer.IsRunning">
+            <summary>
+            See <see cref="P:Engine.Networking.IServer.IsRunning"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnStart">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnStart"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnStop">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnStop"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnShutdown">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnShutdown"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnConnect">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnConnect"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnDisconnect">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnDisconnect"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnAuthenticate">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnAuthenticate"/>
+            </summary>
+        </member>
+        <member name="T:Engine.DataStructures.BidirectionalDict`2">
+            <summary>
+            Provides strict 1:1 mapping between two types.
+            Not thread safe by any stretch of the imagination
+            </summary>
+            <typeparam name="T1"></typeparam>
+            <typeparam name="T2"></typeparam>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.#ctor">
+            <summary>
+            Empty Bidirectional Dictionary
+            </summary>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.Add(`0,`1)">
+            <summary>
+            Add the specified pairing to the dictionary
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.Add(`1,`0)">
+            <summary>
+            Add the specified pairing to the dictionary
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.Remove(`0)">
+            <summary>
+            Remove the item and its corresponding value from the dictionary
+            </summary>
+            <param name="k"></param>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.Remove(`1)">
+            <summary>
+            Remove the item and its corresponding value from the dictionary
+            </summary>
+            <param name="k"></param>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.HasItem(`0)">
+            <summary>
+            True if there is a pairing with the given value
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.HasItem(`1)">
+            <summary>
+            True if there is a pairing with the given value
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.GetValuesType1">
+            <summary>
+            Returns the values of the first type specification in the table
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.GetValuesType2">
+            <summary>
+            Returns the values of the second type specification in the table
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.DataStructures.BidirectionalDict`2.Item(`1)">
+            <summary>
+            Gets or sets the values associated with the specified key
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.DataStructures.BidirectionalDict`2.Item(`0)">
+            <summary>
+            Gets or sets the values associated with the specified key
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.DictionaryExtensions">
+            <summary>
+            Extensions for manipulating dictionaries, such as merging
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.DictionaryExtensions.Merge``2(System.Collections.Generic.IDictionary{``0,``1},System.Collections.Generic.IDictionary{``0,``1}[])">
+            <summary>
+            Merges any number of dictionaries into a new one.
+            Values in the new dictionary are overwritten left to right,
+            such that order matters. (The dictionary this is performed on is the base,
+            so any key that it shares with another dictionary will be overwritten)
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="others"></param>
             <returns></returns>
         </member>
     </members>

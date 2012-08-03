@@ -44,14 +44,14 @@ namespace Engine.Networking
 {
     public class DoCommunicate
     {
-        Server server;
+        BlahServer server;
         Chat.Sockets.TcpClient client;
         System.Net.Sockets.NetworkStream reader;
         System.Net.Sockets.NetworkStream writer;
         Thread runThread;
         string nickName;
 
-        public DoCommunicate(Server server, System.Net.Sockets.TcpClient client)
+        public DoCommunicate(BlahServer server, System.Net.Sockets.TcpClient client)
         {
             this.server = server;
             this.client = client;
