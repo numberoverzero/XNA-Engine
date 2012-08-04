@@ -3794,6 +3794,20 @@
             <param name="func"></param>
             <param name="msg"></param>
         </member>
+        <member name="T:Engine.Utility.InvokeExtensions">
+            <summary>
+            Extensions related to Invocation
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.InvokeExtensions.InvokeEx``1(``0,System.Action{``0})">
+            <summary>
+            If performing the action would require a synchronized invoke,
+            does that for you.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="action"></param>
+        </member>
         <member name="T:Engine.Input.MouseButton">
             <summary>
             Used to specify the left or right mouse button
