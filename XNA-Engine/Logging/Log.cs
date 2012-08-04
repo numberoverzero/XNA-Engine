@@ -28,15 +28,12 @@ namespace Engine.Logging
                     return null;
                 if (_log == null || !_log.CanWrite)
                 {
-                    _log.Close();
-                    _log = File.Open(Filename, FileMode.Append);
+                    _log = File.Open(Filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                 }
                 return _log;
             }
         }
         Frequency frequency;
-        List<string> msgs;
-        int buffsize = 50;
 
         /// <summary>
         /// Create a log file at the given location,
@@ -48,24 +45,13 @@ namespace Engine.Logging
         {
             this.Filename = filename;
             this.frequency = frequency;
-            msgs = new List<string>();
+            Debug("Log:Initialized");
         }
 
         /// <summary>
         /// Write any pending messages to disk
         /// </summary>
-        public virtual void Flush()
-        {
-            // Flip the buffer, grabbing all the messages from the back and
-            // still allowing writes
-            var msgsCopy = msgs.ToArray();
-            msgs.Clear();
-            if (log == null || !log.CanWrite) return;
-            foreach (var msg in msgsCopy)
-                log.Write(uniEncoding.GetBytes(msg),
-                    0, uniEncoding.GetByteCount(msg));
-            log.Close();
-        }
+        public virtual void Flush() { }
 
         /// <summary>
         /// See <see cref="ILog.Error"/>
@@ -121,9 +107,18 @@ namespace Engine.Logging
                     prefix = "DEBG";
                     break;
             }
+            try
+            {
+                _logWrite(fmt.format(DateTime.Now, prefix, msg));
+            }
+            catch { }
+        }
 
-            msgs.Add(fmt.format(DateTime.Now, prefix, msg));
-            if (msgs.Count >= buffsize) Flush();
+        void _logWrite(string msg)
+        {
+            log.Write(uniEncoding.GetBytes(msg + "\n"),
+                0, uniEncoding.GetByteCount(msg + "\n"));
+            log.Close();
         }
     }
 

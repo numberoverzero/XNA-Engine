@@ -223,7 +223,7 @@ namespace Engine.Networking
                 Thread.Sleep(1);
                 try
                 {
-                    line = ClientRead(stream);
+                    line = ClientRead(client);
                     ReceiveMsg(line, client);
                 }
                 catch
@@ -236,16 +236,11 @@ namespace Engine.Networking
         /// <summary>
         /// Attempts to read for a client
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="client"></param>
         /// <returns></returns>
-        protected string ClientRead(NetworkStream stream)
+        protected string ClientRead(TcpClient client)
         {
-            byte[] buffer = new byte[1024];
-            StringBuilder sb = new StringBuilder();
-            int n = stream.Read(buffer, 0, buffer.Length);
-            sb.AppendFormat("{0}", Encoding.ASCII.GetString(buffer, 0, n));
-            if (n == 0) throw new IOException();
-            return sb.ToString();
+            return client.ReadWithFixedSizeHeader();
         }
         /// <summary>
         /// Called when we try to read from a client stream and fail.
@@ -434,10 +429,7 @@ namespace Engine.Networking
         /// <param name="client"></param>
         protected virtual void WriteMsg(string msg, TcpClient client)
         {
-            var writer = new StreamWriter(client.GetStream());
-            writer.WriteLine(msg);
-            writer.Flush();
-            writer = null;
+            client.WriteWithFixedSizeHeader(msg);
         }
 
         /// <summary>

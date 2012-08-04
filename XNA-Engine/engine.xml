@@ -268,11 +268,11 @@
             </summary>
             <param name="oClient"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.ClientRead(System.Net.Sockets.NetworkStream)">
+        <member name="M:Engine.Networking.BasicServer.ClientRead(System.Net.Sockets.TcpClient)">
             <summary>
             Attempts to read for a client
             </summary>
-            <param name="stream"></param>
+            <param name="client"></param>
             <returns></returns>
         </member>
         <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,System.Net.Sockets.TcpClient)">
@@ -386,6 +386,62 @@
         <member name="E:Engine.Networking.BasicServer.OnAuthenticate">
             <summary>
             See <see cref="E:Engine.Networking.IServer.OnAuthenticate"/>
+            </summary>
+        </member>
+        <member name="T:Engine.Logging.Frequency">
+            <summary>
+            The expected rate of message writing.
+            Can be used to determine how to batch writes
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Frequency.None">
+            <summary>
+            Unknown or random frequency
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Frequency.Low">
+            <summary>
+            Rarely writing
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Frequency.Moderate">
+            <summary>
+            Writing constantly
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Frequency.High">
+            <summary>
+            Multiple inputs writing constantly
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Frequency.Burst">
+            <summary>
+            Infrequent, high-bandwidth writing
+            </summary>
+        </member>
+        <member name="T:Engine.Logging.Level">
+            <summary>
+            A log message's severity level
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Level.Error">
+            <summary>
+            An error occured
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Level.Warning">
+            <summary>
+            A warning
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Level.Info">
+            <summary>
+            An informational message
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Level.Debug">
+            <summary>
+            Debug information
             </summary>
         </member>
         <member name="T:Engine.Input.InputBinding">
@@ -1989,6 +2045,35 @@
             Transitioning from tracking a GameObject to tracking a different GameObject
             </summary>
         </member>
+        <member name="T:Engine.Logging.ILog">
+            <summary>
+            Logging interface
+            </summary>
+        </member>
+        <member name="M:Engine.Logging.ILog.Debug(System.String)">
+            <summary>
+            Log a debug message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.ILog.Error(System.String)">
+            <summary>
+            Log an error message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.ILog.Info(System.String)">
+            <summary>
+            Log an info message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.ILog.Warn(System.String)">
+            <summary>
+            Log a warning message
+            </summary>
+            <param name="msg"></param>
+        </member>
         <member name="T:Engine.Rendering.Pipeline.IRenderEffect">
             <summary>
             Renders an effect on a preEffect texture, out to a postEffect texture.
@@ -2454,6 +2539,30 @@
             </summary>
             <param name="client"></param>
             <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.NetworkingExtensions.ReadExact(System.IO.Stream,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Attempts to read exactly count bytes into the buffer, starting at offset.
+            Throws EOS Exception when the requested number of bytes aren't read
+            </summary>
+            <param name="stream"></param>
+            <param name="buffer"></param>
+            <param name="offset"></param>
+            <param name="count"></param>
+        </member>
+        <member name="M:Engine.Utility.NetworkingExtensions.ReadWithFixedSizeHeader(System.Net.Sockets.TcpClient)">
+            <summary>
+            Reads a message from a client where the first 4 bytes are the size of the rest of the message
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithFixedSizeHeader(System.Net.Sockets.TcpClient,System.String)">
+            <summary>
+            Writes a message to the client, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+            </summary>
+            <param name="client"></param>
+            <param name="msg"></param>
         </member>
         <member name="T:Engine.Rendering.Effects.BloomEffect">
             <summary>
@@ -3602,6 +3711,89 @@
             Keyed values that the client provided to the server during the interaction
             </summary>
         </member>
+        <member name="T:Engine.Logging.Log">
+            <summary>
+            See <see cref="T:Engine.Logging.ILog"/>
+            </summary>
+        </member>
+        <member name="F:Engine.Logging.Log.Filename">
+            <summary>
+            The file to log to.
+            </summary>
+        </member>
+        <member name="M:Engine.Logging.Log.#ctor(System.String,Engine.Logging.Frequency)">
+            <summary>
+            Create a log file at the given location,
+            with a given expected frequency of logging
+            </summary>
+            <param name="filename"></param>
+            <param name="frequency"></param>
+        </member>
+        <member name="M:Engine.Logging.Log.Flush">
+            <summary>
+            Write any pending messages to disk
+            </summary>
+        </member>
+        <member name="M:Engine.Logging.Log.Error(System.String)">
+            <summary>
+            See <see cref="M:Engine.Logging.ILog.Error(System.String)"/>
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.Log.Warn(System.String)">
+            <summary>
+            See <see cref="M:Engine.Logging.ILog.Warn(System.String)"/>
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.Log.Info(System.String)">
+            <summary>
+            See <see cref="M:Engine.Logging.ILog.Info(System.String)"/>
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.Log.Debug(System.String)">
+            <summary>
+            See <see cref="M:Engine.Logging.ILog.Debug(System.String)"/>
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="T:Engine.Logging.LogLine">
+            <summary>
+            Used for injecting text into another log message
+            </summary>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Error(System.String)">
+            <summary>
+            Log an error message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Warn(System.String)">
+            <summary>
+            Log a warning message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Info(System.String)">
+            <summary>
+            Log an info message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Debug(System.String)">
+            <summary>
+            Log a debug message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.InjectMsg(System.Action{System.String},System.String)">
+            <summary>
+            Called by Error/Warn/Info/Debug, used for injecting into the message
+            </summary>
+            <param name="func"></param>
+            <param name="msg"></param>
+        </member>
         <member name="T:Engine.Input.MouseButton">
             <summary>
             Used to specify the left or right mouse button
@@ -3711,174 +3903,6 @@
         <member name="F:Engine.Input.FrameState.Current">
             <summary>
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
-            </summary>
-        </member>
-        <member name="T:Engine.Logging.Log">
-            <summary>
-            See <see cref="T:Engine.Logging.ILog"/>
-            </summary>
-        </member>
-        <member name="T:Engine.Logging.ILog">
-            <summary>
-            Logging interface
-            </summary>
-        </member>
-        <member name="M:Engine.Logging.ILog.Debug(System.String)">
-            <summary>
-            Log a debug message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.ILog.Error(System.String)">
-            <summary>
-            Log an error message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.ILog.Info(System.String)">
-            <summary>
-            Log an info message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.ILog.Warn(System.String)">
-            <summary>
-            Log a warning message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="F:Engine.Logging.Log.Filename">
-            <summary>
-            The file to log to.
-            </summary>
-        </member>
-        <member name="M:Engine.Logging.Log.#ctor(System.String,Engine.Logging.Frequency)">
-            <summary>
-            Create a log file at the given location,
-            with a given expected frequency of logging
-            </summary>
-            <param name="filename"></param>
-            <param name="frequency"></param>
-        </member>
-        <member name="M:Engine.Logging.Log.Flush">
-            <summary>
-            Write any pending messages to disk
-            </summary>
-        </member>
-        <member name="M:Engine.Logging.Log.Error(System.String)">
-            <summary>
-            See <see cref="M:Engine.Logging.ILog.Error(System.String)"/>
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.Log.Warn(System.String)">
-            <summary>
-            See <see cref="M:Engine.Logging.ILog.Warn(System.String)"/>
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.Log.Info(System.String)">
-            <summary>
-            See <see cref="M:Engine.Logging.ILog.Info(System.String)"/>
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.Log.Debug(System.String)">
-            <summary>
-            See <see cref="M:Engine.Logging.ILog.Debug(System.String)"/>
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="T:Engine.Logging.LogLine">
-            <summary>
-            Used for injecting text into another log message
-            </summary>
-        </member>
-        <member name="M:Engine.Logging.LogLine.Error(System.String)">
-            <summary>
-            Log an error message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.LogLine.Warn(System.String)">
-            <summary>
-            Log a warning message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.LogLine.Info(System.String)">
-            <summary>
-            Log an info message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.LogLine.Debug(System.String)">
-            <summary>
-            Log a debug message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Logging.LogLine.InjectMsg(System.Action{System.String},System.String)">
-            <summary>
-            Called by Error/Warn/Info/Debug, used for injecting into the message
-            </summary>
-            <param name="func"></param>
-            <param name="msg"></param>
-        </member>
-        <member name="T:Engine.Logging.Frequency">
-            <summary>
-            The expected rate of message writing.
-            Can be used to determine how to batch writes
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Frequency.None">
-            <summary>
-            Unknown or random frequency
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Frequency.Low">
-            <summary>
-            Rarely writing
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Frequency.Moderate">
-            <summary>
-            Writing constantly
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Frequency.High">
-            <summary>
-            Multiple inputs writing constantly
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Frequency.Burst">
-            <summary>
-            Infrequent, high-bandwidth writing
-            </summary>
-        </member>
-        <member name="T:Engine.Logging.Level">
-            <summary>
-            A log message's severity level
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Level.Error">
-            <summary>
-            An error occured
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Level.Warning">
-            <summary>
-            A warning
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Level.Info">
-            <summary>
-            An informational message
-            </summary>
-        </member>
-        <member name="F:Engine.Logging.Level.Debug">
-            <summary>
-            Debug information
             </summary>
         </member>
     </members>
