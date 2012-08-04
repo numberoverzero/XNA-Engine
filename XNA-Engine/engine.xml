@@ -195,6 +195,11 @@
             Mapping from clients to their read threads
             </summary>
         </member>
+        <member name="F:Engine.Networking.BasicServer.log">
+            <summary>
+            The server log
+            </summary>
+        </member>
         <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32)">
             <summary>
             Construct a basic server such that it is ready to be started.
@@ -202,13 +207,22 @@
             <param name="localaddr"></param>
             <param name="port"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.Boolean)">
+        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
+            <summary>
+            Construct a basic server such that it is ready to be started.
+            </summary>
+            <param name="localaddr"></param>
+            <param name="port"></param>
+            <param name="logFileName"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String,System.Boolean)">
             <summary>
             Construct a basic server such that it is ready to be started, and possibly using the default connect
             behavior.
             </summary>
             <param name="localaddr"></param>
             <param name="port"></param>
+            <param name="logFileName"></param>
             <param name="useDefaultConnectBehavior"></param>
         </member>
         <member name="M:Engine.Networking.BasicServer.Start">
@@ -3701,7 +3715,41 @@
         </member>
         <member name="T:Engine.Logging.Log">
             <summary>
-            
+            See <see cref="T:Engine.Logging.ILog"/>
+            </summary>
+        </member>
+        <member name="T:Engine.Logging.ILog">
+            <summary>
+            Logging interface
+            </summary>
+        </member>
+        <member name="M:Engine.Logging.ILog.Debug(System.String)">
+            <summary>
+            Log a debug message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.ILog.Error(System.String)">
+            <summary>
+            Log an error message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.ILog.Info(System.String)">
+            <summary>
+            Log an info message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.ILog.Warn(System.String)">
+            <summary>
+            Log a warning message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="F:Engine.Logging.Log.Filename">
+            <summary>
+            The file to log to.
             </summary>
         </member>
         <member name="M:Engine.Logging.Log.#ctor(System.String,Engine.Logging.Frequency)">
@@ -3719,26 +3767,62 @@
         </member>
         <member name="M:Engine.Logging.Log.Error(System.String)">
             <summary>
-            Log an error message
+            See <see cref="M:Engine.Logging.ILog.Error(System.String)"/>
             </summary>
             <param name="msg"></param>
         </member>
         <member name="M:Engine.Logging.Log.Warn(System.String)">
             <summary>
-            Log a warning message
+            See <see cref="M:Engine.Logging.ILog.Warn(System.String)"/>
             </summary>
             <param name="msg"></param>
         </member>
         <member name="M:Engine.Logging.Log.Info(System.String)">
             <summary>
-            Log an info message
+            See <see cref="M:Engine.Logging.ILog.Info(System.String)"/>
             </summary>
             <param name="msg"></param>
         </member>
         <member name="M:Engine.Logging.Log.Debug(System.String)">
             <summary>
+            See <see cref="M:Engine.Logging.ILog.Debug(System.String)"/>
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="T:Engine.Logging.LogLine">
+            <summary>
+            Used for injecting text into another log message
+            </summary>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Error(System.String)">
+            <summary>
+            Log an error message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Warn(System.String)">
+            <summary>
+            Log a warning message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Info(System.String)">
+            <summary>
+            Log an info message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.Debug(System.String)">
+            <summary>
             Log a debug message
             </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Logging.LogLine.InjectMsg(System.Action{System.String},System.String)">
+            <summary>
+            Called by Error/Warn/Info/Debug, used for injecting into the message
+            </summary>
+            <param name="func"></param>
             <param name="msg"></param>
         </member>
         <member name="T:Engine.Logging.Frequency">

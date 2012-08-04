@@ -9,28 +9,33 @@ using Engine.Utility;
 namespace Engine.Logging
 {
     /// <summary>
-    /// 
+    /// See <see cref="ILog"/>
     /// </summary>
-    public class Log
+    public class Log : ILog
     {
         UnicodeEncoding uniEncoding = new UnicodeEncoding();
-        const string fmt = "{0}::{1}";
-        string filename;
+        const string fmt = "{0:s} {1}::{2}";
+        /// <summary>
+        /// The file to log to.
+        /// </summary>
+        public string Filename;
         FileStream _log;
         FileStream log
         {
             get
             {
+                if (String.IsNullOrEmpty(Filename))
+                    return null;
                 if (_log == null || !_log.CanWrite)
                 {
                     _log.Close();
-                    _log = File.Open(filename, FileMode.Append);
+                    _log = File.Open(Filename, FileMode.Append);
                 }
                 return _log;
             }
         }
         Frequency frequency;
-        DoubleBuffer<string> buffer;
+        List<string> msgs;
         int buffsize = 50;
 
         /// <summary>
@@ -41,56 +46,59 @@ namespace Engine.Logging
         /// <param name="frequency"></param>
         public Log(string filename, Frequency frequency) 
         {
-            this.filename = filename;
+            this.Filename = filename;
             this.frequency = frequency;
-            buffer = new DoubleBuffer<string>();
+            msgs = new List<string>();
         }
 
         /// <summary>
         /// Write any pending messages to disk
         /// </summary>
-        public void Flush()
+        public virtual void Flush()
         {
             // Flip the buffer, grabbing all the messages from the back and
             // still allowing writes
-            buffer.Flip();
-            foreach (var msg in buffer.Front)
+            var msgsCopy = msgs.ToArray();
+            msgs.Clear();
+            if (log == null || !log.CanWrite) return;
+            foreach (var msg in msgsCopy)
                 log.Write(uniEncoding.GetBytes(msg),
                     0, uniEncoding.GetByteCount(msg));
+            log.Close();
         }
 
         /// <summary>
-        /// Log an error message
+        /// See <see cref="ILog.Error"/>
         /// </summary>
         /// <param name="msg"></param>
-        public void Error(string msg)
+        public virtual void Error(string msg)
         {
             WriteMsg(msg, Level.Error);
         }
 
         /// <summary>
-        /// Log a warning message
+        /// See <see cref="ILog.Warn"/>
         /// </summary>
         /// <param name="msg"></param>
-        public void Warn(string msg)
+        public virtual void Warn(string msg)
         {
             WriteMsg(msg, Level.Warning);
         }
 
         /// <summary>
-        /// Log an info message
+        /// See <see cref="ILog.Info"/>
         /// </summary>
         /// <param name="msg"></param>
-        public void Info(string msg)
+        public virtual void Info(string msg)
         {
             WriteMsg(msg, Level.Info);
         }
 
         /// <summary>
-        /// Log a debug message
+        /// See <see cref="ILog.Debug"/>
         /// </summary>
         /// <param name="msg"></param>
-        public void Debug(string msg)
+        public virtual void Debug(string msg)
         {
             WriteMsg(msg, Level.Debug);
         }
@@ -114,8 +122,60 @@ namespace Engine.Logging
                     break;
             }
 
-            buffer.Push(fmt.format(prefix, msg));
-            if (buffer.BackBufferSize >= buffsize) Flush();
+            msgs.Add(fmt.format(DateTime.Now, prefix, msg));
+            if (msgs.Count >= buffsize) Flush();
         }
+    }
+
+    /// <summary>
+    /// Used for injecting text into another log message
+    /// </summary>
+    public abstract class LogLine : ILog
+    {
+        ILog log;
+        internal LogLine(ILog log) { this.log = log;}
+
+        /// <summary>
+        /// Log an error message
+        /// </summary>
+        /// <param name="msg"></param>
+        public virtual void Error(string msg)
+        {
+            InjectMsg(log.Error, msg);
+        }
+
+        /// <summary>
+        /// Log a warning message
+        /// </summary>
+        /// <param name="msg"></param>
+        public virtual void Warn(string msg)
+        {
+            InjectMsg(log.Warn, msg);
+        }
+
+        /// <summary>
+        /// Log an info message
+        /// </summary>
+        /// <param name="msg"></param>
+        public virtual void Info(string msg)
+        {
+            InjectMsg(log.Info, msg);
+        }
+
+        /// <summary>
+        /// Log a debug message
+        /// </summary>
+        /// <param name="msg"></param>
+        public virtual void Debug(string msg)
+        {
+            InjectMsg(log.Debug, msg);
+        }
+
+        /// <summary>
+        /// Called by Error/Warn/Info/Debug, used for injecting into the message
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="msg"></param>
+        protected abstract void InjectMsg(Action<string> func, string msg);
     }
 }
