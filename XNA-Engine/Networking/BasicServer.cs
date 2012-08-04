@@ -20,8 +20,14 @@ namespace Engine.Networking
 
         bool isRunning;
         bool hasShutdown;
-        BidirectionalDict<string, TcpClient> clientTable;
-        Dictionary<TcpClient, Thread> clientThreads;
+        /// <summary>
+        /// Two-way mapping between A client's TcpClient and their GUID
+        /// </summary>
+        protected BidirectionalDict<string, TcpClient> clientTable;
+        /// <summary>
+        /// Mapping from clients to their read threads
+        /// </summary>
+        protected Dictionary<TcpClient, Thread> clientThreads;
         IPAddress localaddr;
         int port;
         TcpListener listener;
@@ -56,19 +62,6 @@ namespace Engine.Networking
                 OnConnect += Handle_OnConnect;
         }
 
-        /// <summary>
-        /// Checks listener forever and adds new clients as they try to connect
-        /// </summary>
-        protected void PollForClients()
-        {
-            Thread.Sleep(500);
-            if (listener.Pending())
-            {
-                var client = listener.AcceptTcpClient();
-                Connect(client);
-            }
-        }
-
         #endregion
 
         #region Server start/stop/shutdown
@@ -89,14 +82,30 @@ namespace Engine.Networking
 
             if (listener != null) listener.Stop();
             listener = new TcpListener(localaddr, port);
+            listener.Start();
 
             if (listenerThread != null && listenerThread.IsAlive) listenerThread.Kill();
-            listenerThread = new Thread(() => { PollForClients(); });
+            listenerThread = new Thread(new ThreadStart(PollForClients));
             listenerThread.Start();
 
             isRunning = true;
-            OnStart(this, null);
+            if(OnStart != null)
+                OnStart(this, null);
         }
+        /// <summary>
+        /// Checks listener forever and adds new clients as they try to connect
+        /// </summary>
+        protected void PollForClients()
+        {
+            Action<TcpClient> connect = (c) => { Connect(c); };
+            TcpClient client;
+            while (true)
+            {
+                client = listener.AcceptTcpClient();
+                new Thread(() => { connect(client); }).Start();
+            }
+        }
+
         /// <summary>
         /// See <see cref="IServer.Stop"/>
         /// </summary>
@@ -111,7 +120,8 @@ namespace Engine.Networking
             listener = null;
 
             isRunning = false;
-            OnStop(this, null);
+            if (OnStop != null)
+                OnStop(this, null);
         }
         /// <summary>
         /// See <see cref="IServer.Shutdown"/>
@@ -124,7 +134,8 @@ namespace Engine.Networking
             foreach (var client in clientTable.GetValuesType2().ToArray())
                 Disconnect(client);
             hasShutdown = true;
-            OnShutdown(this, null);
+            if (OnShutdown != null)
+                OnShutdown(this, null);
         }
 
         #endregion
@@ -140,7 +151,7 @@ namespace Engine.Networking
         {
             bool success = true;
             var parameters = new Dictionary<string, string>();
-            parameters["Server:Connect:Data:IP"] = GetIP(client);
+            parameters["Server:Connect:Data:IP"] = client.GetIP();
             if (!isRunning || hasShutdown) return;
             if (e == null)
             {
@@ -156,7 +167,8 @@ namespace Engine.Networking
                 e.Success = success;
                 e.Client = client;
             }
-            OnConnect(this, e);
+            if (OnConnect != null)
+                OnConnect(this, e);
         }
         /// <summary>
         /// Default handler for the OnConnect event.
@@ -167,57 +179,49 @@ namespace Engine.Networking
         /// <param name="args"></param>
         protected virtual void Handle_OnConnect(object sender, ServerEventArgs args)
         {
-            clientTable[args.Client] = new Guid().ToString();
-            var thread = new Thread(() => { DefaultClientThreadFunction(args); });
-            clientThreads[args.Client] = thread;
-            thread.Start();
+            var client = args.Client;
+            clientTable[client] = new Guid().ToString();
+            var thread = new Thread(new ParameterizedThreadStart(DefaultClientThreadFunction));
+            clientThreads[client] = thread;
+            thread.Start(client);
         }
         /// <summary>
         /// Constantly checks a client for incoming messages
         /// </summary>
-        /// <param name="args"></param>
-        protected void DefaultClientThreadFunction(ServerEventArgs args)
+        /// <param name="oClient"></param>
+        protected void DefaultClientThreadFunction(object oClient)
         {
-            Action OnBreak = () => { };
-            var client = args.Client;
+            var client = (TcpClient)oClient;
             var stream = client.GetStream();
             string line;
             while (true)
             {
+                Thread.Sleep(1);
                 try
                 {
-                    if ((line = ClientReadLine(stream)) != null)
-                        ReceiveMsg(line, client);
+                    line = ClientRead(stream);
+                    ReceiveMsg(line, client);
                 }
-                catch (Exception e)
+                catch
                 {
-                    e = e;
-                    OnBreak = () => { OnClientReadException("Unknown", client); };
                     break;
                 }
             }
-            OnBreak();
+            OnClientReadException("Lost Connection", client);
         }
         /// <summary>
         /// Attempts to read for a client
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        protected string ClientReadLine(NetworkStream stream)
+        protected string ClientRead(NetworkStream stream)
         {
-            if (stream.CanRead)
-            {
-                byte[] buffer = new byte[1024];
-                StringBuilder sb = new StringBuilder();
-                int n = 0;
-                do
-                {
-                    n = stream.Read(buffer, 0, buffer.Length);
-                    sb.AppendFormat("{0}", Encoding.ASCII.GetString(buffer, 0, n));
-                } while (stream.DataAvailable);
-                return sb.ToString();
-            }
-            return null;
+            byte[] buffer = new byte[1024];
+            StringBuilder sb = new StringBuilder();
+            int n = stream.Read(buffer, 0, buffer.Length);
+            sb.AppendFormat("{0}", Encoding.ASCII.GetString(buffer, 0, n));
+            if (n == 0) throw new IOException();
+            return sb.ToString();
         }
         /// <summary>
         /// Called when we try to read from a client stream and fail.
@@ -235,11 +239,6 @@ namespace Engine.Networking
             parameters.Add("ClientReadException:Data:Reason", reason);
             var e = new ServerEventArgs(success, client, parameters);
             Disconnect(client, e);
-        }
-
-        private string GetIP(TcpClient client)
-        {
-            return ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
         }
 
         #endregion
@@ -267,9 +266,8 @@ namespace Engine.Networking
                 clientThreads.Remove(client);
                 parameters["Server:RemoveClientThreadFromTable:Value"] = "true";
             }
-            catch (Exception e2)
+            catch
             {
-                e2 = e2;
                 success = false;
             }
             if (e == null)
@@ -283,7 +281,8 @@ namespace Engine.Networking
                 e.Success = success;
                 e.Client = client;
             }
-            OnDisconnect(this, e);
+            if (OnDisconnect != null)
+                OnDisconnect(this, e);
         }
         /// <summary>
         /// See <see cref="IServer.Authenticate"/>
@@ -310,7 +309,8 @@ namespace Engine.Networking
                 e.Success = success;
                 e.Client = client;
             }
-            OnAuthenticate(this, e);
+            if (OnAuthenticate != null)
+                OnAuthenticate(this, e);
         }
 
         #region EventHandlers
@@ -370,9 +370,8 @@ namespace Engine.Networking
                 {
                     WriteMsg(msg, client);
                 }
-                catch (Exception e)
+                catch
                 {
-                    e = e;
                     OnSendMsgException(msg, "Unknown", client);
                 }
         }
@@ -407,6 +406,7 @@ namespace Engine.Networking
             parameters.Add("SendMsgFailedException:Data:Value", msg);
             parameters.Add("SendMsgFailedException:Data:Reason", reason);
             var e = new ServerEventArgs(success, client, parameters);
+            Console.WriteLine("OnSendMsgException");
             Disconnect(client, e);
         }
 

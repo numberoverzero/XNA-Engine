@@ -100,5 +100,17 @@ namespace Engine.Utility
             }
             return source;
         }
+
+        /// <summary>
+        /// Returns the formatted string.  Lowercase because there's already a static method with this signature
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static string format(this string str, params object[] args)
+        {
+            return String.Format(str, args);
+        }
+
     }
 }

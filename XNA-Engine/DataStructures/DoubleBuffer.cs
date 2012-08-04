@@ -23,6 +23,14 @@ namespace Engine.DataStructures
         protected List<T> Back { get; set; }
 
         /// <summary>
+        /// Returns the number of items currently in the back buffer
+        /// </summary>
+        public int BackBufferSize
+        {
+            get { return Back.Count; }
+        }
+
+        /// <summary>
         /// Construct an empty DoubleBuffer
         /// </summary>
         public DoubleBuffer()
@@ -52,5 +60,7 @@ namespace Engine.DataStructures
         {
             Back.Add(item);
         }
+
+        
     }
 }

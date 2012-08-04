@@ -127,10 +127,10 @@
     <Compile Include="Input\InputSnapshot.cs" />
     <Compile Include="Input\Managers\BasicInputManager.cs" />
     <Compile Include="Input\Managers\InputManager.cs" />
+    <Compile Include="Logging\Enums.cs" />
+    <Compile Include="Logging\Log.cs" />
     <Compile Include="Networking\BasicServer.cs" />
     <Compile Include="Networking\ServerEventArgs.cs" />
-    <Compile Include="Networking\DoCommunicate.cs" />
-    <Compile Include="Networking\BlahServer.cs" />
     <Compile Include="Networking\IServer.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
