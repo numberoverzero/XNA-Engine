@@ -1393,6 +1393,15 @@
             <param name="args"></param>
             <returns></returns>
         </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.Timestamped(System.String,System.String)">
+            <summary>
+            Returns the string prepended with the time in the format:
+            "HH:mm:ffff "
+            </summary>
+            <param name="str"></param>
+            <param name="time_fmt"></param>
+            <returns></returns>
+        </member>
         <member name="T:Engine.Utility.DictionaryExtensions">
             <summary>
             Extensions for manipulating dictionaries, such as merging

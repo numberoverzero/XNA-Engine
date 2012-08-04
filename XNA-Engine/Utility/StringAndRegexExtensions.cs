@@ -112,5 +112,18 @@ namespace Engine.Utility
             return String.Format(str, args);
         }
 
+        private const string dflt_time_fmt = "HH:mm:ff ";
+        /// <summary>
+        /// Returns the string prepended with the time in the format:
+        /// "HH:mm:ffff "
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="time_fmt"></param>
+        /// <returns></returns>
+        public static string Timestamped(this string str, string time_fmt = null)
+        {
+            if (time_fmt == null) time_fmt = dflt_time_fmt;
+            return DateTime.Now.ToString(time_fmt) + str;
+        }
     }
 }
