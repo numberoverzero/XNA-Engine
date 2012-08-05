@@ -2559,14 +2559,18 @@
             <param name="offset"></param>
             <param name="count"></param>
         </member>
-        <member name="M:Engine.Utility.NetworkingExtensions.ReadWithFixedSizeHeader(System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Utility.NetworkingExtensions.ReadWithHeader(System.Net.Sockets.TcpClient)">
             <summary>
             Reads a message from a client where the first 4 bytes are the size of the rest of the message
             </summary>
             <param name="client"></param>
             <returns></returns>
+            <remarks>
+            EXTREMELY susceptible to trickle attacks.
+            
+            </remarks>
         </member>
-        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithFixedSizeHeader(System.Net.Sockets.TcpClient,System.String)">
+        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithHeader(System.Net.Sockets.TcpClient,System.String)">
             <summary>
             Writes a message to the client, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
             </summary>

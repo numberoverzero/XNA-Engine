@@ -83,7 +83,7 @@ namespace Engine.Networking
                 try
                 {
                     Thread.Sleep(1);
-                    msg = client.ReadWithFixedSizeHeader();
+                    msg = client.ReadWithHeader();
                     readQueue.Enqueue(msg);
                 }
                 catch { break; }
@@ -100,7 +100,7 @@ namespace Engine.Networking
                 {
                     Thread.Sleep(1);
                     needsWrite = writeQueue.TryDequeue(out msg);
-                    if (needsWrite) client.WriteWithFixedSizeHeader(msg);
+                    if (needsWrite) client.WriteWithHeader(msg);
                 }
                 catch { break; }
             }

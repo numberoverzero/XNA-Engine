@@ -240,7 +240,7 @@ namespace Engine.Networking
         /// <returns></returns>
         protected string ClientRead(TcpClient client)
         {
-            return client.ReadWithFixedSizeHeader();
+            return client.ReadWithHeader();
         }
         /// <summary>
         /// Called when we try to read from a client stream and fail.
@@ -429,7 +429,7 @@ namespace Engine.Networking
         /// <param name="client"></param>
         protected virtual void WriteMsg(string msg, TcpClient client)
         {
-            client.WriteWithFixedSizeHeader(msg);
+            client.WriteWithHeader(msg);
         }
 
         /// <summary>

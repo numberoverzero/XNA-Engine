@@ -47,14 +47,21 @@ namespace Engine.Utility
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>
-        public static string ReadWithFixedSizeHeader(this TcpClient client)
+        /// <remarks>
+        /// EXTREMELY susceptible to trickle attacks.
+        /// 
+        /// </remarks>
+        public static string ReadWithHeader(this TcpClient client)
         {
             var stream = client.GetStream();
-            byte[] messageSizeBuffer = new byte[4];
-            stream.ReadExact(messageSizeBuffer, 0, 4);
-            int messageSize = BitConverter.ToInt32(messageSizeBuffer, 0);
-            byte[] messageBuffer = new byte[messageSize];
-            stream.ReadExact(messageBuffer, 0, messageSize);
+            
+            byte[] header = new byte[4];
+            stream.ReadExact(header, 0, 4);
+            
+            int length = BitConverter.ToInt32(header, 0);
+            byte[] messageBuffer = new byte[length];
+            stream.ReadExact(messageBuffer, 0, length);
+            
             return Encoding.UTF8.GetString(messageBuffer);
         }
 
@@ -63,17 +70,14 @@ namespace Engine.Utility
         /// </summary>
         /// <param name="client"></param>
         /// <param name="msg"></param>
-        public static void WriteWithFixedSizeHeader(this TcpClient client, string msg)
+        public static void WriteWithHeader(this TcpClient client, string msg)
         {
             var stream = client.GetStream();
             var messageBuffer = Encoding.UTF8.GetBytes(msg);
-            var fullMessageBuffer = new byte[4 + messageBuffer.Length];
             var header = BitConverter.GetBytes(messageBuffer.Length);
 
-            Array.Copy(header, fullMessageBuffer, header.Length);
-            Array.Copy(messageBuffer, 0, fullMessageBuffer, 4, messageBuffer.Length);
-            
-            stream.Write(fullMessageBuffer, 0, fullMessageBuffer.Length);
+            stream.Write(header, 0, 4);
+            stream.Write(messageBuffer, 0, messageBuffer.Length);
         }
     }
 }
