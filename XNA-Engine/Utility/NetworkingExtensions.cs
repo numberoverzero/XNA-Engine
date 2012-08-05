@@ -27,10 +27,6 @@ namespace Engine.Utility
         /// Attempts to read exactly count bytes into the buffer, starting at offset.
         /// Throws EOS Exception when the requested number of bytes aren't read
         /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
         public static void ReadExact(this Stream stream, byte[] buffer, int offset, int count)
         {
             int read;
@@ -43,41 +39,45 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        /// Reads a message from a client where the first 4 bytes are the size of the rest of the message
+        /// Reads a message from a stream where the first 4 bytes are the size of the rest of the message
         /// </summary>
-        /// <param name="client"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// EXTREMELY susceptible to trickle attacks.
-        /// 
-        /// </remarks>
-        public static string ReadWithHeader(this TcpClient client)
+        public static byte[] ReadWithHeader(this Stream stream)
         {
-            var stream = client.GetStream();
-            
             byte[] header = new byte[4];
             stream.ReadExact(header, 0, 4);
-            
             int length = BitConverter.ToInt32(header, 0);
-            byte[] messageBuffer = new byte[length];
-            stream.ReadExact(messageBuffer, 0, length);
             
-            return Encoding.UTF8.GetString(messageBuffer);
+            byte[] buffer = new byte[length];
+            stream.ReadExact(buffer, 0, length);
+            return buffer;
         }
 
         /// <summary>
-        /// Writes a message to the client, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+        /// Reads a message from a stream where the first 4 bytes are the size of the rest of the message
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="msg"></param>
-        public static void WriteWithHeader(this TcpClient client, string msg)
+        public static string ReadStringWithHeader(this Stream stream)
         {
-            var stream = client.GetStream();
-            var messageBuffer = Encoding.UTF8.GetBytes(msg);
-            var header = BitConverter.GetBytes(messageBuffer.Length);
+            byte[] buffer = stream.ReadWithHeader();
+            return Encoding.UTF8.GetString(buffer);
+        }
 
+        /// <summary>
+        /// Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+        /// </summary>
+        public static void WriteWithHeader(this Stream stream, byte[] buffer, int offset, int length)
+        {
+            byte[] header = BitConverter.GetBytes(length - offset);
             stream.Write(header, 0, 4);
-            stream.Write(messageBuffer, 0, messageBuffer.Length);
+            stream.Write(buffer, offset, length);
+        }
+
+        /// <summary>
+        /// Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+        /// </summary>
+        public static void WriteWithHeader(this Stream stream, string msg)
+        {
+            byte[] buffer = Encoding.UTF8.GetBytes(msg);
+            stream.WriteWithHeader(buffer, 0, buffer.Length);
         }
     }
 }

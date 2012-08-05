@@ -62,6 +62,15 @@ namespace Engine.Networking
         }
 
         /// <summary>
+        /// Close the TcpClient and its underlying NetworkStream
+        /// </summary>
+        public void Close()
+        {
+            client.GetStream().Close();
+            client.Close();
+        }
+
+        /// <summary>
         /// Whether there are pending messages to be read.
         /// </summary>
         public bool HasQueuedReadMessages
@@ -78,12 +87,13 @@ namespace Engine.Networking
         void ReadLoop()
         {
             string msg;
+            var stream = client.GetStream();
             while (true)
             {
                 try
                 {
                     Thread.Sleep(1);
-                    msg = client.ReadWithHeader();
+                    msg = stream.ReadStringWithHeader();
                     readQueue.Enqueue(msg);
                 }
                 catch { break; }
@@ -94,13 +104,14 @@ namespace Engine.Networking
         {
             bool needsWrite;
             string msg;
+            var stream = client.GetStream();
             while (true)
             {
                 try
                 {
                     Thread.Sleep(1);
                     needsWrite = writeQueue.TryDequeue(out msg);
-                    if (needsWrite) client.WriteWithHeader(msg);
+                    if (needsWrite) stream.WriteWithHeader(msg);
                 }
                 catch { break; }
             }

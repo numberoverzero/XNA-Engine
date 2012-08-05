@@ -2554,28 +2554,26 @@
             Attempts to read exactly count bytes into the buffer, starting at offset.
             Throws EOS Exception when the requested number of bytes aren't read
             </summary>
-            <param name="stream"></param>
-            <param name="buffer"></param>
-            <param name="offset"></param>
-            <param name="count"></param>
         </member>
-        <member name="M:Engine.Utility.NetworkingExtensions.ReadWithHeader(System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Utility.NetworkingExtensions.ReadWithHeader(System.IO.Stream)">
             <summary>
-            Reads a message from a client where the first 4 bytes are the size of the rest of the message
+            Reads a message from a stream where the first 4 bytes are the size of the rest of the message
             </summary>
-            <param name="client"></param>
-            <returns></returns>
-            <remarks>
-            EXTREMELY susceptible to trickle attacks.
-            
-            </remarks>
         </member>
-        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithHeader(System.Net.Sockets.TcpClient,System.String)">
+        <member name="M:Engine.Utility.NetworkingExtensions.ReadStringWithHeader(System.IO.Stream)">
             <summary>
-            Writes a message to the client, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+            Reads a message from a stream where the first 4 bytes are the size of the rest of the message
             </summary>
-            <param name="client"></param>
-            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithHeader(System.IO.Stream,System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithHeader(System.IO.Stream,System.String)">
+            <summary>
+            Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+            </summary>
         </member>
         <member name="T:Engine.Rendering.Effects.BloomEffect">
             <summary>
@@ -3957,6 +3955,11 @@
             Tries to read a message from the client.
             Returns null if there is no pending message from the client.
             Messages to be read are enqueued by a worker thread and added in the order they are received
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Close">
+            <summary>
+            Close the TcpClient and its underlying NetworkStream
             </summary>
         </member>
         <member name="P:Engine.Networking.Client.HasQueuedReadMessages">
