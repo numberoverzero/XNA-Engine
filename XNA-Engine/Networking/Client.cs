@@ -19,21 +19,27 @@ namespace Engine.Networking
     {
         Thread readThread, writeThread;
         ConcurrentQueue<string> readQueue, writeQueue;
-        TcpClient client;
+        /// <summary>
+        /// Underlying TcpClient
+        /// </summary>
+        public TcpClient TcpClient { get; protected set; }
 
         /// <summary>
         /// Construct a client that manages concurrent reads/writes to a TcpClient
+        /// Default behavior starts the client immediately
         /// </summary>
         /// <param name="baseClient"></param>
-        public Client(TcpClient baseClient)
+        /// <param name="start"></param>
+        public Client(TcpClient baseClient, bool start = true)
         {
-            client = baseClient;
+            TcpClient = baseClient;
             IsAlive = false;
 
             readQueue = new ConcurrentQueue<string>();
             writeQueue = new ConcurrentQueue<string>();
             readThread = new Thread(new ThreadStart(ReadLoop));
             writeThread = new Thread(new ThreadStart(WriteLoop));
+            if (start) Start();
         }
 
         /// <summary>
@@ -73,8 +79,8 @@ namespace Engine.Networking
         /// </summary>
         public void Close()
         {
-            client.GetStream().Close();
-            client.Close();
+            TcpClient.GetStream().Close();
+            TcpClient.Close();
         }
 
         /// <summary>
@@ -91,16 +97,22 @@ namespace Engine.Networking
         /// </summary>
         public bool IsAlive { get; protected set; }
 
+        /// <summary>
+        /// Returns the underlying TcpClient's IPAddress as a string
+        /// </summary>
+        public string IPString { get { return TcpClient.GetIP(); } }
+
         void ReadLoop()
         {
             string msg;
-            var stream = client.GetStream();
+            var stream = TcpClient.GetStream();
             while (true)
             {
                 try
                 {
                     Thread.Sleep(1);
                     msg = stream.ReadStringWithHeader();
+                    if (msg == null) continue;
                     readQueue.Enqueue(msg);
                 }
                 catch { break; }
@@ -111,7 +123,7 @@ namespace Engine.Networking
         {
             bool needsWrite;
             string msg;
-            var stream = client.GetStream();
+            var stream = TcpClient.GetStream();
             while (true)
             {
                 try

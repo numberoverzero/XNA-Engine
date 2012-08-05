@@ -19,7 +19,7 @@ namespace Engine.Networking
         /// <summary>
         /// The TcpClient that interacted
         /// </summary>
-        public TcpClient Client { get; set; }
+        public Client Client { get; set; }
 
         /// <summary>
         /// When the interaction occured
@@ -36,7 +36,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="success"></param>
         /// <param name="client"></param>
-        public ServerEventArgs(bool success, TcpClient client)
+        public ServerEventArgs(bool success, Client client)
             : this(success, client, new Dictionary<string, string>()) { }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Engine.Networking
         /// <param name="success"></param>
         /// <param name="client"></param>
         /// <param name="parameters"></param>
-        public ServerEventArgs(bool success, TcpClient client, IDictionary<string, string> parameters)
+        public ServerEventArgs(bool success, Client client, IDictionary<string, string> parameters)
             : this(success, client, parameters, DateTime.Now) { }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Engine.Networking
         /// <param name="client"></param>
         /// <param name="parameters"></param>
         /// <param name="time"></param>
-        public ServerEventArgs(bool success, TcpClient client, IDictionary<string, string> parameters, DateTime time)
+        public ServerEventArgs(bool success, Client client, IDictionary<string, string> parameters, DateTime time)
             : base()
         {
             Success = success;

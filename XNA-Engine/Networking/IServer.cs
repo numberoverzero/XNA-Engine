@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Net.Sockets;
 
 namespace Engine.Networking
 {
@@ -42,21 +41,21 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="client"></param>
         /// <param name="e"></param>
-        void Connect(TcpClient client, ServerEventArgs e = null);
+        void Connect(Client client, ServerEventArgs e = null);
         /// <summary>
         /// Tries to disconnect a client to the Server.
         /// Fires OnDisconnect, even if client does not successfully disconnect
         /// </summary>
         /// <param name="client"></param>
         /// <param name="e"></param>
-        void Disconnect(TcpClient client, ServerEventArgs e = null);
+        void Disconnect(Client client, ServerEventArgs e = null);
         /// <summary>
         /// Tries to authenticate a client.
         /// Fires OnAuthenticate, even if client does not successfully authenticate
         /// </summary>
         /// <param name="client"></param>
         /// <param name="e"></param>
-        void Authenticate(TcpClient client, ServerEventArgs e = null);
+        void Authenticate(Client client, ServerEventArgs e = null);
 
         /// <summary>
         /// Fired when the server is started
@@ -90,7 +89,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="client"></param>
-        void ReceiveMsg(string msg, TcpClient client);
+        void ReceiveMsg(string msg, Client client);
 
         /// <summary>
         /// Sends a message to a specific group of clients.
@@ -98,32 +97,40 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="client"></param>
-        void SendMsg(string msg, params TcpClient[] client);
+        void SendMsg(string msg, params Client[] client);
+
+        /// <summary>
+        /// Checks if the client has authenticated with the server,
+        /// and if that authentication is still valid
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        bool IsAuthenticated(Client client);
 
         /// <summary>
         /// Gets the string that uniquely identifies the client
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>
-        string GetClientString(TcpClient client);
+        string GetClientString(Client client);
         /// <summary>
         /// Gets a client from a given string that uniquely identifies the client
         /// </summary>
         /// <param name="clientString"></param>
         /// <returns></returns>
-        TcpClient GetClient(string clientString);
+        Client GetClient(string clientString);
 
         /// <summary>
         /// Gets the strings that uniquely identify the clients
         /// </summary>
         /// <param name="clients"></param>
         /// <returns></returns>
-        IEnumerable<string> GetClientStrings(params TcpClient[] clients);
+        IEnumerable<string> GetClientStrings(params Client[] clients);
         /// <summary>
         /// Gets the clients from the given strings that uniquely identify the clients
         /// </summary>
         /// <param name="clientStrings"></param>
         /// <returns></returns>
-        IEnumerable<TcpClient> GetClients(params string[] clientStrings);
+        IEnumerable<Client> GetClients(params string[] clientStrings);
     }
 }

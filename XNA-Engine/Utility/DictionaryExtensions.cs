@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,19 @@ namespace Engine.Utility
                 foreach (var x in dict)
                     result[x.Key] = x.Value;
             return result;
+        }
+
+        /// <summary>
+        /// When you're removing from a concurrent dictionary and you don't care if the value is successfully removed
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="key"></param>
+        public static void Remove<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dictionary, TKey key)
+        {
+            TValue v;
+            dictionary.TryRemove(key, out v);
         }
     }
 }

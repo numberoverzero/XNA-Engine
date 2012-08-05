@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
+
+using Engine.Utility;
 
 namespace Engine.DataStructures
 {
@@ -13,16 +16,16 @@ namespace Engine.DataStructures
     /// <typeparam name="T2"></typeparam>
     public class BidirectionalDict<T1, T2>
     {
-        Dictionary<T1, T2> t1_t2;
-        Dictionary<T2, T1> t2_t1;
+        ConcurrentDictionary<T1, T2> t1_t2;
+        ConcurrentDictionary<T2, T1> t2_t1;
 
         /// <summary>
         /// Empty Bidirectional Dictionary
         /// </summary>
         public BidirectionalDict()
         {
-            t1_t2 = new Dictionary<T1, T2>();
-            t2_t1 = new Dictionary<T2, T1>();
+            t1_t2 = new ConcurrentDictionary<T1, T2>();
+            t2_t1 = new ConcurrentDictionary<T2, T1>();
         }
 
         /// <summary>
@@ -99,7 +102,7 @@ namespace Engine.DataStructures
 
         private void Remove(T1 key, T2 value)
         {
-            if (t1_t2.ContainsKey(key))
+            if (t1_t2.ContainsKey(key) || t2_t1.ContainsKey(value))
             {
                 t1_t2.Remove(key);
                 t2_t1.Remove(value);

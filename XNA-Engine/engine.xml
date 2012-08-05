@@ -81,7 +81,7 @@
             </summary>
             <param name="immediate"></param>
         </member>
-        <member name="M:Engine.Networking.IServer.Connect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+        <member name="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
             Tries to connect a client to the Server.
             Fires OnConnect, even if client does not successfully connect
@@ -89,7 +89,7 @@
             <param name="client"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Engine.Networking.IServer.Disconnect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+        <member name="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
             Tries to disconnect a client to the Server.
             Fires OnDisconnect, even if client does not successfully disconnect
@@ -97,7 +97,7 @@
             <param name="client"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Engine.Networking.IServer.Authenticate(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+        <member name="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
             Tries to authenticate a client.
             Fires OnAuthenticate, even if client does not successfully authenticate
@@ -105,14 +105,14 @@
             <param name="client"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Engine.Networking.IServer.ReceiveMsg(System.String,System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.IServer.ReceiveMsg(System.String,Engine.Networking.Client)">
             <summary>
             Receives a message from a client
             </summary>
             <param name="msg"></param>
             <param name="client"></param>
         </member>
-        <member name="M:Engine.Networking.IServer.SendMsg(System.String,System.Net.Sockets.TcpClient[])">
+        <member name="M:Engine.Networking.IServer.SendMsg(System.String,Engine.Networking.Client[])">
             <summary>
             Sends a message to a specific group of clients.
             Sends to all connected clients if the list is empty
@@ -120,7 +120,15 @@
             <param name="msg"></param>
             <param name="client"></param>
         </member>
-        <member name="M:Engine.Networking.IServer.GetClientString(System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)">
+            <summary>
+            Checks if the client has authenticated with the server,
+            and if that authentication is still valid
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)">
             <summary>
             Gets the string that uniquely identifies the client
             </summary>
@@ -134,7 +142,7 @@
             <param name="clientString"></param>
             <returns></returns>
         </member>
-        <member name="M:Engine.Networking.IServer.GetClientStrings(System.Net.Sockets.TcpClient[])">
+        <member name="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])">
             <summary>
             Gets the strings that uniquely identify the clients
             </summary>
@@ -195,6 +203,11 @@
             Mapping from clients to their read threads
             </summary>
         </member>
+        <member name="F:Engine.Networking.BasicServer.authTable">
+            <summary>
+            True if a client have authenticated with the server
+            </summary>
+        </member>
         <member name="F:Engine.Networking.BasicServer.log">
             <summary>
             The server log
@@ -209,21 +222,12 @@
         </member>
         <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
             <summary>
-            Construct a basic server such that it is ready to be started.
-            </summary>
-            <param name="localaddr"></param>
-            <param name="port"></param>
-            <param name="logFileName"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String,System.Boolean)">
-            <summary>
             Construct a basic server such that it is ready to be started, and possibly using the default connect
             behavior.
             </summary>
             <param name="localaddr"></param>
             <param name="port"></param>
             <param name="logFileName"></param>
-            <param name="useDefaultConnectBehavior"></param>
         </member>
         <member name="M:Engine.Networking.BasicServer.Start">
             <summary>
@@ -246,14 +250,14 @@
             </summary>
             <param name="immediate"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.Connect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+        <member name="M:Engine.Networking.BasicServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
-            See <see cref="M:Engine.Networking.IServer.Connect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)"/>
+            See <see cref="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
             </summary>
             <param name="client"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.Handle_OnConnect(System.Object,Engine.Networking.ServerEventArgs)">
+        <member name="M:Engine.Networking.BasicServer.DefaultHandle_OnConnect(System.Object,Engine.Networking.ServerEventArgs)">
             <summary>
             Default handler for the OnConnect event.
             Registers the client in the clientTable, registers a new thread in the clientThread table,
@@ -268,56 +272,49 @@
             </summary>
             <param name="oClient"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.ClientRead(System.Net.Sockets.TcpClient)">
-            <summary>
-            Attempts to read for a client
-            </summary>
-            <param name="client"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,Engine.Networking.Client)">
             <summary>
             Called when we try to read from a client stream and fail.
             </summary>
             <param name="reason"></param>
             <param name="client"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.Disconnect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+        <member name="M:Engine.Networking.BasicServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
-            See <see cref="M:Engine.Networking.IServer.Disconnect(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)"/>
+            See <see cref="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
             </summary>
             <param name="client"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.Authenticate(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)">
+        <member name="M:Engine.Networking.BasicServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
-            See <see cref="M:Engine.Networking.IServer.Authenticate(System.Net.Sockets.TcpClient,Engine.Networking.ServerEventArgs)"/>
+            See <see cref="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
             </summary>
             <param name="client"></param>
             <param name="e"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.ReceiveMsg(System.String,System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.BasicServer.ReceiveMsg(System.String,Engine.Networking.Client)">
             <summary>
-            See <see cref="M:Engine.Networking.IServer.ReceiveMsg(System.String,System.Net.Sockets.TcpClient)"/>
+            See <see cref="M:Engine.Networking.IServer.ReceiveMsg(System.String,Engine.Networking.Client)"/>
             </summary>
             <param name="msg"></param>
             <param name="client"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.SendMsg(System.String,System.Net.Sockets.TcpClient[])">
+        <member name="M:Engine.Networking.BasicServer.SendMsg(System.String,Engine.Networking.Client[])">
             <summary>
-            See <see cref="M:Engine.Networking.IServer.SendMsg(System.String,System.Net.Sockets.TcpClient[])"/>
+            See <see cref="M:Engine.Networking.IServer.SendMsg(System.String,Engine.Networking.Client[])"/>
             </summary>
             <param name="msg"></param>
             <param name="clients"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.WriteMsg(System.String,System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.BasicServer.WriteMsg(System.String,Engine.Networking.Client)">
             <summary>
             Tries to write a message to a client
             </summary>
             <param name="msg"></param>
             <param name="client"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.OnSendMsgException(System.String,System.String,System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.BasicServer.OnSendMsgException(System.String,System.String,Engine.Networking.Client)">
             <summary>
             Called when we try to send a message to a client but that send fails.
             </summary>
@@ -325,9 +322,16 @@
             <param name="reason"></param>
             <param name="client"></param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.GetClientString(System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.BasicServer.IsAuthenticated(Engine.Networking.Client)">
             <summary>
-            See <see cref="M:Engine.Networking.IServer.GetClientString(System.Net.Sockets.TcpClient)"/>
+            See <see cref="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)"/>
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClientString(Engine.Networking.Client)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)"/>
             </summary>
             <param name="client"></param>
             <returns></returns>
@@ -339,9 +343,9 @@
             <param name="client"></param>
             <returns></returns>
         </member>
-        <member name="M:Engine.Networking.BasicServer.GetClientStrings(System.Net.Sockets.TcpClient[])">
+        <member name="M:Engine.Networking.BasicServer.GetClientStrings(Engine.Networking.Client[])">
             <summary>
-            See <see cref="M:Engine.Networking.IServer.GetClientStrings(System.Net.Sockets.TcpClient[])"/>
+            See <see cref="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])"/>
             </summary>
             <param name="clients"></param>
             <returns></returns>
@@ -1419,6 +1423,15 @@
             <param name="dictionary"></param>
             <param name="others"></param>
             <returns></returns>
+        </member>
+        <member name="M:Engine.Utility.DictionaryExtensions.Remove``2(System.Collections.Concurrent.ConcurrentDictionary{``0,``1},``0)">
+            <summary>
+            When you're removing from a concurrent dictionary and you don't care if the value is successfully removed
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="key"></param>
         </member>
         <member name="T:Engine.Tiles.Chunk`1">
             <summary>
@@ -3678,14 +3691,14 @@
             Events passed when an authentication attempt occurs.
             </summary>
         </member>
-        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client)">
             <summary>
             Initialize a set of parameterless server interaction args at the current time
             </summary>
             <param name="success"></param>
             <param name="client"></param>
         </member>
-        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,System.Net.Sockets.TcpClient,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initialize a set of server interaction args at the current time with the given parameters
             </summary>
@@ -3693,7 +3706,7 @@
             <param name="client"></param>
             <param name="parameters"></param>
         </member>
-        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,System.Net.Sockets.TcpClient,System.Collections.Generic.IDictionary{System.String,System.String},System.DateTime)">
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String},System.DateTime)">
             <summary>
             Initialize a set of server interaction args at the given time with the given parameters
             </summary>
@@ -3937,11 +3950,13 @@
             Manages concurrent read/writes using ConcurrentQueues
             </summary>
         </member>
-        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient)">
+        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient,System.Boolean)">
             <summary>
             Construct a client that manages concurrent reads/writes to a TcpClient
+            Default behavior starts the client immediately
             </summary>
             <param name="baseClient"></param>
+            <param name="start"></param>
         </member>
         <member name="M:Engine.Networking.Client.Write(System.String)">
             <summary>
@@ -3967,6 +3982,11 @@
             Close the TcpClient and its underlying NetworkStream
             </summary>
         </member>
+        <member name="P:Engine.Networking.Client.TcpClient">
+            <summary>
+            Underlying TcpClient
+            </summary>
+        </member>
         <member name="P:Engine.Networking.Client.HasQueuedReadMessages">
             <summary>
             Whether there are pending messages to be read.
@@ -3976,6 +3996,11 @@
             <summary>
             Whether the underlying TcpClient is still alive,
             and handling reads/writes
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.IPString">
+            <summary>
+            Returns the underlying TcpClient's IPAddress as a string
             </summary>
         </member>
     </members>

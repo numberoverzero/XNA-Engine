@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 
@@ -10,7 +11,7 @@ namespace Engine.DataStructures
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class DefaultDict<TKey, TValue> : Dictionary<TKey, TValue>
+    public class DefaultDict<TKey, TValue> : ConcurrentDictionary<TKey, TValue>
     {
         Func<TValue> defaultValueFunc;
 
@@ -58,8 +59,8 @@ namespace Engine.DataStructures
             get
             {
                 TValue value;
-                base.TryGetValue(key, out value);
-                if (value == null)
+                bool found = base.TryGetValue(key, out value);
+                if (!found)
                 {
                     if (defaultValueFunc == null)
                         value = default(TValue);

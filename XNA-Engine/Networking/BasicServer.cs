@@ -6,10 +6,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using Engine.DataStructures;
 using Engine.Logging;
 using Engine.Utility;
-
 
 namespace Engine.Networking
 {
@@ -25,11 +25,17 @@ namespace Engine.Networking
         /// <summary>
         /// Two-way mapping between A client's TcpClient and their GUID
         /// </summary>
-        protected BidirectionalDict<string, TcpClient> clientTable;
+        protected BidirectionalDict<string, Client> clientTable;
         /// <summary>
         /// Mapping from clients to their read threads
         /// </summary>
-        protected Dictionary<TcpClient, Thread> clientThreads;
+        protected ConcurrentDictionary<Client, Thread> clientThreads;
+
+        /// <summary>
+        /// True if a client have authenticated with the server
+        /// </summary>
+        protected DefaultDict<Client, bool> authTable;
+
         IPAddress localaddr;
         int port;
         TcpListener listener;
@@ -48,15 +54,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="localaddr"></param>
         /// <param name="port"></param>
-        public BasicServer(IPAddress localaddr, int port) : this(localaddr, port, null, false) { }
-
-        /// <summary>
-        /// Construct a basic server such that it is ready to be started.
-        /// </summary>
-        /// <param name="localaddr"></param>
-        /// <param name="port"></param>
-        /// <param name="logFileName"></param>
-        public BasicServer(IPAddress localaddr, int port, string logFileName) : this(localaddr, port, logFileName, false) { }
+        public BasicServer(IPAddress localaddr, int port) : this(localaddr, port, null) { }
 
         /// <summary>
         /// Construct a basic server such that it is ready to be started, and possibly using the default connect
@@ -65,18 +63,16 @@ namespace Engine.Networking
         /// <param name="localaddr"></param>
         /// <param name="port"></param>
         /// <param name="logFileName"></param>
-        /// <param name="useDefaultConnectBehavior"></param>
-        public BasicServer(IPAddress localaddr, int port, string logFileName, bool useDefaultConnectBehavior)
+        public BasicServer(IPAddress localaddr, int port, string logFileName)
         {
             isRunning = hasShutdown = false;
-            clientTable = new BidirectionalDict<string, TcpClient>();
-            clientThreads = new Dictionary<TcpClient, Thread>();
+            clientTable = new BidirectionalDict<string, Client>();
+            authTable = new DefaultDict<Client, bool>();
+            clientThreads = new ConcurrentDictionary<Client, Thread>();
             this.localaddr = localaddr;
             this.port = port;
             log = new Log(logFileName, Frequency.Burst);
             log.Info("Server initialized: <{0}>::{1}".format(localaddr, port));
-            if (useDefaultConnectBehavior)
-                OnConnect += Handle_OnConnect;
         }
 
         #endregion
@@ -119,7 +115,7 @@ namespace Engine.Networking
             while (true)
             {
                 client = listener.AcceptTcpClient();
-                new Thread(() => { Connect(client); }).Start();
+                new Thread(() => { Connect(new Client(client)); }).Start();
             }
         }
 
@@ -157,6 +153,7 @@ namespace Engine.Networking
                 Disconnect(client);
             hasShutdown = true;
             log.Info("Server shutdown.");
+            log.Flush();
             if (OnShutdown != null)
                 OnShutdown(this, null);
         }
@@ -170,11 +167,11 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="client"></param>
         /// <param name="e"></param>
-        public virtual void Connect(TcpClient client, ServerEventArgs e = null)
+        public virtual void Connect(Client client, ServerEventArgs e = null)
         {
             bool success = true;
             var parameters = new Dictionary<string, string>();
-            parameters["Server:Connect:Data:IP"] = client.GetIP();
+            parameters["Server:Connect:Data:IP"] = client.IPString;
             if (!isRunning || hasShutdown) return;
             if (e == null)
             {
@@ -190,7 +187,7 @@ namespace Engine.Networking
                 e.Success = success;
                 e.Client = client;
             }
-            log.Info("Server:Connect:Data:IP:<{0}>".format(client.GetIP()));
+            log.Info("Server:Connect:Data:IP:<{0}>".format(client.IPString));
             if (OnConnect != null)
                 OnConnect(this, e);
         }
@@ -201,7 +198,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        protected virtual void Handle_OnConnect(object sender, ServerEventArgs args)
+        protected virtual void DefaultHandle_OnConnect(object sender, ServerEventArgs args)
         {
             var client = args.Client;
             clientTable[client] = new Guid().ToString();
@@ -215,44 +212,35 @@ namespace Engine.Networking
         /// <param name="oClient"></param>
         protected void DefaultClientThreadFunction(object oClient)
         {
-            var client = (TcpClient)oClient;
-            var stream = client.GetStream();
+            var client = oClient as Client;
             string line;
-            while (true)
+            while (client.IsAlive)
             {
                 Thread.Sleep(1);
                 try
                 {
-                    line = ClientRead(client);
-                    ReceiveMsg(line, client);
+                    // We don't read messages from a client until they've authenticated
+                    if(IsAuthenticated(client) && client.HasQueuedReadMessages){
+                        line = client.Read();
+                        ReceiveMsg(line, client);
+                    }
                 }
-                catch
-                {
-                    break;
-                }
+                catch { break; }
             }
             OnClientReadException("Lost Connection", client);
         }
-        /// <summary>
-        /// Attempts to read for a client
-        /// </summary>
-        /// <param name="client"></param>
-        /// <returns></returns>
-        protected string ClientRead(TcpClient client)
-        {
-            return client.GetStream().ReadStringWithHeader();
-        }
+
         /// <summary>
         /// Called when we try to read from a client stream and fail.
         /// </summary>
         /// <param name="reason"></param>
         /// <param name="client"></param>
-        protected virtual void OnClientReadException(string reason, TcpClient client)
+        protected virtual void OnClientReadException(string reason, Client client)
         {
             // Nothing to do if we didn't track the client
             if (!clientTable.HasItem(client))
             {
-                log.Debug("Server:InvalidFunctionCall:OnClientReadException:UnknownClient:Data:IP:<{0}>".format(client.GetIP()));
+                log.Debug("Server:InvalidFunctionCall:OnClientReadException:UnknownClient:Data:IP:<{0}>".format(client.IPString));
                 return;
             }
 
@@ -271,11 +259,11 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="client"></param>
         /// <param name="e"></param>
-        public virtual void Disconnect(TcpClient client, ServerEventArgs e = null)
+        public virtual void Disconnect(Client client, ServerEventArgs e = null)
         {
             if (!isRunning || hasShutdown)
             {
-                log.Debug("Server:InvalidFunctionCall:Disconnect:Data:IP:<{0}>".format(client.GetIP()));
+                log.Debug("Server:InvalidFunctionCall:Disconnect:Data:IP:<{0}>".format(client.IPString));
                 return;
             }
             bool success = true;
@@ -288,6 +276,8 @@ namespace Engine.Networking
                 
                 clientTable.Remove(client);
                 parameters["Server:RemoveClientFromTable:Value"] = "true";
+                authTable.Remove(client);
+                parameters["Server:RemoveClientFromAuthTable:Value"] = "true";
                 clientThreads[client].Kill();
                 parameters["Server:KillClientThread:Value"] = "true";
                 clientThreads.Remove(client);
@@ -308,7 +298,7 @@ namespace Engine.Networking
                 e.Success = success;
                 e.Client = client;
             }
-            log.Info("Server:Disconnect:Data:IP:<{0}>".format(client.GetIP()));
+            log.Info("Server:Disconnect:Data:IP:<{0}>".format(client.IPString));
             if (OnDisconnect != null)
                 OnDisconnect(this, e);
         }
@@ -317,34 +307,31 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="client"></param>
         /// <param name="e"></param>
-        public virtual void Authenticate(TcpClient client, ServerEventArgs e = null)
+        public virtual void Authenticate(Client client, ServerEventArgs e = null)
         {
             if (!isRunning || hasShutdown)
             {
-                log.Debug("Server:InvalidFunctionCall:Authenticate:Data:IP:<{0}>".format(client.GetIP()));
+                log.Debug("Server:InvalidFunctionCall:Authenticate:Data:IP:<{0}>".format(client.IPString));
                 return;
             }
-            bool success = true;
             var parameters = new Dictionary<string, string>();
             if (e == null)
             {
-                success = false;
                 parameters = new Dictionary<string, string>();
-                e = new ServerEventArgs(success, client, parameters);
+                // Always fail default auth attempt
+                e = new ServerEventArgs(false, client, parameters);
             }
             else
             {
+                // It is assumed that anyone passing ServerEventArgs will have the authority to declare the client authenticated or not
                 e.Parameters.Merge(parameters);
-
-                // Authenticate has the final say on these two,
-                // since it was the most recent frame from which the Event was fired
-                e.Success = success;
                 e.Client = client;
             }
+            authTable[client] = e.Success;
             if(e.Success)
-                log.Info("Server:AuthSucceed:Data:IP:<{0}>".format(client.GetIP()));
+                log.Info("Server:AuthSucceed:Data:IP:<{0}>".format(client.IPString));
             else
-                log.Info("Server:AuthFail:Data:IP:<{0}>".format(client.GetIP()));
+                log.Info("Server:AuthFail:Data:IP:<{0}>".format(client.IPString));
             if (OnAuthenticate != null)
                 OnAuthenticate(this, e);
         }
@@ -384,7 +371,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="client"></param>
-        public virtual void ReceiveMsg(string msg, TcpClient client)
+        public virtual void ReceiveMsg(string msg, Client client)
         {
             if (!isRunning || hasShutdown)
             {
@@ -401,7 +388,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="clients"></param>
-        public virtual void SendMsg(string msg, params TcpClient[] clients)
+        public virtual void SendMsg(string msg, params Client[] clients)
         {
             if (!isRunning || hasShutdown)
             {
@@ -414,7 +401,7 @@ namespace Engine.Networking
             foreach (var client in clients)
                 try
                 {
-                    WriteMsg(msg, client);
+                    if(IsAuthenticated(client)) WriteMsg(msg, client);
                 }
                 catch
                 {
@@ -427,9 +414,9 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="client"></param>
-        protected virtual void WriteMsg(string msg, TcpClient client)
+        protected virtual void WriteMsg(string msg, Client client)
         {
-            client.GetStream().WriteWithHeader(msg);
+            client.Write(msg);
         }
 
         /// <summary>
@@ -438,12 +425,12 @@ namespace Engine.Networking
         /// <param name="msg"></param>
         /// <param name="reason"></param>
         /// <param name="client"></param>
-        protected virtual void OnSendMsgException(string msg, string reason, TcpClient client)
+        protected virtual void OnSendMsgException(string msg, string reason, Client client)
         {
             // Nothing to do if we didn't track the client
             if (!clientTable.HasItem(client))
             {
-                log.Debug("Server:InvalidFunctionCall:OnSendMsgException:UnknownClient:Data:IP:<{0}>".format(client.GetIP()));
+                log.Debug("Server:InvalidFunctionCall:OnSendMsgException:UnknownClient:Data:IP:<{0}>".format(client.IPString));
                 return;
             }
             bool success = false;
@@ -458,14 +445,23 @@ namespace Engine.Networking
 
         #endregion
 
-        #region Client lookups
+        #region Client query
 
+        /// <summary>
+        /// See <see cref="IServer.IsAuthenticated"/>
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        public bool IsAuthenticated(Client client)
+        {
+            return authTable[client];
+        }
         /// <summary>
         /// See <see cref="IServer.GetClientString"/>
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>
-        public string GetClientString(TcpClient client)
+        public string GetClientString(Client client)
         {
             if (!isRunning || hasShutdown) return null;
             return clientTable[client];
@@ -475,7 +471,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="client"></param>
         /// <returns></returns>
-        public TcpClient GetClient(string client)
+        public Client GetClient(string client)
         {
             if (!isRunning || hasShutdown) return null;
             return clientTable[client];
@@ -485,7 +481,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="clients"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetClientStrings(params TcpClient[] clients)
+        public IEnumerable<string> GetClientStrings(params Client[] clients)
         {
             if (hasShutdown) return new List<string>();
             return from client in clients select clientTable[client];
@@ -495,9 +491,9 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="clients"></param>
         /// <returns></returns>
-        public IEnumerable<TcpClient> GetClients(params string[] clients)
+        public IEnumerable<Client> GetClients(params string[] clients)
         {
-            if (hasShutdown) return new List<TcpClient>();
+            if (hasShutdown) return new List<Client>();
             return from client in clients select clientTable[client];
         }
 

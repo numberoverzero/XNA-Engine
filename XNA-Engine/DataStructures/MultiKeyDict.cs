@@ -63,7 +63,7 @@ namespace Engine.DataStructures
         /// <summary>
         /// Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
         /// </summary>
-        public DefaultDict<TKey1, DefaultDict<TKey2, TValue>>.KeyCollection Keys
+        public ICollection<TKey1> Keys
         {
             get
             {
