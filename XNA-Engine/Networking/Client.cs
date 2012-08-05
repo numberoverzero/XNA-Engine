@@ -28,15 +28,12 @@ namespace Engine.Networking
         public Client(TcpClient baseClient)
         {
             client = baseClient;
-            IsAlive = true;
+            IsAlive = false;
 
             readQueue = new ConcurrentQueue<string>();
             writeQueue = new ConcurrentQueue<string>();
             readThread = new Thread(new ThreadStart(ReadLoop));
             writeThread = new Thread(new ThreadStart(WriteLoop));
-
-            readThread.Start();
-            writeThread.Start();
         }
 
         /// <summary>
@@ -59,6 +56,16 @@ namespace Engine.Networking
             string msg;
             bool hasMsg = readQueue.TryDequeue(out msg);
             return hasMsg ? msg : null;
+        }
+
+        /// <summary>
+        /// Start reading/writing
+        /// </summary>
+        public void Start()
+        {
+            IsAlive = true;
+            readThread.Start();
+            writeThread.Start();
         }
 
         /// <summary>
