@@ -2067,6 +2067,66 @@
             Transitioning from tracking a GameObject to tracking a different GameObject
             </summary>
         </member>
+        <member name="T:Engine.Networking.Client">
+            <summary>
+            Attempts to abstract the network layer of the TcpClient,
+            so that this is simply a read/write container.
+            Manages concurrent read/writes using ConcurrentQueues
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient,System.Boolean)">
+            <summary>
+            Construct a client that manages concurrent reads/writes to a TcpClient
+            Default behavior starts the client immediately
+            </summary>
+            <param name="baseClient"></param>
+            <param name="start"></param>
+        </member>
+        <member name="M:Engine.Networking.Client.Write(System.String)">
+            <summary>
+            Writes a message to the client.
+            Messages are queued and a thread proccesses them in the order they were enqueued
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.Networking.Client.Read">
+            <summary>
+            Tries to read a message from the client.
+            Returns null if there is no pending message from the client.
+            Messages to be read are enqueued by a worker thread and added in the order they are received
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Start">
+            <summary>
+            Start reading/writing
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Close">
+            <summary>
+            Close the TcpClient and its underlying NetworkStream
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.TcpClient">
+            <summary>
+            Underlying TcpClient
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.HasQueuedReadMessages">
+            <summary>
+            Whether there are pending messages to be read.
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.IsAlive">
+            <summary>
+            Whether the underlying TcpClient is still alive,
+            and handling reads/writes
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.IPString">
+            <summary>
+            Returns the underlying TcpClient's IPAddress as a string
+            </summary>
+        </member>
         <member name="T:Engine.Logging.ILog">
             <summary>
             Logging interface
@@ -3941,66 +4001,6 @@
         <member name="F:Engine.Input.FrameState.Current">
             <summary>
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
-            </summary>
-        </member>
-        <member name="T:Engine.Networking.Client">
-            <summary>
-            Attempts to abstract the network layer of the TcpClient,
-            so that this is simply a read/write container.
-            Manages concurrent read/writes using ConcurrentQueues
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient,System.Boolean)">
-            <summary>
-            Construct a client that manages concurrent reads/writes to a TcpClient
-            Default behavior starts the client immediately
-            </summary>
-            <param name="baseClient"></param>
-            <param name="start"></param>
-        </member>
-        <member name="M:Engine.Networking.Client.Write(System.String)">
-            <summary>
-            Writes a message to the client.
-            Messages are queued and a thread proccesses them in the order they were enqueued
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.Networking.Client.Read">
-            <summary>
-            Tries to read a message from the client.
-            Returns null if there is no pending message from the client.
-            Messages to be read are enqueued by a worker thread and added in the order they are received
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.Start">
-            <summary>
-            Start reading/writing
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.Close">
-            <summary>
-            Close the TcpClient and its underlying NetworkStream
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.TcpClient">
-            <summary>
-            Underlying TcpClient
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.HasQueuedReadMessages">
-            <summary>
-            Whether there are pending messages to be read.
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.IsAlive">
-            <summary>
-            Whether the underlying TcpClient is still alive,
-            and handling reads/writes
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.IPString">
-            <summary>
-            Returns the underlying TcpClient's IPAddress as a string
             </summary>
         </member>
     </members>

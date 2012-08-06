@@ -91,6 +91,7 @@ namespace Engine.Logging
 
         void WriteMsg(string msg, Level level)
         {
+            if (String.IsNullOrEmpty(msg)) return;
             string prefix = "";
             switch (level)
             {
@@ -116,8 +117,9 @@ namespace Engine.Logging
 
         void _logWrite(string msg)
         {
-            log.Write(uniEncoding.GetBytes(msg + "\n"),
-                0, uniEncoding.GetByteCount(msg + "\n"));
+            var line = msg + "\r\n";
+            log.Write(uniEncoding.GetBytes(line),
+                0, uniEncoding.GetByteCount(line));
             log.Close();
         }
     }
