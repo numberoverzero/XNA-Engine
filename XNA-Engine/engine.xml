@@ -51,347 +51,6 @@
             <param name="t">The point at which the function is being evaluated</param>
             <returns></returns>
         </member>
-        <member name="T:Engine.Networking.BasicServer">
-            <summary>
-            A basic implementation of the <see cref="T:Engine.Networking.IServer"/> interface
-            </summary>
-        </member>
-        <member name="T:Engine.Networking.IServer">
-            <summary>
-            Receives and Sends messages, handles Connect/Disconnect and Auth
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.IServer.Start">
-            <summary>
-            Start the server.  Until the server is started, it cannot handle messages
-            Cannot be started after Shutdown
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.IServer.Stop">
-            <summary>
-            Stop handling messages.
-            Can be resumed with Start
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.IServer.Shutdown(System.Boolean)">
-            <summary>
-            Completely release all clients and stop handling messages.
-            Cannot be started after a shutdown.
-            Sends a shutdown message to clients unless immediate is true
-            </summary>
-            <param name="immediate"></param>
-        </member>
-        <member name="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-            Tries to connect a client to the Server.
-            Fires OnConnect, even if client does not successfully connect
-            </summary>
-            <param name="client"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-            Tries to disconnect a client to the Server.
-            Fires OnDisconnect, even if client does not successfully disconnect
-            </summary>
-            <param name="client"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-            Tries to authenticate a client.
-            Fires OnAuthenticate, even if client does not successfully authenticate
-            </summary>
-            <param name="client"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Engine.Networking.IServer.ReceiveMsg(System.String,Engine.Networking.Client)">
-            <summary>
-            Receives a message from a client
-            </summary>
-            <param name="msg"></param>
-            <param name="client"></param>
-        </member>
-        <member name="M:Engine.Networking.IServer.SendMsg(System.String,Engine.Networking.Client[])">
-            <summary>
-            Sends a message to a specific group of clients.
-            Sends to all connected clients if the list is empty
-            </summary>
-            <param name="msg"></param>
-            <param name="client"></param>
-        </member>
-        <member name="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)">
-            <summary>
-            Checks if the client has authenticated with the server,
-            and if that authentication is still valid
-            </summary>
-            <param name="client"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)">
-            <summary>
-            Gets the string that uniquely identifies the client
-            </summary>
-            <param name="client"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.IServer.GetClient(System.String)">
-            <summary>
-            Gets a client from a given string that uniquely identifies the client
-            </summary>
-            <param name="clientString"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])">
-            <summary>
-            Gets the strings that uniquely identify the clients
-            </summary>
-            <param name="clients"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.IServer.GetClients(System.String[])">
-            <summary>
-            Gets the clients from the given strings that uniquely identify the clients
-            </summary>
-            <param name="clientStrings"></param>
-            <returns></returns>
-        </member>
-        <member name="P:Engine.Networking.IServer.IsRunning">
-            <summary>
-            If the server has been started, returns true.
-            Returns false if the server is stopped or shutdown.
-            A server cannot be started from shutdown.
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.IServer.OnStart">
-            <summary>
-            Fired when the server is started
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.IServer.OnStop">
-            <summary>
-            Fired when the server is stopped
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.IServer.OnShutdown">
-            <summary>
-            Fired when the server is shut down
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.IServer.OnConnect">
-            <summary>
-            Fired when a client attempts to connect to the server
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.IServer.OnDisconnect">
-            <summary>
-            Fired when a client attempts to disconnect to the server
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.IServer.OnAuthenticate">
-            <summary>
-            Fired when a client attempts to authenticate
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.BasicServer.clientTable">
-            <summary>
-            Two-way mapping between A client's TcpClient and their GUID
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.BasicServer.clientThreads">
-            <summary>
-            Mapping from clients to their read threads
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.BasicServer.authTable">
-            <summary>
-            True if a client have authenticated with the server
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.BasicServer.log">
-            <summary>
-            The server log
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32)">
-            <summary>
-            Construct a basic server such that it is ready to be started.
-            </summary>
-            <param name="localaddr"></param>
-            <param name="port"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
-            <summary>
-            Construct a basic server such that it is ready to be started, and possibly using the default connect
-            behavior.
-            </summary>
-            <param name="localaddr"></param>
-            <param name="port"></param>
-            <param name="logFileName"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Start">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.Start"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.PollForClients">
-            <summary>
-            Checks listener forever and adds new clients as they try to connect
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Stop">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.Stop"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Shutdown(System.Boolean)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.Shutdown(System.Boolean)"/>
-            </summary>
-            <param name="immediate"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
-            </summary>
-            <param name="client"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.DefaultHandle_OnConnect(System.Object,Engine.Networking.ServerEventArgs)">
-            <summary>
-            Default handler for the OnConnect event.
-            Registers the client in the clientTable, registers a new thread in the clientThread table,
-            and starts that thread.  The thread calls DefaultClientThreadFunction
-            </summary>
-            <param name="sender"></param>
-            <param name="args"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.DefaultClientThreadFunction(System.Object)">
-            <summary>
-            Constantly checks a client for incoming messages
-            </summary>
-            <param name="oClient"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,Engine.Networking.Client)">
-            <summary>
-            Called when we try to read from a client stream and fail.
-            </summary>
-            <param name="reason"></param>
-            <param name="client"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
-            </summary>
-            <param name="client"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
-            </summary>
-            <param name="client"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.ReceiveMsg(System.String,Engine.Networking.Client)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.ReceiveMsg(System.String,Engine.Networking.Client)"/>
-            </summary>
-            <param name="msg"></param>
-            <param name="client"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.SendMsg(System.String,Engine.Networking.Client[])">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.SendMsg(System.String,Engine.Networking.Client[])"/>
-            </summary>
-            <param name="msg"></param>
-            <param name="clients"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.WriteMsg(System.String,Engine.Networking.Client)">
-            <summary>
-            Tries to write a message to a client
-            </summary>
-            <param name="msg"></param>
-            <param name="client"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.OnSendMsgException(System.String,System.String,Engine.Networking.Client)">
-            <summary>
-            Called when we try to send a message to a client but that send fails.
-            </summary>
-            <param name="msg"></param>
-            <param name="reason"></param>
-            <param name="client"></param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.IsAuthenticated(Engine.Networking.Client)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)"/>
-            </summary>
-            <param name="client"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClientString(Engine.Networking.Client)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)"/>
-            </summary>
-            <param name="client"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClient(System.String)">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.GetClient(System.String)"/>
-            </summary>
-            <param name="client"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClientStrings(Engine.Networking.Client[])">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])"/>
-            </summary>
-            <param name="clients"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClients(System.String[])">
-            <summary>
-            See <see cref="M:Engine.Networking.IServer.GetClients(System.String[])"/>
-            </summary>
-            <param name="clients"></param>
-            <returns></returns>
-        </member>
-        <member name="P:Engine.Networking.BasicServer.IsRunning">
-            <summary>
-            See <see cref="P:Engine.Networking.IServer.IsRunning"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnStart">
-            <summary>
-            See <see cref="E:Engine.Networking.IServer.OnStart"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnStop">
-            <summary>
-            See <see cref="E:Engine.Networking.IServer.OnStop"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnShutdown">
-            <summary>
-            See <see cref="E:Engine.Networking.IServer.OnShutdown"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnConnect">
-            <summary>
-            See <see cref="E:Engine.Networking.IServer.OnConnect"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnDisconnect">
-            <summary>
-            See <see cref="E:Engine.Networking.IServer.OnDisconnect"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnAuthenticate">
-            <summary>
-            See <see cref="E:Engine.Networking.IServer.OnAuthenticate"/>
-            </summary>
-        </member>
         <member name="T:Engine.Logging.Frequency">
             <summary>
             The expected rate of message writing.
@@ -3746,55 +3405,6 @@
             <param name="rotation">Rotation in radians about the center</param>
             <param name="lineWidth">Width in pixels of the line</param>
         </member>
-        <member name="T:Engine.Networking.ServerEventArgs">
-            <summary>
-            Events passed when an authentication attempt occurs.
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client)">
-            <summary>
-            Initialize a set of parameterless server interaction args at the current time
-            </summary>
-            <param name="success"></param>
-            <param name="client"></param>
-        </member>
-        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String})">
-            <summary>
-            Initialize a set of server interaction args at the current time with the given parameters
-            </summary>
-            <param name="success"></param>
-            <param name="client"></param>
-            <param name="parameters"></param>
-        </member>
-        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String},System.DateTime)">
-            <summary>
-            Initialize a set of server interaction args at the given time with the given parameters
-            </summary>
-            <param name="success"></param>
-            <param name="client"></param>
-            <param name="parameters"></param>
-            <param name="time"></param>
-        </member>
-        <member name="P:Engine.Networking.ServerEventArgs.Success">
-            <summary>
-            Was the interaction successful
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.ServerEventArgs.Client">
-            <summary>
-            The TcpClient that interacted
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.ServerEventArgs.Time">
-            <summary>
-            When the interaction occured
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.ServerEventArgs.Parameters">
-            <summary>
-            Keyed values that the client provided to the server during the interaction
-            </summary>
-        </member>
         <member name="T:Engine.Logging.Log">
             <summary>
             See <see cref="T:Engine.Logging.ILog"/>
@@ -4001,6 +3611,396 @@
         <member name="F:Engine.Input.FrameState.Current">
             <summary>
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.BasicServer">
+            <summary>
+            A basic implementation of the <see cref="T:Engine.Networking.IServer"/> interface
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.IServer">
+            <summary>
+            Receives and Sends messages, handles Connect/Disconnect and Auth
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.IServer.Start">
+            <summary>
+            Start the server.  Until the server is started, it cannot handle messages
+            Cannot be started after Shutdown
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.IServer.Stop">
+            <summary>
+            Stop handling messages.
+            Can be resumed with Start
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.IServer.Shutdown(System.Boolean)">
+            <summary>
+            Completely release all clients and stop handling messages.
+            Cannot be started after a shutdown.
+            Sends a shutdown message to clients unless immediate is true
+            </summary>
+            <param name="immediate"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Tries to connect a client to the Server.
+            Fires OnConnect, even if client does not successfully connect
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Tries to disconnect a client to the Server.
+            Fires OnDisconnect, even if client does not successfully disconnect
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Tries to authenticate a client.
+            Fires OnAuthenticate, even if client does not successfully authenticate
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.ReceiveMsg(System.String,Engine.Networking.Client)">
+            <summary>
+            Receives a message from a client
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.SendMsg(System.String,Engine.Networking.Client[])">
+            <summary>
+            Sends a message to a specific group of clients.
+            Sends to all connected clients if the list is empty
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)">
+            <summary>
+            Checks if the client has authenticated with the server,
+            and if that authentication is still valid
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)">
+            <summary>
+            Gets the string that uniquely identifies the client
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClient(System.String)">
+            <summary>
+            Gets a client from a given string that uniquely identifies the client
+            </summary>
+            <param name="clientString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])">
+            <summary>
+            Gets the strings that uniquely identify the clients
+            </summary>
+            <param name="clients"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.IServer.GetClients(System.String[])">
+            <summary>
+            Gets the clients from the given strings that uniquely identify the clients
+            </summary>
+            <param name="clientStrings"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Networking.IServer.IsRunning">
+            <summary>
+            If the server has been started, returns true.
+            Returns false if the server is stopped or shutdown.
+            A server cannot be started from shutdown.
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnStart">
+            <summary>
+            Fired when the server is started
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnStop">
+            <summary>
+            Fired when the server is stopped
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnShutdown">
+            <summary>
+            Fired when the server is shut down
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnConnect">
+            <summary>
+            Fired when a client attempts to connect to the server
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnDisconnect">
+            <summary>
+            Fired when a client attempts to disconnect to the server
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.IServer.OnAuthenticate">
+            <summary>
+            Fired when a client attempts to authenticate
+            </summary>
+        </member>
+        <member name="F:Engine.Networking.BasicServer.clientTable">
+            <summary>
+            Two-way mapping between A client's TcpClient and their GUID
+            </summary>
+        </member>
+        <member name="F:Engine.Networking.BasicServer.clientThreads">
+            <summary>
+            Mapping from clients to their read threads
+            </summary>
+        </member>
+        <member name="F:Engine.Networking.BasicServer.authTable">
+            <summary>
+            True if a client have authenticated with the server
+            </summary>
+        </member>
+        <member name="F:Engine.Networking.BasicServer.log">
+            <summary>
+            The server log
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32)">
+            <summary>
+            Construct a basic server such that it is ready to be started.
+            </summary>
+            <param name="localaddr"></param>
+            <param name="port"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
+            <summary>
+            Construct a basic server such that it is ready to be started, and possibly using the default connect
+            behavior.
+            </summary>
+            <param name="localaddr"></param>
+            <param name="port"></param>
+            <param name="logFileName"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Start">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Start"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.PollForClients">
+            <summary>
+            Checks listener forever and adds new clients as they try to connect
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Stop">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Stop"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Shutdown(System.Boolean)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Shutdown(System.Boolean)"/>
+            </summary>
+            <param name="immediate"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.DefaultHandle_OnConnect(System.Object,Engine.Networking.ServerEventArgs)">
+            <summary>
+            Default handler for the OnConnect event.
+            Registers the client in the clientTable, registers a new thread in the clientThread table,
+            and starts that thread.  The thread calls DefaultClientThreadFunction
+            </summary>
+            <param name="sender"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.DefaultClientThreadFunction(System.Object)">
+            <summary>
+            Constantly checks a client for incoming messages
+            </summary>
+            <param name="oClient"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,Engine.Networking.Client)">
+            <summary>
+            Called when we try to read from a client stream and fail.
+            </summary>
+            <param name="reason"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+            <param name="client"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.ReceiveMsg(System.String,Engine.Networking.Client)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.ReceiveMsg(System.String,Engine.Networking.Client)"/>
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.SendMsg(System.String,Engine.Networking.Client[])">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.SendMsg(System.String,Engine.Networking.Client[])"/>
+            </summary>
+            <param name="msg"></param>
+            <param name="clients"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.WriteMsg(System.String,Engine.Networking.Client)">
+            <summary>
+            Tries to write a message to a client
+            </summary>
+            <param name="msg"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.OnSendMsgException(System.String,System.String,Engine.Networking.Client)">
+            <summary>
+            Called when we try to send a message to a client but that send fails.
+            </summary>
+            <param name="msg"></param>
+            <param name="reason"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.IsAuthenticated(Engine.Networking.Client)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)"/>
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClientString(Engine.Networking.Client)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)"/>
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClient(System.String)">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClient(System.String)"/>
+            </summary>
+            <param name="client"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClientStrings(Engine.Networking.Client[])">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])"/>
+            </summary>
+            <param name="clients"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Engine.Networking.BasicServer.GetClients(System.String[])">
+            <summary>
+            See <see cref="M:Engine.Networking.IServer.GetClients(System.String[])"/>
+            </summary>
+            <param name="clients"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Networking.BasicServer.IsRunning">
+            <summary>
+            See <see cref="P:Engine.Networking.IServer.IsRunning"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnStart">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnStart"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnStop">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnStop"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnShutdown">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnShutdown"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnConnect">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnConnect"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnDisconnect">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnDisconnect"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.BasicServer.OnAuthenticate">
+            <summary>
+            See <see cref="E:Engine.Networking.IServer.OnAuthenticate"/>
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.ServerEventArgs">
+            <summary>
+            Events passed when an authentication attempt occurs.
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client)">
+            <summary>
+            Initialize a set of parameterless server interaction args at the current time
+            </summary>
+            <param name="success"></param>
+            <param name="client"></param>
+        </member>
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Initialize a set of server interaction args at the current time with the given parameters
+            </summary>
+            <param name="success"></param>
+            <param name="client"></param>
+            <param name="parameters"></param>
+        </member>
+        <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String},System.DateTime)">
+            <summary>
+            Initialize a set of server interaction args at the given time with the given parameters
+            </summary>
+            <param name="success"></param>
+            <param name="client"></param>
+            <param name="parameters"></param>
+            <param name="time"></param>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Success">
+            <summary>
+            Was the interaction successful
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Client">
+            <summary>
+            The TcpClient that interacted
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Time">
+            <summary>
+            When the interaction occured
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.ServerEventArgs.Parameters">
+            <summary>
+            Keyed values that the client provided to the server during the interaction
             </summary>
         </member>
     </members>

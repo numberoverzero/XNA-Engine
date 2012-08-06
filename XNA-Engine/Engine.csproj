@@ -130,10 +130,10 @@
     <Compile Include="Logging\Enums.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\Log.cs" />
-    <Compile Include="Networking\BasicServer.cs" />
+    <Compile Include="Networking\Server\BasicServer.cs" />
     <Compile Include="Networking\Client.cs" />
-    <Compile Include="Networking\ServerEventArgs.cs" />
-    <Compile Include="Networking\IServer.cs" />
+    <Compile Include="Networking\Server\ServerEventArgs.cs" />
+    <Compile Include="Networking\Server\IServer.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
     <Compile Include="Rendering\ColorScheme.cs" />
     <Compile Include="Rendering\Effects\BloomSettings.cs" />
@@ -165,6 +165,7 @@
     <Compile Include="Utility\Vector2Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Networking\Packets\" />
     <Folder Include="Screens\" />
     <Folder Include="Testing\" />
   </ItemGroup>
