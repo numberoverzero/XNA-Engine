@@ -3,7 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine.csproj", "{DA293C9C-D124-4CE5-8B22-72A9B46C36F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineTest", "EngineTest\EngineTest.csproj", "{32E6E067-4439-48AE-89F5-03330B474F6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F0826B4B-F556-42DA-92D8-EF3F51DEF3D1}"
+	ProjectSection(SolutionItems) = preProject
+		Engine.vsmdi = Engine.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Engine.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -23,6 +35,16 @@ Global
 		{DA293C9C-D124-4CE5-8B22-72A9B46C36F3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{DA293C9C-D124-4CE5-8B22-72A9B46C36F3}.Release|x86.ActiveCfg = Release|x86
 		{DA293C9C-D124-4CE5-8B22-72A9B46C36F3}.Release|x86.Build.0 = Release|x86
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{32E6E067-4439-48AE-89F5-03330B474F6F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -41,7 +41,7 @@ namespace Engine.DataStructures
         }
 
         /// <summary>
-        /// Construct the equivalent bi-directional dictionary from a single-direction dictionary
+        /// Construct the equivalent bi-directional dictionary from a T2 -> T1 dictionary
         /// </summary>
         /// <param name="dictionary"></param>
         public BidirectionalDict(IDictionary<T2, T1> dictionary)

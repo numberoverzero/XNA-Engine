@@ -130,6 +130,8 @@
     <Compile Include="Logging\Enums.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\Log.cs" />
+    <Compile Include="Networking\Packets\ChatPacket.cs" />
+    <Compile Include="Networking\Packets\Packet.cs" />
     <Compile Include="Networking\Server\BasicServer.cs" />
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Networking\Server\ServerEventArgs.cs" />
@@ -161,11 +163,11 @@
     <Compile Include="Utility\MathFunctions.cs" />
     <Compile Include="Utility\NetworkingExtensions.cs" />
     <Compile Include="Utility\StringAndRegexExtensions.cs" />
+    <Compile Include="Utility\StructExtensions.cs" />
     <Compile Include="Utility\ThreadExtensions.cs" />
     <Compile Include="Utility\Vector2Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Networking\Packets\" />
     <Folder Include="Screens\" />
     <Folder Include="Testing\" />
   </ItemGroup>

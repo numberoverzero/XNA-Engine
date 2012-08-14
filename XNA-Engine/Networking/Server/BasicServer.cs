@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using Engine.DataStructures;
 using Engine.Logging;
 using Engine.Utility;
+using Engine.Networking.Packets;
 
 namespace Engine.Networking
 {
@@ -213,7 +214,7 @@ namespace Engine.Networking
         protected void DefaultClientThreadFunction(object oClient)
         {
             var client = oClient as Client;
-            string line;
+            ChatPacket line;
             while (client.IsAlive)
             {
                 Thread.Sleep(1);
@@ -221,8 +222,8 @@ namespace Engine.Networking
                 {
                     // We don't read messages from a client until they've authenticated
                     if(IsAuthenticated(client) && client.HasQueuedReadMessages){
-                        line = client.Read();
-                        ReceiveMsg(line, client);
+                        line = client.ReadPacket() as ChatPacket;
+                        ReceivePacket(line, client);
                     }
                 }
                 catch { break; }
@@ -367,79 +368,79 @@ namespace Engine.Networking
         #endregion
 
         /// <summary>
-        /// See <see cref="IServer.ReceiveMsg"/>
+        /// See <see cref="IServer.ReceivePacket"/>
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="packet"></param>
         /// <param name="client"></param>
-        public virtual void ReceiveMsg(string msg, Client client)
+        public virtual void ReceivePacket(Packet packet, Client client)
         {
             if (!isRunning || hasShutdown)
             {
-                log.Debug("Server:InvalidFunctionCall:ReceiveMsg:Data:Msg:<{0}>".format(msg));
+                log.Debug("Server:InvalidFunctionCall:ReceivePacket:Data:Packet:<{0}>".format(packet));
                 return;
             }
             return;
         }
 
-        #region SendMsg
+        #region SendPacket
 
         /// <summary>
-        /// See <see cref="IServer.SendMsg"/>
+        /// See <see cref="IServer.SendPacket"/>
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="packet"></param>
         /// <param name="clients"></param>
-        public virtual void SendMsg(string msg, params Client[] clients)
+        public virtual void SendPacket(Packet packet, params Client[] clients)
         {
             if (!isRunning || hasShutdown)
             {
-                log.Debug("Server:InvalidFunctionCall:SendMsg:Data:Msg:<{0}>".format(msg));
+                log.Debug("Server:InvalidFunctionCall:SendPacket:Data:Packet:<{0}>".format(packet));
                 return;
             }
             if (clients.Length == 0)
                 clients = clientTable.GetValuesType2().ToArray();
-            log.Debug("Server:SendMsg:Data:Msg:<{0}>".format(msg));
+            log.Debug("Server:SendPacket:Data:Packet:<{0}>".format(packet));
             foreach (var client in clients)
                 try
                 {
-                    if(IsAuthenticated(client)) WriteMsg(msg, client);
+                    if(IsAuthenticated(client)) WritePacket(packet, client);
                 }
                 catch
                 {
-                    OnSendMsgException(msg, "Unknown", client);
+                    OnSendPacketException(packet, "Unknown", client);
                 }
         }
 
         /// <summary>
-        /// Tries to write a message to a client
+        /// Tries to write a packet to a client
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="packet"></param>
         /// <param name="client"></param>
-        protected virtual void WriteMsg(string msg, Client client)
+        protected virtual void WritePacket(Packet packet, Client client)
         {
-            client.Write(msg);
+            client.WritePacket(packet);
         }
 
         /// <summary>
         /// Called when we try to send a message to a client but that send fails.
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="packet"></param>
         /// <param name="reason"></param>
         /// <param name="client"></param>
-        protected virtual void OnSendMsgException(string msg, string reason, Client client)
+        protected virtual void OnSendPacketException(Packet packet, string reason, Client client)
         {
             // Nothing to do if we didn't track the client
             if (!clientTable.HasItem(client))
             {
-                log.Debug("Server:InvalidFunctionCall:OnSendMsgException:UnknownClient:Data:IP:<{0}>".format(client.IPString));
+                log.Debug("Server:InvalidFunctionCall:OnSendPacketException:UnknownClient:Data:IP:<{0}>".format(client.IPString));
                 return;
             }
             bool success = false;
             var parameters = new Dictionary<string, string>();
-            parameters.Add("Exception:ServerException", "SendMsgFailedException");
-            parameters.Add("SendMsgFailedException:Data:Value", msg);
-            parameters.Add("SendMsgFailedException:Data:Reason", reason);
+            parameters.Add("Exception:ServerException", "SendPacketFailedException");
+            parameters.Add("SendPacketFailedException:Data:Value", packet.ToString());
+            parameters.Add("SendPacketFailedException:Data:Reason", reason);
             var e = new ServerEventArgs(success, client, parameters);
-            Console.WriteLine("OnSendMsgException");
+            Console.WriteLine("OnSendPacketException");
             Disconnect(client, e);
         }
 

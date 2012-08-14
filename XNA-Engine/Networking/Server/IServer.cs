@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Engine.Networking.Packets;
 
 namespace Engine.Networking
 {
@@ -85,19 +86,19 @@ namespace Engine.Networking
 
         
         /// <summary>
-        /// Receives a message from a client
+        /// Receives a packet from a client
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="packet"></param>
         /// <param name="client"></param>
-        void ReceiveMsg(string msg, Client client);
+        void ReceivePacket(Packet packet, Client client);
 
         /// <summary>
-        /// Sends a message to a specific group of clients.
+        /// Sends a packet to a specific group of clients.
         /// Sends to all connected clients if the list is empty
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="packet"></param>
         /// <param name="client"></param>
-        void SendMsg(string msg, params Client[] client);
+        void SendPacket(Packet packet, params Client[] client);
 
         /// <summary>
         /// Checks if the client has authenticated with the server,
