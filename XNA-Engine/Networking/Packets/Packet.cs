@@ -44,6 +44,9 @@ namespace Engine.Networking.Packets
                 case 1:
                     packet = new ChatPacket();
                     break;
+                case 2:
+                    packet = new ServerInfoPacket();
+                    break;
             }
             packet.LoadFromBuffer(buffer);
             return packet;
