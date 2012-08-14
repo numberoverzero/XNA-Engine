@@ -125,5 +125,37 @@ namespace Engine.Utility
             if (time_fmt == null) time_fmt = dflt_time_fmt;
             return DateTime.Now.ToString(time_fmt) + str;
         }
+
+        /// <summary>
+        /// Gets the byte count of the string in the given encoding
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static int ByteCount(this string str, Encoding encoding)
+        {
+            return encoding.GetByteCount(str);
+        }
+
+        /// <summary>
+        /// Get the bytes of a string in a given encoding
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this string str, Encoding encoding)
+        {
+            return encoding.GetBytes(str);
+        }
+
+        /// <summary>
+        /// bytes of a UTF8-encoded string
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static byte[] GetBytesUTF8(this string str)
+        {
+            return str.GetBytes(Encoding.UTF8);
+        }
     }
 }

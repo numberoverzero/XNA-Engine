@@ -29,6 +29,30 @@ namespace Engine.DataStructures
         }
 
         /// <summary>
+        /// Construct the equivalent bi-directional dictionary from a single-direction dictionary
+        /// </summary>
+        /// <param name="dictionary"></param>
+        public BidirectionalDict(IDictionary<T1, T2> dictionary)
+        {
+            t1_t2 = new ConcurrentDictionary<T1, T2>(dictionary);
+            t2_t1 = new ConcurrentDictionary<T2, T1>();
+            foreach (T1 t1 in dictionary.Keys)
+                t2_t1[dictionary[t1]] = t1;
+        }
+
+        /// <summary>
+        /// Construct the equivalent bi-directional dictionary from a single-direction dictionary
+        /// </summary>
+        /// <param name="dictionary"></param>
+        public BidirectionalDict(IDictionary<T2, T1> dictionary)
+        {
+            t2_t1 = new ConcurrentDictionary<T2, T1>(dictionary);
+            t1_t2 = new ConcurrentDictionary<T1, T2>();
+            foreach (T2 t2 in dictionary.Keys)
+                t1_t2[dictionary[t2]] = t2;
+        }
+
+        /// <summary>
         /// Gets or sets the values associated with the specified key
         /// </summary>
         /// <param name="key"></param>
