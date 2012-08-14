@@ -132,6 +132,7 @@
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Networking\Packets\ChatPacket.cs" />
     <Compile Include="Networking\Packets\Packet.cs" />
+    <Compile Include="Networking\Packets\ServerInfoPacket.cs" />
     <Compile Include="Networking\Server\BasicServer.cs" />
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Networking\Server\ServerEventArgs.cs" />

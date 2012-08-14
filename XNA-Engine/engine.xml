@@ -14,6 +14,11 @@
             Wrapper around the byte array that is sent to/read from a network stream
             </summary>
         </member>
+        <member name="F:Engine.Networking.Packets.Packet.string_fmt">
+            <summary>
+            Formats a string to be null-terminated
+            </summary>
+        </member>
         <member name="M:Engine.Networking.Packets.Packet.LoadFromBuffer(System.Byte[])">
             <summary>
             Load the data from a buffer according to the packet type's
@@ -4150,6 +4155,57 @@
         <member name="F:Engine.Entities.Hostility.Unfriendly">
             <summary>
             The object(s) are unfriendly with each other
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.Packets.ServerInfoPacket">
+            <summary>
+            Contains info about the server, such as IP address and server name
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Packets.ServerInfoPacket.LoadFromBuffer(System.Byte[])">
+            <summary>
+            See <see cref="M:Engine.Networking.Packets.Packet.LoadFromBuffer(System.Byte[])"/>
+            </summary>
+            <param name="buffer"></param>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.IP">
+            <summary>
+            Server IP
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.Name">
+            <summary>
+            Name of the server
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.Description">
+            <summary>
+            Description of the server's capabilities, rules, etc
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.Port">
+            <summary>
+            Port the server sends/receives on
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.CurrentPlayers">
+            <summary>
+            Current players connected (or taking up player slots, whatever that means for a server
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.MaxPlayers">
+            <summary>
+            Maximum player slots or connections
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.HasPassword">
+            <summary>
+            Whether the server requires a password
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Packets.ServerInfoPacket.ByteStream">
+            <summary>
+            See <see cref="P:Engine.Networking.Packets.Packet.ByteStream"/>
             </summary>
         </member>
     </members>

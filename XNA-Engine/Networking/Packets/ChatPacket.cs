@@ -26,7 +26,6 @@ namespace Engine.Networking.Packets
         public string To { get; set; }
 
         StringBuilder builder;
-        const string field_fmt = "{0}\0";
 
         /// <summary>
         /// See <see cref="Packet.ByteStream"/>
@@ -36,9 +35,9 @@ namespace Engine.Networking.Packets
             get 
             {
                 builder = new StringBuilder(3);
-                builder.Append(field_fmt.format(Message));
-                builder.Append(field_fmt.format(From));
-                builder.Append(field_fmt.format(To));
+                builder.Append(string_fmt.format(Message));
+                builder.Append(string_fmt.format(From));
+                builder.Append(string_fmt.format(To));
                 string msg = builder.ToString();
                 int msgSize = msg.ByteCount(Encoding.UTF8);
                 byte[] buffer = new byte[msgSize + 4];

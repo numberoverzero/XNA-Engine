@@ -57,6 +57,11 @@ namespace Engine.Networking.Packets
         protected byte[] fromInt(int i) { return BitConverter.GetBytes(i); }
 
         /// <summary>
+        /// Formats a string to be null-terminated
+        /// </summary>
+        protected const string string_fmt = "{0}\0";
+        
+        /// <summary>
         /// Determines whether the specified object is equal to this one
         /// </summary>
         /// <param name="obj"></param>
