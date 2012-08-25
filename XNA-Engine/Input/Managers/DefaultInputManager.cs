@@ -226,15 +226,16 @@ namespace Engine.Input
         /// <param name="bindingName">The string used to query the binding state</param>
         /// <param name="binding">The binding to associate with the bindingName</param>
         /// <param name="player">The player to add the binding for</param>
-        public void AddBinding(string bindingName, IBinding binding, PlayerIndex player)
+        public bool AddBinding(string bindingName, IBinding binding, PlayerIndex player)
         {
             var bindings = Bindings[bindingName, player];
             if (bindings.Contains(binding))
-                return;
+                return true;
 
             bindings.Add(binding);
             foreach (var modifier in binding.Modifiers)
                 Modifiers.Add(modifier);
+            return true;
         }
 
         /// <summary>

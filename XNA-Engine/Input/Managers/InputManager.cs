@@ -36,7 +36,8 @@ namespace Engine.Input
         /// <param name="bindingName">The string used to query the binding state</param>
         /// <param name="binding">The binding to associate with the bindingName</param>
         /// <param name="player">The player to add the binding for</param>
-        void AddBinding(string bindingName, IBinding binding, PlayerIndex player);
+        /// <returns>true if the binding was added</returns>
+        bool AddBinding(string bindingName, IBinding binding, PlayerIndex player);
 
         /// <summary>
         /// Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
