@@ -346,8 +346,14 @@ namespace Engine.Input
                 return true;
             
             var bindings = Bindings[bindingName, player];
+
+            var keyboardState = state == FrameState.Current ? CurrentKeyboardState : PreviousKeyboardState;
+            GamePadState gamePadState = state == FrameState.Current ? CurrentGamePadStates[player] : PreviousGamePadStates[player];
+            MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
+            var inputSnapshot = new InputSnapshot(keyboardState, gamePadState, mouseState, Settings);
+
             foreach (var binding in bindings)
-                if (binding.IsActive(this, player, state) && IsModifiersActive(binding, player, state))
+                if (binding.IsActive(inputSnapshot) && IsModifiersActive(binding, inputSnapshot))
                     return true;
             
             return false;
@@ -356,17 +362,13 @@ namespace Engine.Input
         /// <summary>
         /// Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
-        /// <param name="bindingName">The name of the binding whose modifiers are being checked</param>
-        /// <param name="player">The player to check the binding's modifiers for</param>
-        /// <param name="state">The FrameState in which to check the modifiers</param>
-        /// <returns>True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).</returns>
-        protected virtual bool IsModifiersActive(IBinding bindingName, PlayerIndex player, FrameState state)
+        protected virtual bool IsModifiersActive(IBinding bindingName, InputSnapshot inputSnapshot)
         {
             bool modifierActive;
             bool keyTracksModifier;
             foreach (var trackedModifier in Modifiers)
             {
-                modifierActive = trackedModifier.IsActive(this, player, state);
+                modifierActive = trackedModifier.IsActive(inputSnapshot);
                 keyTracksModifier = bindingName.Modifiers.Contains(trackedModifier);
                 if (modifierActive != keyTracksModifier)
                     return false;

@@ -43,7 +43,7 @@ namespace Engine.Input
         /// <summary>
         /// True if the  ThumbstickDirection of the specified Thumbstick is past the settings threshold
         /// </summary>
-        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
+        public override bool IsActive(InputSnapshot inputSnapshot)
         {
             var settings = inputSnapshot.InputSettings;
             var gamePadState = inputSnapshot.GamePadState;
@@ -94,7 +94,7 @@ namespace Engine.Input
         /// <summary>
         /// True if the Mouse button (without modifiers) is pressed
         /// </summary>
-        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
+        public override bool IsActive(InputSnapshot inputSnapshot)
         {
             var mouseState = inputSnapshot.MouseState;
             ButtonState buttonState;
@@ -143,7 +143,7 @@ namespace Engine.Input
         /// <summary>
         /// True if the thumbstick (without modifiers) is past the settings threshold
         /// </summary>
-        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
+        public override bool IsActive(InputSnapshot inputSnapshot)
         {
             var gamePadState = inputSnapshot.GamePadState;
             Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
@@ -175,7 +175,7 @@ namespace Engine.Input
         /// <summary>
         /// True if the Button (without modifiers) is pressed
         /// </summary>
-        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
+        public override bool IsActive(InputSnapshot inputSnapshot)
         {
             return inputSnapshot.GamePadState.IsButtonDown(Button);
         }
@@ -205,7 +205,7 @@ namespace Engine.Input
         /// <summary>
         /// True if the key (without modifiers) is pressed
         /// </summary>
-        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
+        public override bool IsActive(InputSnapshot inputSnapshot)
         {
             return inputSnapshot.KeyboardState.IsKeyDown(Key);
         }
@@ -236,7 +236,7 @@ namespace Engine.Input
         /// <summary>
         /// True if the trigger (without modifiers) is past the settings threshold
         /// </summary>
-        protected override bool IsRawBindingActive(InputSnapshot inputSnapshot)
+        public override bool IsActive(InputSnapshot inputSnapshot)
         {
             var gamePadState = inputSnapshot.GamePadState;
             float triggerMag = Trigger == Trigger.Left ? gamePadState.Triggers.Left : gamePadState.Triggers.Right;

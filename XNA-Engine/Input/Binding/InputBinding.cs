@@ -10,10 +10,9 @@ using System.Collections.Generic;
 namespace Engine.Input
 {
     /// <summary>
-    /// Supports checking if a particular input is active,
-    /// given states for keyboards, mice, and gamepads.
+    /// See <see cref="IBinding"/>
     /// </summary>
-    public class InputBinding : IBinding
+    public abstract class InputBinding : IBinding
     {
         /// <summary>
         /// Any modifiers required for this binding to be considered 'active'
@@ -41,32 +40,9 @@ namespace Engine.Input
 
         #endregion
 
-        #region IsActive Methods
-
         /// <summary>
-        /// True if the InputBinding is active in the given FrameState of the given InputManager
+        /// See <see cref="IBinding.IsActive"/>
         /// </summary>
-        /// <param name="manager">The manager keeping track of current/previous input states</param>
-        /// <param name="player">Player to check binding on</param>
-        /// <param name="state">Current or Previous frame</param>
-        /// <returns>True if the binding is active</returns>
-        public bool IsActive(DefaultInputManager manager, PlayerIndex player, FrameState state)
-        {
-            var keyboardState = state == FrameState.Current ? manager.CurrentKeyboardState : manager.PreviousKeyboardState;
-            GamePadState gamePadState = state == FrameState.Current ? manager.CurrentGamePadStates[player] : manager.PreviousGamePadStates[player];
-            MouseState mouseState = state == FrameState.Current ? manager.CurrentMouseState : manager.PreviousMouseState;
-            var inputSnapshot = new InputSnapshot(keyboardState, gamePadState, mouseState, manager.Settings);
-            return IsRawBindingActive(inputSnapshot);
-        }
-
-        /// <summary>
-        /// True if the binding (without modifiers) is active
-        /// </summary>
-        protected virtual bool IsRawBindingActive(InputSnapshot inputSnapshot)
-        {
-            return false;
-        }
-
-        #endregion
+        public abstract bool IsActive(InputSnapshot inputSnapshot);
     }
 }

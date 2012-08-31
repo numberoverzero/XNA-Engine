@@ -31,10 +31,6 @@ namespace Engine.Input
         /// <summary>
         /// Snapshot a set of input device states
         /// </summary>
-        /// <param name="keyboardState"></param>
-        /// <param name="gamePadState"></param>
-        /// <param name="mouseState"></param>
-        /// <param name="inputSettings"></param>
         public InputSnapshot(KeyboardState keyboardState, GamePadState gamePadState, MouseState mouseState, InputSettings inputSettings)
         {
             this.KeyboardState = keyboardState;
