@@ -98,4 +98,24 @@ namespace Engine.Input
         /// The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
         /// </summary>
         Current }
+
+    /// <summary>
+    /// How a manager interpolates binding checks (if at all)
+    /// </summary>
+    public enum ModifierCheckType
+    {
+        /// <summary>
+        /// The exact modifiers specified by the binding must be active.  No other modifiers may be active.
+        /// </summary>
+        Strict,
+
+        /// <summary>
+        /// Binding A with modifiers x, y will be counted active (even if modifier z is active) so long as there is no other binding B with modifiers x, y, and z.
+        /// </summary>
+        /// <example>
+        /// Jump is bound to space bar.  Fireball is 1, Fire nova is Shift + 1.
+        /// In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
+        /// In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
+        /// </example>
+        Smart }
 }

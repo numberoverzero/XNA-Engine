@@ -427,6 +427,12 @@
             means you will not be able to read the most recent input.
             </remarks>
         </member>
+        <member name="P:Engine.Input.InputManager.ModifierCheckType">
+            <summary>
+            How a binding's modifiers are validated against the manager state.
+            See <see cref="P:Engine.Input.InputManager.ModifierCheckType"/> for more info.
+            </summary>
+        </member>
         <member name="P:Engine.Input.InputManager.GetModifiers">
             <summary>
             All the modifiers currently being tracked.
@@ -685,6 +691,11 @@
             A unique set of modifiers of the bindings this manager tracks.
             Keeps track of how many bindings use this modifier; 
                 stops checking for modifiers once no bindings use that modifier
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputManager.ModifierCheckType">
+            <summary>
+            See <see cref="P:Engine.Input.InputManager.ModifierCheckType"/>
             </summary>
         </member>
         <member name="P:Engine.Input.DefaultInputManager.PreviousKeyboardState">
@@ -3389,7 +3400,12 @@
             The InputSettings at the time of snapshotting
             </summary>
         </member>
-        <member name="M:Engine.Input.InputSnapshot.#ctor(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings)">
+        <member name="F:Engine.Input.InputSnapshot.ModifierCheckType">
+            <summary>
+            The ModifierCheckType at the time of snapshotting
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputSnapshot.#ctor(Microsoft.Xna.Framework.Input.KeyboardState,Microsoft.Xna.Framework.Input.GamePadState,Microsoft.Xna.Framework.Input.MouseState,Engine.Input.InputSettings,Engine.Input.ModifierCheckType)">
             <summary>
             Snapshot a set of input device states
             </summary>
@@ -4187,6 +4203,26 @@
             <summary>
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
             </summary>
+        </member>
+        <member name="T:Engine.Input.ModifierCheckType">
+            <summary>
+            How a manager interpolates binding checks (if at all)
+            </summary>
+        </member>
+        <member name="F:Engine.Input.ModifierCheckType.Strict">
+            <summary>
+            The exact modifiers specified by the binding must be active.  No other modifiers may be active.
+            </summary>
+        </member>
+        <member name="F:Engine.Input.ModifierCheckType.Smart">
+            <summary>
+            Binding A with modifiers x, y will be counted active (even if modifier z is active) so long as there is no other binding B with modifiers x, y, and z.
+            </summary>
+            <example>
+            Jump is bound to space bar.  Fireball is 1, Fire nova is Shift + 1.
+            In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
+            In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
+            </example>
         </member>
     </members>
 </doc>

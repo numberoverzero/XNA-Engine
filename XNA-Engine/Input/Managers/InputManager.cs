@@ -14,6 +14,12 @@ namespace Engine.Input
     public interface InputManager
     {
         /// <summary>
+        /// How a binding's modifiers are validated against the manager state.
+        /// See <see cref="ModifierCheckType"/> for more info.
+        /// </summary>
+        ModifierCheckType ModifierCheckType { get; set; }
+
+        /// <summary>
         /// The buffered text input since the last frame.  This is cleared per frame,
         /// regardless of whether it has been read.
         /// </summary>
@@ -58,7 +64,6 @@ namespace Engine.Input
         /// <param name="binding">The binding to remove from the association with the bindingName</param>
         /// <param name="player">The player the binding is being removed for</param>
         void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player);
-
 
         /// <summary>
         /// Check if the manager has a binding associated with a bindingName for a player

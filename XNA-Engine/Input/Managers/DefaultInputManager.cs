@@ -45,6 +45,11 @@ namespace Engine.Input
         /// </summary>
         protected DoubleBuffer<char> BufferedText;
 
+        /// <summary>
+        /// See <see cref="InputManager.ModifierCheckType"/>
+        /// </summary>
+        public ModifierCheckType ModifierCheckType { get; set; }
+
         #region Previous/Current States
 
         /// <summary>
@@ -338,8 +343,7 @@ namespace Engine.Input
         {
             if (!ContainsBinding(bindingName, player))
                 return false;
-            
-            //var injectedPresses = state == FrameState.Current ? CurrentInjectedPresses : PreviousInjectedPresses;
+
             var injectedPresses = InjectedPressedKeys[state, player];
             bool isInjected = injectedPresses.Contains(bindingName);
             if (isInjected)
@@ -350,7 +354,7 @@ namespace Engine.Input
             var keyboardState = state == FrameState.Current ? CurrentKeyboardState : PreviousKeyboardState;
             GamePadState gamePadState = state == FrameState.Current ? CurrentGamePadStates[player] : PreviousGamePadStates[player];
             MouseState mouseState = state == FrameState.Current ? CurrentMouseState : PreviousMouseState;
-            var inputSnapshot = new InputSnapshot(keyboardState, gamePadState, mouseState, Settings);
+            var inputSnapshot = new InputSnapshot(keyboardState, gamePadState, mouseState, Settings, ModifierCheckType);
 
             foreach (var binding in bindings)
                 if (binding.IsActive(inputSnapshot) && IsModifiersActive(binding, inputSnapshot))
