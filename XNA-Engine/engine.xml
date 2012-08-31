@@ -107,6 +107,21 @@
             Debug information
             </summary>
         </member>
+        <member name="T:Engine.Input.InputBinding">
+            <summary>
+            A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputBinding.IsActive(Engine.Input.InputSnapshot)">
+            <summary>
+            True if the InputBinding is active in the given FrameState of the given InputManager
+            </summary>
+        </member>
+        <member name="P:Engine.Input.InputBinding.Modifiers">
+            <summary>
+            Returns the list of modifiers necessary to be active before the binding is considered "active"
+            </summary>
+        </member>
         <member name="T:Engine.Events.GameObjectEvents.GameObjectDestroyedEvent">
             <summary>
             Event when a GameObject is destroyed
@@ -308,134 +323,134 @@
         </member>
         <member name="T:Engine.Input.InputManager">
             <summary>
-            Allows input querying and offers hooks for event-driven keyboard input
+              Allows input querying and offers hooks for event-driven keyboard input
             </summary>
         </member>
         <member name="M:Engine.Input.InputManager.GetBufferedText">
             <summary>
-            The buffered text input since the last frame.  This is cleared per frame,
-            regardless of whether it has been read.
+              The buffered text input since the last frame.  This is cleared per frame,
+              regardless of whether it has been read.
             </summary>
         </member>
         <member name="M:Engine.Input.InputManager.GetMousePosition(Engine.Input.FrameState)">
             <summary>
-            Get the position of the mouse in the specified frame.
+              Get the position of the mouse in the specified frame.
             </summary>
-            <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
-            <returns>The position of the mouse in screen space</returns>
+            <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
+            <returns> The position of the mouse in screen space </returns>
         </member>
         <member name="M:Engine.Input.InputManager.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Add a binding that can be checked for state (Pressed, Released, Active)
+              Add a binding that can be checked for state (Pressed, Released, Active)
             </summary>
-            <param name="bindingName">The string used to query the binding state</param>
-            <param name="binding">The binding to associate with the bindingName</param>
-            <param name="player">The player to add the binding for</param>
-            <returns>true if the binding was added</returns>
+            <param name="bindingName"> The string used to query the binding state </param>
+            <param name="binding"> The binding to associate with the bindingName </param>
+            <param name="player"> The player to add the binding for </param>
+            <returns> true if the binding was added </returns>
         </member>
         <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
-            For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
-            RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
-            This is useful when you know the index of the binding in its list of bindings
+              Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
+              For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
+              RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
+              This is useful when you know the index of the binding in its list of bindings
             </summary>
-            <param name="bindingName">The string used to query the binding state</param>
-            <param name="index">The index of the binding in the list of bindings associated with the bindingName</param>
-            <param name="player">The player the binding is being removed for</param>
+            <param name="bindingName"> The string used to query the binding state </param>
+            <param name="index"> The index of the binding in the list of bindings associated with the bindingName </param>
+            <param name="player"> The player the binding is being removed for </param>
         </member>
         <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Remove a binding from the InputManager.  Removes the exact binding from the relation.
-            This can be used when you don't know the binding's index in its list of bindings.
+              Remove a binding from the InputManager.  Removes the exact binding from the relation.
+              This can be used when you don't know the binding's index in its list of bindings.
             </summary>
-            <param name="bindingName">The string used to query the binding state</param>
-            <param name="binding">The binding to remove from the association with the bindingName</param>
-            <param name="player">The player the binding is being removed for</param>
+            <param name="bindingName"> The string used to query the binding state </param>
+            <param name="binding"> The binding to remove from the association with the bindingName </param>
+            <param name="player"> The player the binding is being removed for </param>
         </member>
         <member name="M:Engine.Input.InputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Check if the manager has a binding associated with a bindingName for a player
+              Check if the manager has a binding associated with a bindingName for a player
             </summary>
-            <param name="bindingName">The name of the binding to check for</param>
-            <param name="player">The player to check the binding for</param>
-            <returns>True if there are bindings associated with the bindingName for the given player</returns>
+            <param name="bindingName"> The name of the binding to check for </param>
+            <param name="player"> The player to check the binding for </param>
+            <returns> True if there are bindings associated with the bindingName for the given player </returns>
         </member>
         <member name="M:Engine.Input.InputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Clears all bindings associated with the given bindingName for a particular player
+              Clears all bindings associated with the given bindingName for a particular player
             </summary>
-            <param name="bindingName">The name of the binding to clear</param>
-            <param name="player">The player to clear the binding for</param>
+            <param name="bindingName"> The name of the binding to clear </param>
+            <param name="player"> The player to clear the binding for </param>
         </member>
         <member name="M:Engine.Input.InputManager.ClearAllBindings">
             <summary>
-            Clears all bindings for all players
+              Clears all bindings for all players
             </summary>
         </member>
         <member name="M:Engine.Input.InputManager.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
             <summary>
-            Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
+              Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
             </summary>
-            <param name="bindingName">The name of the binding to query for active state</param>
-            <param name="player">The player to check the binding's activity for</param>
-            <param name="state">The FrameState in which to check for activity</param>
-            <returns>True if any of the bindings associated with the bindingName for a given player in a given FrameState is active.</returns>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <param name="player"> The player to check the binding's activity for </param>
+            <param name="state"> The FrameState in which to check for activity </param>
+            <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
         </member>
         <member name="M:Engine.Input.InputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
+              Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
             </summary>
-            <param name="bindingName">The name of the binding to query for active state</param>
-            <param name="player">The player to check the binding's activity for</param>
-            <returns>True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).</returns>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <param name="player"> The player to check the binding's activity for </param>
+            <returns> True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous). </returns>
         </member>
         <member name="M:Engine.Input.InputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
+              Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
             </summary>
-            <param name="bindingName">The name of the binding to query for active state</param>
-            <param name="player">The player to check the binding's activity for</param>
-            <returns>True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).</returns>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <param name="player"> The player to check the binding's activity for </param>
+            <returns> True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous). </returns>
         </member>
         <member name="M:Engine.Input.InputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Gets the list of bindings associated with a particular bindingName for a given player
+              Gets the list of bindings associated with a particular bindingName for a given player
             </summary>
-            <param name="bindingName">The bindingName associated with the list of Bindings</param>
-            <param name="player">The player to get the list of bindings for</param>
-            <returns>Returns a copy of the Bindings associated with the bindingName for a givem player</returns>
+            <param name="bindingName"> The bindingName associated with the list of Bindings </param>
+            <param name="player"> The player to get the list of bindings for </param>
+            <returns> Returns a copy of the Bindings associated with the bindingName for a givem player </returns>
         </member>
         <member name="M:Engine.Input.InputManager.BindingsUsing(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-            Used to get a list of strings that map to the given binding for a given player.
-            This is useful when you want to unbind a key from current bindings and remap to a new binding:
-            You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
+              Used to get a list of strings that map to the given binding for a given player.
+              This is useful when you want to unbind a key from current bindings and remap to a new binding:
+              You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
             </summary>
-            <param name="binding">The binding to search for in the InputManager</param>
-            <param name="player">The player to search for bindings on</param>
-            <returns>A list of the bindingNames that, for a given player, track the given binding as a possible input</returns>
+            <param name="binding"> The binding to search for in the InputManager </param>
+            <param name="player"> The player to search for bindings on </param>
+            <returns> A list of the bindingNames that, for a given player, track the given binding as a possible input </returns>
         </member>
         <member name="M:Engine.Input.InputManager.Update">
             <summary>
-            Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
+              Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
             </summary>
             <remarks>
-            This should be called at the end of your update loop, so that game logic
-            uses latest values.
-            Calling update at the beginning of the update loop will clear current buffers (if any) which
-            means you will not be able to read the most recent input.
+              This should be called at the end of your update loop, so that game logic
+              uses latest values.
+              Calling update at the beginning of the update loop will clear current buffers (if any) which
+              means you will not be able to read the most recent input.
             </remarks>
         </member>
         <member name="P:Engine.Input.InputManager.ModifierCheckType">
             <summary>
-            How a binding's modifiers are validated against the manager state.
-            See <see cref="P:Engine.Input.InputManager.ModifierCheckType"/> for more info.
+              How a binding's modifiers are validated against the manager state.
+              See <see cref="P:Engine.Input.InputManager.ModifierCheckType"/> for more info.
             </summary>
         </member>
         <member name="P:Engine.Input.InputManager.GetModifiers">
             <summary>
-            All the modifiers currently being tracked.
+              All the modifiers currently being tracked.
             </summary>
         </member>
         <member name="T:Engine.Input.EventInput.IKeyboardSubscriber">
@@ -1671,21 +1686,6 @@
         <member name="T:Engine.Input.DefaultInputBinding">
             <summary>
             See <see cref="T:Engine.Input.InputBinding"/>
-            </summary>
-        </member>
-        <member name="T:Engine.Input.InputBinding">
-            <summary>
-            A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputBinding.IsActive(Engine.Input.InputSnapshot)">
-            <summary>
-            True if the InputBinding is active in the given FrameState of the given InputManager
-            </summary>
-        </member>
-        <member name="P:Engine.Input.InputBinding.Modifiers">
-            <summary>
-            Returns the list of modifiers necessary to be active before the binding is considered "active"
             </summary>
         </member>
         <member name="M:Engine.Input.DefaultInputBinding.#ctor(Engine.Input.InputBinding[])">
@@ -3078,6 +3078,116 @@
         <member name="M:Engine.Rendering.Effects.RepeaterEffect.Reset">
             <summary>
             Reset any state the effect might track, such as camera deltas or elapsed game time
+            </summary>
+        </member>
+        <member name="T:Engine.Input.InjectableInputManager">
+            <summary>
+              Can inject presses
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InjectableInputManager.InjectedPressedKeys">
+            <summary>
+              Programmatically injected binding presses
+            </summary>
+        </member>
+        <member name="F:Engine.Input.InjectableInputManager.PressableKeys">
+            <summary>
+              Keys that the manager "contains"
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.#ctor">
+            <summary>
+              Constructor
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.#ctor(Engine.Input.InjectableInputManager)">
+            <summary>
+              Copy Constructor
+            </summary>
+            <param name="input"> </param>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.GetBufferedText">
+            <summary>
+              The buffered text input since the last frame.  This is cleared per frame,
+              regardless of whether it has been read.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.GetMousePosition(Engine.Input.FrameState)">
+            <summary>
+              Get the position of the mouse in the specified frame.
+            </summary>
+            <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
+            <returns> The position of the mouse in screen space </returns>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.ClearAllBindings">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.ClearAllBindings"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.BindingsUsing(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.BindingsUsing(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.Update">
+            <summary>
+              See <see cref="M:Engine.Input.InputManager.Update"/>
+            </summary>
+        </member>
+        <member name="P:Engine.Input.InjectableInputManager.ModifierCheckType">
+            <summary>
+              How a binding's modifiers are validated against the manager state.
+              See <see cref="P:Engine.Input.InputManager.ModifierCheckType"/> for more info.
+            </summary>
+        </member>
+        <member name="P:Engine.Input.InjectableInputManager.GetModifiers">
+            <summary>
+              See <see cref="P:Engine.Input.InputManager.GetModifiers"/>
             </summary>
         </member>
         <member name="T:Engine.DataStructures.BidirectionalDict`2">

@@ -125,6 +125,7 @@
     <Compile Include="Input\EventInput.cs" />
     <Compile Include="Input\InputSnapshot.cs" />
     <Compile Include="Input\Managers\BasicInputManager.cs" />
+    <Compile Include="Input\Managers\InjectableInputManager.cs" />
     <Compile Include="Input\Managers\InputManager.cs" />
     <Compile Include="Logging\Enums.cs" />
     <Compile Include="Logging\ILog.cs" />

@@ -21,17 +21,17 @@ namespace Engine.Input
         /// <summary>
         /// The Bindings being tracked by the Manager
         /// </summary>
-        public MultiKeyObjDict<String, PlayerIndex, List<InputBinding>> Bindings { get; protected set; }
+        protected MultiKeyObjDict<String, PlayerIndex, List<InputBinding>> Bindings { get; set; }
 
         /// <summary>
         /// Programmatically injected binding presses
         /// </summary>
-        public CycleBuffer<FrameState, PlayerIndex, string> InjectedPressedKeys { get; protected set; }
+        protected CycleBuffer<FrameState, PlayerIndex, string> InjectedPressedKeys { get; set; }
 
         /// <summary>
         /// The InputSettings for this InputManager (trigger thresholds, etc)
         /// </summary>
-        public InputSettings Settings { get; private set; }
+        protected InputSettings Settings { get; private set; }
 
         /// <summary>
         /// A unique set of modifiers of the bindings this manager tracks.
@@ -429,7 +429,6 @@ namespace Engine.Input
         public void Press(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player)) return;
-            //InjectedPresses.Add(state, player, bindingName);
             InjectedPressedKeys[state, player].Add(bindingName);
         }
 
