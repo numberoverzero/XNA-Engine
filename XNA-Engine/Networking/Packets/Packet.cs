@@ -100,8 +100,6 @@ namespace Engine.Networking.Packets
             /// </summary>
             /// <param name="buffer"></param>
             protected override void LoadFromBuffer(byte[] buffer) { }
-
-            
         }
 
         static Packet _nullPacket;

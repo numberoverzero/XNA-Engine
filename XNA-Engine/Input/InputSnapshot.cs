@@ -29,21 +29,15 @@ namespace Engine.Input
         public readonly InputSettings InputSettings;
 
         /// <summary>
-        /// The ModifierCheckType at the time of snapshotting
-        /// </summary>
-        public readonly ModifierCheckType ModifierCheckType;
-
-        /// <summary>
         /// Snapshot a set of input device states
         /// </summary>
         public InputSnapshot(KeyboardState keyboardState, GamePadState gamePadState, MouseState mouseState, 
-                            InputSettings inputSettings, ModifierCheckType modifierCheckType)
+                            InputSettings inputSettings)
         {
             this.KeyboardState = keyboardState;
             this.GamePadState = gamePadState;
             this.MouseState = mouseState;
             this.InputSettings = inputSettings;
-            this.ModifierCheckType = modifierCheckType;
         }
     }
 }

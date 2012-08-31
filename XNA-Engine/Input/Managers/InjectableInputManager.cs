@@ -10,8 +10,6 @@ namespace Engine.Input
     /// </summary>
     public class InjectableInputManager : InputManager
     {
-        #region Fields
-
         /// <summary>
         ///   Programmatically injected binding presses
         /// </summary>
@@ -21,10 +19,6 @@ namespace Engine.Input
         ///   Keys that the manager "contains"
         /// </summary>
         protected DefaultDict<PlayerIndex, List<string>> PressableKeys;
-
-        #endregion
-
-        #region Initialization
 
         /// <summary>
         ///   Constructor
@@ -44,8 +38,6 @@ namespace Engine.Input
         {
             InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(input.InjectedPressedKeys);
         }
-
-        #endregion
 
         #region InputManager Members
 
@@ -173,12 +165,6 @@ namespace Engine.Input
         }
 
         /// <summary>
-        ///   How a binding's modifiers are validated against the manager state.
-        ///   See <see cref="InputManager.ModifierCheckType" /> for more info.
-        /// </summary>
-        public ModifierCheckType ModifierCheckType { get; set; }
-
-        /// <summary>
         ///   See <see cref="InputManager.GetModifiers" />
         /// </summary>
         public IEnumerable<InputBinding> GetModifiers
@@ -191,6 +177,32 @@ namespace Engine.Input
         }
 
         #endregion
+
+        /// <summary>
+        ///   "Press" a key in a given frame.
+        ///   Cannot press a binding unless it has been added to the InputManager
+        /// </summary>
+        /// <param name="bindingName"> The binding to press </param>
+        /// <param name="player"> The player to press the binding for </param>
+        /// <param name="state"> The frame to press it in </param>
+        public void Press(string bindingName, PlayerIndex player, FrameState state)
+        {
+            if (!ContainsBinding(bindingName, player)) return;
+            InjectedPressedKeys[state, player].Add(bindingName);
+        }
+
+        /// <summary>
+        ///   "Release" a key in a given frame.
+        ///   Cannot release a binding unless it has been added to the InputManager
+        /// </summary>
+        /// <param name="bindingName"> The binding to release </param>
+        /// <param name="player"> The player to release the binding for </param>
+        /// <param name="state"> The frame to release it in </param>
+        public void Release(string bindingName, PlayerIndex player, FrameState state)
+        {
+            if (!ContainsBinding(bindingName, player)) return;
+            InjectedPressedKeys[state, player].Remove(bindingName);
+        }
 
         private void RemoveBinding(string bindingName, PlayerIndex player)
         {

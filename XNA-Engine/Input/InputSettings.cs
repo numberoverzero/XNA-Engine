@@ -20,17 +20,26 @@ namespace Engine.Input
         public float ThumbstickThreshold;
 
         /// <summary>
+        ///   How a binding's modifiers are validated against the manager state.
+        ///   See <see cref="ModifierCheckType" /> for more info.
+        /// </summary>
+        public ModifierCheckType ModifierCheckType;
+
+        /// <summary>
         /// Construct a set of Input Settings describing certain thresholds and limits that must be met for
         /// some bindings to be considered "active"
         /// </summary>
         /// <param name="triggerThreshold">The minimum value a trigger must have to be considered pulled/depressed (active)</param>
         /// <param name="thumbstickThreshold">The minimum value a thumbstick must be moved to be considered active 
         /// (some bindings may require this amount in a single direction)</param>
-        public InputSettings(float triggerThreshold, float thumbstickThreshold)
+        /// <param name="modifierCheckType">How modifiers are checked</param>
+        public InputSettings(float triggerThreshold, float thumbstickThreshold, ModifierCheckType modifierCheckType)
         {
             TriggerThreshold = triggerThreshold;
             ThumbstickThreshold = thumbstickThreshold;
+            ModifierCheckType = modifierCheckType;
         }
+
         /// <summary>
         /// Copy Constructor
         /// </summary>
@@ -39,6 +48,7 @@ namespace Engine.Input
         {
             TriggerThreshold = settings.TriggerThreshold;
             ThumbstickThreshold = settings.ThumbstickThreshold;
+            ModifierCheckType = settings.ModifierCheckType;
         }
     }
 }
