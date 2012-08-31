@@ -21,7 +21,7 @@ namespace Engine.Input
         /// <summary>
         /// The Bindings being tracked by the Manager
         /// </summary>
-        public MultiKeyObjDict<String, PlayerIndex, List<IBinding>> Bindings { get; protected set; }
+        public MultiKeyObjDict<String, PlayerIndex, List<InputBinding>> Bindings { get; protected set; }
 
         /// <summary>
         /// Programmatically injected binding presses
@@ -38,7 +38,7 @@ namespace Engine.Input
         /// Keeps track of how many bindings use this modifier; 
         ///     stops checking for modifiers once no bindings use that modifier
         /// </summary>
-        public ICollection<IBinding> Modifiers { get; protected set; }
+        public ICollection<InputBinding> Modifiers { get; protected set; }
 
         /// <summary>
         /// The per-frame text buffer.
@@ -160,8 +160,8 @@ namespace Engine.Input
         public DefaultInputManager()
         {
             Settings = new InputSettings(0,0);
-            Bindings = new MultiKeyObjDict<String, PlayerIndex, List<IBinding>>();
-            Modifiers = new CountedCollection<IBinding>();
+            Bindings = new MultiKeyObjDict<String, PlayerIndex, List<InputBinding>>();
+            Modifiers = new CountedCollection<InputBinding>();
 
             InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(FrameState.Current, FrameState.Previous);
             BufferedText = new DoubleBuffer<char>();
@@ -186,8 +186,8 @@ namespace Engine.Input
             CurrentMouseState = input.CurrentMouseState;
 
             Settings = new InputSettings(input.Settings);
-            Bindings = new MultiKeyObjDict<String, PlayerIndex, List<IBinding>>(input.Bindings);
-            Modifiers = new CountedCollection<IBinding>(input.Modifiers);
+            Bindings = new MultiKeyObjDict<String, PlayerIndex, List<InputBinding>>(input.Bindings);
+            Modifiers = new CountedCollection<InputBinding>(input.Modifiers);
 
             InjectedPressedKeys = new CycleBuffer<FrameState, PlayerIndex, string>(input.InjectedPressedKeys);
 
@@ -226,7 +226,7 @@ namespace Engine.Input
         /// <param name="bindingName">The string used to query the binding state</param>
         /// <param name="binding">The binding to associate with the bindingName</param>
         /// <param name="player">The player to add the binding for</param>
-        public bool AddBinding(string bindingName, IBinding binding, PlayerIndex player)
+        public bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
             var bindings = Bindings[bindingName, player];
             if (bindings.Contains(binding))
@@ -279,7 +279,7 @@ namespace Engine.Input
         /// <param name="bindingName">The string used to query the binding state</param>
         /// <param name="binding">The binding to remove from the association with the bindingName</param>
         /// <param name="player">The player the binding is being removed for</param>
-        public virtual void RemoveBinding(string bindingName, IBinding binding, PlayerIndex player)
+        public virtual void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
             if (!ContainsBinding(bindingName, player))
                 return;
@@ -308,10 +308,10 @@ namespace Engine.Input
         public virtual void ClearBinding(string bindingName, PlayerIndex player)
         {
             // Make sure we clean up any modifiers
-            var old_bindings = new List<IBinding>(Bindings[bindingName, player]);
+            var old_bindings = new List<InputBinding>(Bindings[bindingName, player]);
             foreach (var binding in old_bindings)
                 RemoveBinding(bindingName, binding, player);
-            Bindings[bindingName, player] = new List<IBinding>();
+            Bindings[bindingName, player] = new List<InputBinding>();
         }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace Engine.Input
         /// <summary>
         /// Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
-        protected virtual bool IsModifiersActive(IBinding bindingName, InputSnapshot inputSnapshot)
+        protected virtual bool IsModifiersActive(InputBinding bindingName, InputSnapshot inputSnapshot)
         {
             bool modifierActive;
             bool keyTracksModifier;
@@ -406,9 +406,9 @@ namespace Engine.Input
         /// <param name="bindingName">The bindingName associated with the list of Bindings</param>
         /// <param name="player">The player to get the list of bindings for</param>
         /// <returns>Returns a copy of the Bindings associated with the bindingName for a givem player</returns>
-        public List<IBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
+        public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
-            return new List<IBinding>(Bindings[bindingName, player]);
+            return new List<InputBinding>(Bindings[bindingName, player]);
         }
 
         #endregion
@@ -454,11 +454,11 @@ namespace Engine.Input
         /// <param name="binding">The binding to search for in the InputManager</param>
         /// <param name="player">The player to search for bindings on</param>
         /// <returns>A list of the bindingNames that, for a given player, track the given binding as a possible input</returns>
-        public List<string> BindingsUsing(IBinding binding, PlayerIndex player = PlayerIndex.One)
+        public List<string> BindingsUsing(InputBinding binding, PlayerIndex player = PlayerIndex.One)
         {
             List<string> binds = new List<string>();
 
-            List<IBinding> bindingGroup;
+            List<InputBinding> bindingGroup;
             foreach (string bindingGroupKey in Bindings.Keys)
             {
                 bindingGroup = Bindings[bindingGroupKey, player];
@@ -540,7 +540,7 @@ namespace Engine.Input
         /// <summary>
         /// All the modifiers currently being tracked.
         /// </summary>
-        public IEnumerable<IBinding> GetModifiers
+        public IEnumerable<InputBinding> GetModifiers
         {
             get { return Modifiers; }
         }

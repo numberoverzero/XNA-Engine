@@ -107,49 +107,6 @@
             Debug information
             </summary>
         </member>
-        <member name="T:Engine.Input.InputBinding">
-            <summary>
-            See <see cref="T:Engine.Input.IBinding"/>
-            </summary>
-        </member>
-        <member name="T:Engine.Input.IBinding">
-            <summary>
-            A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
-            </summary>
-        </member>
-        <member name="M:Engine.Input.IBinding.IsActive(Engine.Input.InputSnapshot)">
-            <summary>
-            True if the InputBinding is active in the given FrameState of the given InputManager
-            </summary>
-        </member>
-        <member name="P:Engine.Input.IBinding.Modifiers">
-            <summary>
-            Returns the list of modifiers necessary to be active before the binding is considered "active"
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputBinding.#ctor(Engine.Input.IBinding[])">
-            <summary>
-            Initialize an InputBinding with an optional list of required modifiers
-            </summary>
-            <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
-            
-        </member>
-        <member name="M:Engine.Input.InputBinding.#ctor(Engine.Input.InputBinding)">
-            <summary>
-            Copy Constructor
-            </summary>
-            <param name="other"></param>
-        </member>
-        <member name="M:Engine.Input.InputBinding.IsActive(Engine.Input.InputSnapshot)">
-            <summary>
-            See <see cref="M:Engine.Input.IBinding.IsActive(Engine.Input.InputSnapshot)"/>
-            </summary>
-        </member>
-        <member name="P:Engine.Input.InputBinding.Modifiers">
-            <summary>
-            Any modifiers required for this binding to be considered 'active'
-            </summary>
-        </member>
         <member name="T:Engine.Events.GameObjectEvents.GameObjectDestroyedEvent">
             <summary>
             Event when a GameObject is destroyed
@@ -367,7 +324,7 @@
             <param name="state">The frame to inspect for the position- the current frame or the previous frame</param>
             <returns>The position of the mouse in screen space</returns>
         </member>
-        <member name="M:Engine.Input.InputManager.AddBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.InputManager.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
             Add a binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -387,7 +344,7 @@
             <param name="index">The index of the binding in the list of bindings associated with the bindingName</param>
             <param name="player">The player the binding is being removed for</param>
         </member>
-        <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
             Remove a binding from the InputManager.  Removes the exact binding from the relation.
             This can be used when you don't know the binding's index in its list of bindings.
@@ -449,7 +406,7 @@
             <param name="player">The player to get the list of bindings for</param>
             <returns>Returns a copy of the Bindings associated with the bindingName for a givem player</returns>
         </member>
-        <member name="M:Engine.Input.InputManager.BindingsUsing(Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.InputManager.BindingsUsing(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
             Used to get a list of strings that map to the given binding for a given player.
             This is useful when you want to unbind a key from current bindings and remap to a new binding:
@@ -546,7 +503,7 @@
             </summary>
             <param name="window"></param>
         </member>
-        <member name="M:Engine.Input.DefaultInputManager.AddBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.DefaultInputManager.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
             Add a binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -565,7 +522,7 @@
             <param name="index">The index of the binding in the list of bindings associated with the bindingName</param>
             <param name="player">The player the binding is being removed for</param>
         </member>
-        <member name="M:Engine.Input.DefaultInputManager.RemoveBinding(System.String,Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.DefaultInputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
             Remove a binding from the InputManager.  Removes the exact binding from the relation.
             This can be used when you don't know the binding's index in its list of bindings.
@@ -603,7 +560,7 @@
             <param name="state">The FrameState in which to check for activity</param>
             <returns>True if any of the bindings associated with the bindingName for a given player in a given FrameState is active.</returns>
         </member>
-        <member name="M:Engine.Input.DefaultInputManager.IsModifiersActive(Engine.Input.IBinding,Engine.Input.InputSnapshot)">
+        <member name="M:Engine.Input.DefaultInputManager.IsModifiersActive(Engine.Input.InputBinding,Engine.Input.InputSnapshot)">
             <summary>
             Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
             </summary>
@@ -650,7 +607,7 @@
             <param name="player">The player to release the binding for</param>
             <param name="state">The frame to release it in</param>
         </member>
-        <member name="M:Engine.Input.DefaultInputManager.BindingsUsing(Engine.Input.IBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.DefaultInputManager.BindingsUsing(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
             Used to get a list of strings that map to the given binding for a given player.
             This is useful when you want to unbind a key from current bindings and remap to a new binding:
@@ -788,7 +745,7 @@
             All the modifiers currently being tracked.
             </summary>
         </member>
-        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
             <summary>
             Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -798,7 +755,7 @@
             <param name="thumbstick"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.MouseButton,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.MouseButton,Engine.Input.InputBinding[])">
             <summary>
             Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -807,7 +764,7 @@
             <param name="mouseButton"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
             <summary>
             Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -816,7 +773,7 @@
             <param name="thumbstick"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Trigger,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Trigger,Engine.Input.InputBinding[])">
             <summary>
             Add a Trigger binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -825,7 +782,7 @@
             <param name="trigger"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Buttons,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Buttons,Engine.Input.InputBinding[])">
             <summary>
             Add a Button binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -834,7 +791,7 @@
             <param name="button"></param>
             <param name="modifiers"></param>
         </member>
-        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Keys,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.BasicInputManager.AddBinding(System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Keys,Engine.Input.InputBinding[])">
             <summary>
             Add a key binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -1700,13 +1657,56 @@
             <param name="theta">The angle (in radians) to rotate by</param>
             <returns></returns>
         </member>
+        <member name="T:Engine.Input.DefaultInputBinding">
+            <summary>
+            See <see cref="T:Engine.Input.InputBinding"/>
+            </summary>
+        </member>
+        <member name="T:Engine.Input.InputBinding">
+            <summary>
+            A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputBinding.IsActive(Engine.Input.InputSnapshot)">
+            <summary>
+            True if the InputBinding is active in the given FrameState of the given InputManager
+            </summary>
+        </member>
+        <member name="P:Engine.Input.InputBinding.Modifiers">
+            <summary>
+            Returns the list of modifiers necessary to be active before the binding is considered "active"
+            </summary>
+        </member>
+        <member name="M:Engine.Input.DefaultInputBinding.#ctor(Engine.Input.InputBinding[])">
+            <summary>
+            Initialize an InputBinding with an optional list of required modifiers
+            </summary>
+            <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
+            
+        </member>
+        <member name="M:Engine.Input.DefaultInputBinding.#ctor(Engine.Input.DefaultInputBinding)">
+            <summary>
+            Copy Constructor
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Engine.Input.DefaultInputBinding.IsActive(Engine.Input.InputSnapshot)">
+            <summary>
+            See <see cref="M:Engine.Input.InputBinding.IsActive(Engine.Input.InputSnapshot)"/>
+            </summary>
+        </member>
+        <member name="P:Engine.Input.DefaultInputBinding.Modifiers">
+            <summary>
+            Any modifiers required for this binding to be considered 'active'
+            </summary>
+        </member>
         <member name="T:Engine.Input.ThumbstickDirectionInputBinding">
             <summary>
             An InputBinding that checks if a certain ThumbstickDirection is active
             (beyond some threshold as defined in an InputManager's InputSettings)
             </summary>
         </member>
-        <member name="M:Engine.Input.ThumbstickDirectionInputBinding.#ctor(Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.ThumbstickDirectionInputBinding.#ctor(Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
             <summary>
             An InputBinding wrapper for a ThumbstickDirection
             </summary>
@@ -1734,7 +1734,7 @@
             An InputBinding wrapper for a Thumbstick
             </summary>
         </member>
-        <member name="M:Engine.Input.MouseInputBinding.#ctor(Engine.Input.MouseButton,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.MouseInputBinding.#ctor(Engine.Input.MouseButton,Engine.Input.InputBinding[])">
             <summary>
             An InputBinding wrapper for a MouseButton
             </summary>
@@ -1758,7 +1758,7 @@
             (direction doesn't matter)
             </summary>
         </member>
-        <member name="M:Engine.Input.ThumbstickInputBinding.#ctor(Engine.Input.Thumbstick,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.ThumbstickInputBinding.#ctor(Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
             <summary>
             An InputBinding wrapper for a Thumbstick
             </summary>
@@ -1780,7 +1780,7 @@
             An InputBinding wrapper for a Button
             </summary>
         </member>
-        <member name="M:Engine.Input.ButtonInputBinding.#ctor(Microsoft.Xna.Framework.Input.Buttons,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.ButtonInputBinding.#ctor(Microsoft.Xna.Framework.Input.Buttons,Engine.Input.InputBinding[])">
             <summary>
             An InputBinding wrapper for a Button
             </summary>
@@ -1802,7 +1802,7 @@
             An InputBinding wrapper for a keyboard Key
             </summary>
         </member>
-        <member name="M:Engine.Input.KeyInputBinding.#ctor(Microsoft.Xna.Framework.Input.Keys,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.KeyInputBinding.#ctor(Microsoft.Xna.Framework.Input.Keys,Engine.Input.InputBinding[])">
             <summary>
             InputBinding wrapper for a keyboard Key
             </summary>
@@ -1825,7 +1825,7 @@
             (beyond some threshold as defined in an InputManager's InputSettings)
             </summary>
         </member>
-        <member name="M:Engine.Input.TriggerInputBinding.#ctor(Engine.Input.Trigger,Engine.Input.IBinding[])">
+        <member name="M:Engine.Input.TriggerInputBinding.#ctor(Engine.Input.Trigger,Engine.Input.InputBinding[])">
             <summary>
             InputBinding wrapper for GamePad triggers
             </summary>

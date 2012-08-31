@@ -12,10 +12,47 @@ using Microsoft.Xna.Framework.Input;
 namespace Engine.Input
 {
     /// <summary>
+    /// See <see cref="InputBinding"/>
+    /// </summary>
+    public abstract class DefaultInputBinding : InputBinding
+    {
+        /// <summary>
+        /// Any modifiers required for this binding to be considered 'active'
+        /// </summary>
+        public InputBinding[] Modifiers { get; private set; }
+
+        #region Initialiation
+
+        /// <summary>
+        /// Initialize an InputBinding with an optional list of required modifiers
+        /// </summary>
+        /// <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
+        /// 
+        public DefaultInputBinding(params InputBinding[] modifiers)
+        {
+            Modifiers = new InputBinding[modifiers.Length];
+            Array.Copy(modifiers, Modifiers, modifiers.Length);
+        }
+
+        /// <summary>
+        /// Copy Constructor
+        /// </summary>
+        /// <param name="other"></param>
+        public DefaultInputBinding(DefaultInputBinding other) : this(other.Modifiers) { }
+
+        #endregion
+
+        /// <summary>
+        /// See <see cref="InputBinding.IsActive"/>
+        /// </summary>
+        public abstract bool IsActive(InputSnapshot inputSnapshot);
+    }
+
+    /// <summary>
     /// An InputBinding that checks if a certain ThumbstickDirection is active
     /// (beyond some threshold as defined in an InputManager's InputSettings)
     /// </summary>
-    public class ThumbstickDirectionInputBinding : InputBinding
+    public class ThumbstickDirectionInputBinding : DefaultInputBinding
     {
         /// <summary>
         /// The Thumbstick (left or right) which is checked for activity past a threshold
@@ -33,7 +70,7 @@ namespace Engine.Input
         /// <param name="thumbstickDirection"></param>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
-        public ThumbstickDirectionInputBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params IBinding[] modifiers)
+        public ThumbstickDirectionInputBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Thumbstick = thumbstick;
@@ -73,7 +110,7 @@ namespace Engine.Input
     /// <summary>
     /// An InputBinding wrapper for a Thumbstick
     /// </summary>
-    public class MouseInputBinding : InputBinding
+    public class MouseInputBinding : DefaultInputBinding
     {
         /// <summary>
         /// The mouse button which is checked for activity
@@ -85,7 +122,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="mouseButton"></param>
         /// <param name="modifiers"></param>
-        public MouseInputBinding(MouseButton mouseButton, params IBinding[] modifiers)
+        public MouseInputBinding(MouseButton mouseButton, params InputBinding[] modifiers)
             : base(modifiers)
         {
             Button = mouseButton;
@@ -122,7 +159,7 @@ namespace Engine.Input
     /// (beyond some threshold as defined in an InputManager's InputSettings)
     /// (direction doesn't matter)
     /// </summary>
-    public class ThumbstickInputBinding : InputBinding
+    public class ThumbstickInputBinding : DefaultInputBinding
     {
         /// <summary>
         /// The Thumbstick (left or right) which is checked for activity past a threshold
@@ -134,7 +171,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
-        public ThumbstickInputBinding(Thumbstick thumbstick, params IBinding[] modifiers)
+        public ThumbstickInputBinding(Thumbstick thumbstick, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Thumbstick = thumbstick;
@@ -154,7 +191,7 @@ namespace Engine.Input
     /// <summary>
     /// An InputBinding wrapper for a Button
     /// </summary>
-    public class ButtonInputBinding : InputBinding
+    public class ButtonInputBinding : DefaultInputBinding
     {
         /// <summary>
         /// The Button which is checked for activity
@@ -166,7 +203,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="button"></param>
         /// <param name="modifiers"></param>
-        public ButtonInputBinding(Buttons button, params IBinding[] modifiers)
+        public ButtonInputBinding(Buttons button, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Button = button;
@@ -184,7 +221,7 @@ namespace Engine.Input
     /// <summary>
     /// An InputBinding wrapper for a keyboard Key
     /// </summary>
-    public class KeyInputBinding : InputBinding
+    public class KeyInputBinding : DefaultInputBinding
     {
         /// <summary>
         /// The Key which is checked for activity
@@ -196,7 +233,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key"></param>
         /// <param name="modifiers"></param>
-        public KeyInputBinding(Keys key, params IBinding[] modifiers)
+        public KeyInputBinding(Keys key, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Key = key;
@@ -215,7 +252,7 @@ namespace Engine.Input
     /// An InputBinding that checks if a certain Trigger is active
     /// (beyond some threshold as defined in an InputManager's InputSettings)
     /// </summary>
-    public class TriggerInputBinding : InputBinding
+    public class TriggerInputBinding : DefaultInputBinding
     {
         /// <summary>
         /// The left or right trigger
@@ -227,7 +264,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="trigger"></param>
         /// <param name="modifiers"></param>
-        public TriggerInputBinding(Trigger trigger, params IBinding[] modifiers)
+        public TriggerInputBinding(Trigger trigger, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Trigger = trigger;

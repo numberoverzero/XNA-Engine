@@ -1,48 +1,25 @@
-﻿#region Using Statements
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-
-#endregion
 
 namespace Engine.Input
 {
     /// <summary>
-    /// See <see cref="IBinding"/>
+    /// A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
     /// </summary>
-    public abstract class InputBinding : IBinding
+    public interface InputBinding
     {
         /// <summary>
-        /// Any modifiers required for this binding to be considered 'active'
+        /// True if the InputBinding is active in the given FrameState of the given InputManager
         /// </summary>
-        public IBinding[] Modifiers { get; private set; }
-
-        #region Initialiation
+        bool IsActive(InputSnapshot inputSnapshot);
 
         /// <summary>
-        /// Initialize an InputBinding with an optional list of required modifiers
+        /// Returns the list of modifiers necessary to be active before the binding is considered "active"
         /// </summary>
-        /// <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
-        /// 
-        public InputBinding(params IBinding[] modifiers)
-        {
-            Modifiers = new IBinding[modifiers.Length];
-            Array.Copy(modifiers, Modifiers, modifiers.Length);
-        }
-
-        /// <summary>
-        /// Copy Constructor
-        /// </summary>
-        /// <param name="other"></param>
-        public InputBinding(InputBinding other) : this(other.Modifiers) { }
-
-        #endregion
-
-        /// <summary>
-        /// See <see cref="IBinding.IsActive"/>
-        /// </summary>
-        public abstract bool IsActive(InputSnapshot inputSnapshot);
+        InputBinding[] Modifiers {get;}
     }
 }

@@ -21,9 +21,9 @@ namespace Engine.Input
         /// <param name="thumbstickDirection"></param>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
-        public bool AddBinding(string bindingName, PlayerIndex player, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params IBinding[] modifiers)
+        public bool AddBinding(string bindingName, PlayerIndex player, ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params InputBinding[] modifiers)
         {
-            InputBinding inputBinding = new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
+            DefaultInputBinding inputBinding = new ThumbstickDirectionInputBinding(thumbstickDirection, thumbstick, modifiers);
             return AddBinding(bindingName, inputBinding, player);
         }
         /// <summary>
@@ -33,9 +33,9 @@ namespace Engine.Input
         /// <param name="player"></param>
         /// <param name="mouseButton"></param>
         /// <param name="modifiers"></param>
-        public bool AddBinding(string bindingName, PlayerIndex player, MouseButton mouseButton, params IBinding[] modifiers)
+        public bool AddBinding(string bindingName, PlayerIndex player, MouseButton mouseButton, params InputBinding[] modifiers)
         {
-            InputBinding inputBinding = new MouseInputBinding(mouseButton, modifiers);
+            DefaultInputBinding inputBinding = new MouseInputBinding(mouseButton, modifiers);
             return AddBinding(bindingName, inputBinding, player);
         }
         /// <summary>
@@ -45,9 +45,9 @@ namespace Engine.Input
         /// <param name="player"></param>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
-        public bool AddBinding(string bindingName, PlayerIndex player, Thumbstick thumbstick, params IBinding[] modifiers)
+        public bool AddBinding(string bindingName, PlayerIndex player, Thumbstick thumbstick, params InputBinding[] modifiers)
         {
-            InputBinding inputBinding = new ThumbstickInputBinding(thumbstick, modifiers);
+            DefaultInputBinding inputBinding = new ThumbstickInputBinding(thumbstick, modifiers);
             return AddBinding(bindingName, inputBinding, player);
         }
         /// <summary>
@@ -57,9 +57,9 @@ namespace Engine.Input
         /// <param name="player"></param>
         /// <param name="trigger"></param>
         /// <param name="modifiers"></param>
-        public bool AddBinding(string bindingName, PlayerIndex player, Trigger trigger, params IBinding[] modifiers)
+        public bool AddBinding(string bindingName, PlayerIndex player, Trigger trigger, params InputBinding[] modifiers)
         {
-            InputBinding inputBinding = new TriggerInputBinding(trigger, modifiers);
+            DefaultInputBinding inputBinding = new TriggerInputBinding(trigger, modifiers);
             return AddBinding(bindingName, inputBinding, player);
         }
         /// <summary>
@@ -69,9 +69,9 @@ namespace Engine.Input
         /// <param name="player"></param>
         /// <param name="button"></param>
         /// <param name="modifiers"></param>
-        public bool AddBinding(string bindingName, PlayerIndex player, Buttons button, params IBinding[] modifiers)
+        public bool AddBinding(string bindingName, PlayerIndex player, Buttons button, params InputBinding[] modifiers)
         {
-            InputBinding inputBinding = new ButtonInputBinding(button, modifiers);
+            DefaultInputBinding inputBinding = new ButtonInputBinding(button, modifiers);
             return AddBinding(bindingName, inputBinding, player);
         }
         /// <summary>
@@ -81,9 +81,9 @@ namespace Engine.Input
         /// <param name="player"></param>
         /// <param name="key"></param>
         /// <param name="modifiers"></param>
-        public bool AddBinding(string bindingName, PlayerIndex player, Keys key, params IBinding[] modifiers)
+        public bool AddBinding(string bindingName, PlayerIndex player, Keys key, params InputBinding[] modifiers)
         {
-            InputBinding inputBinding = new KeyInputBinding(key, modifiers);
+            DefaultInputBinding inputBinding = new KeyInputBinding(key, modifiers);
             return AddBinding(bindingName, inputBinding, player);
         }
     }

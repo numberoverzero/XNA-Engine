@@ -37,7 +37,7 @@ namespace Engine.Input
         /// <param name="binding">The binding to associate with the bindingName</param>
         /// <param name="player">The player to add the binding for</param>
         /// <returns>true if the binding was added</returns>
-        bool AddBinding(string bindingName, IBinding binding, PlayerIndex player);
+        bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player);
 
         /// <summary>
         /// Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
@@ -57,7 +57,7 @@ namespace Engine.Input
         /// <param name="bindingName">The string used to query the binding state</param>
         /// <param name="binding">The binding to remove from the association with the bindingName</param>
         /// <param name="player">The player the binding is being removed for</param>
-        void RemoveBinding(string bindingName, IBinding binding, PlayerIndex player);
+        void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player);
 
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Engine.Input
         /// <param name="bindingName">The bindingName associated with the list of Bindings</param>
         /// <param name="player">The player to get the list of bindings for</param>
         /// <returns>Returns a copy of the Bindings associated with the bindingName for a givem player</returns>
-        List<IBinding> GetCurrentBindings(string bindingName, PlayerIndex player);
+        List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player);
 
         // ===================
         // Manager Query
@@ -129,7 +129,7 @@ namespace Engine.Input
         /// <param name="binding">The binding to search for in the InputManager</param>
         /// <param name="player">The player to search for bindings on</param>
         /// <returns>A list of the bindingNames that, for a given player, track the given binding as a possible input</returns>
-        List<string> BindingsUsing(IBinding binding, PlayerIndex player);
+        List<string> BindingsUsing(InputBinding binding, PlayerIndex player);
 
         // ===================
         // Per-frame input polling
@@ -153,6 +153,6 @@ namespace Engine.Input
         /// <summary>
         /// All the modifiers currently being tracked.
         /// </summary>
-        IEnumerable<IBinding> GetModifiers { get; }
+        IEnumerable<InputBinding> GetModifiers { get; }
     }
 }
