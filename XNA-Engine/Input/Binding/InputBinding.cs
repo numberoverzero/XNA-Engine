@@ -21,5 +21,10 @@ namespace Engine.Input
         /// Returns the list of modifiers necessary to be active before the binding is considered "active"
         /// </summary>
         InputBinding[] Modifiers {get;}
+
+        /// <summary>
+        /// Compares this Binding to another, and returns whether they are the same (with/without modifiers)
+        /// </summary>
+        bool IsEqual(InputBinding other, bool includeModifiers = false);
     }
 }

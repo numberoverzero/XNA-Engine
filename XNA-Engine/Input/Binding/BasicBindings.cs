@@ -1,9 +1,7 @@
 ﻿#region Using Statements
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,22 +10,38 @@ using Microsoft.Xna.Framework.Input;
 namespace Engine.Input
 {
     /// <summary>
-    /// See <see cref="InputBinding"/>
+    ///   See <see cref="InputBinding" />
     /// </summary>
     public abstract class DefaultBinding : InputBinding
     {
+        #region InputBinding Members
+
         /// <summary>
-        /// Any modifiers required for this binding to be considered 'active'
+        ///   Any modifiers required for this binding to be considered 'active'
         /// </summary>
         public InputBinding[] Modifiers { get; private set; }
+
+        /// <summary>
+        ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
+        /// </summary>
+        public virtual bool IsEqual(InputBinding other, bool includeModifiers = false)
+        {
+            return !includeModifiers || Modifiers.SequenceEqual(other.Modifiers);
+        }
+
+        /// <summary>
+        ///   See <see cref="InputBinding.IsActive" />
+        /// </summary>
+        public abstract bool IsActive(InputSnapshot inputSnapshot);
+
+        #endregion
 
         #region Initialiation
 
         /// <summary>
-        /// Initialize an InputBinding with an optional list of required modifiers
+        ///   Initialize an InputBinding with an optional list of required modifiers
         /// </summary>
-        /// <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
-        /// 
+        /// <param name="modifiers"> Optional modifiers- Ctrl, Alt, Shift </param>
         public DefaultBinding(params InputBinding[] modifiers)
         {
             Modifiers = new InputBinding[modifiers.Length];
@@ -35,50 +49,60 @@ namespace Engine.Input
         }
 
         /// <summary>
-        /// Copy Constructor
+        ///   Copy Constructor
         /// </summary>
-        /// <param name="other"></param>
-        public DefaultBinding(DefaultBinding other) : this(other.Modifiers) { }
+        /// <param name="other"> </param>
+        public DefaultBinding(DefaultBinding other) : this(other.Modifiers)
+        {
+        }
 
         #endregion
-
-        /// <summary>
-        /// See <see cref="InputBinding.IsActive"/>
-        /// </summary>
-        public abstract bool IsActive(InputSnapshot inputSnapshot);
     }
 
     /// <summary>
-    /// An InputBinding that checks if a certain ThumbstickDirection is active
-    /// (beyond some threshold as defined in an InputManager's InputSettings)
+    ///   An InputBinding that checks if a certain ThumbstickDirection is active
+    ///   (beyond some threshold as defined in an InputManager's InputSettings)
     /// </summary>
     public class ThumbstickDirectionBinding : DefaultBinding
     {
         /// <summary>
-        /// The Thumbstick (left or right) which is checked for activity past a threshold
+        ///   An InputBinding wrapper for a ThumbstickDirection
         /// </summary>
-        public Thumbstick Thumbstick { get; protected set; }
-        
-        /// <summary>
-        /// The Thumbstick Direction (up/down/left/right) which is checked for activity past a threshold
-        /// </summary>
-        public ThumbstickDirection Direction { get; protected set; }
-
-        /// <summary>
-        /// An InputBinding wrapper for a ThumbstickDirection
-        /// </summary>
-        /// <param name="thumbstickDirection"></param>
-        /// <param name="thumbstick"></param>
-        /// <param name="modifiers"></param>
-        public ThumbstickDirectionBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params InputBinding[] modifiers)
+        /// <param name="thumbstickDirection"> </param>
+        /// <param name="thumbstick"> </param>
+        /// <param name="modifiers"> </param>
+        public ThumbstickDirectionBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick,
+                                          params InputBinding[] modifiers)
             : base(modifiers)
         {
-            this.Thumbstick = thumbstick;
+            Thumbstick = thumbstick;
             Direction = thumbstickDirection;
         }
 
         /// <summary>
-        /// True if the  ThumbstickDirection of the specified Thumbstick is past the settings threshold
+        ///   The Thumbstick (left or right) which is checked for activity past a threshold
+        /// </summary>
+        public Thumbstick Thumbstick { get; protected set; }
+
+        /// <summary>
+        ///   The Thumbstick Direction (up/down/left/right) which is checked for activity past a threshold
+        /// </summary>
+        public ThumbstickDirection Direction { get; protected set; }
+
+        /// <summary>
+        ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
+        /// </summary>
+        public override bool IsEqual(InputBinding other, bool includeModifiers = false)
+        {
+            var tdb = other as ThumbstickDirectionBinding;
+            if (tdb == null) return false;
+            return tdb.Thumbstick == Thumbstick &&
+                   tdb.Direction == Direction &&
+                   base.IsEqual(other, includeModifiers);
+        }
+
+        /// <summary>
+        ///   True if the  ThumbstickDirection of the specified Thumbstick is past the settings threshold
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
@@ -88,7 +112,9 @@ namespace Engine.Input
             var gamePadState = inputSnapshot.GamePadState.Value;
             var settings = inputSnapshot.InputSettings;
 
-            Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
+            Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left
+                                            ? gamePadState.ThumbSticks.Left
+                                            : gamePadState.ThumbSticks.Right;
             bool isActive = false;
             switch (Direction)
             {
@@ -112,20 +138,15 @@ namespace Engine.Input
     }
 
     /// <summary>
-    /// An InputBinding wrapper for a Thumbstick
+    ///   An InputBinding wrapper for a Thumbstick
     /// </summary>
     public class MouseBinding : DefaultBinding
     {
         /// <summary>
-        /// The mouse button which is checked for activity
+        ///   An InputBinding wrapper for a MouseButton
         /// </summary>
-        public MouseButton Button { get; protected set; }
-
-        /// <summary>
-        /// An InputBinding wrapper for a MouseButton
-        /// </summary>
-        /// <param name="mouseButton"></param>
-        /// <param name="modifiers"></param>
+        /// <param name="mouseButton"> </param>
+        /// <param name="modifiers"> </param>
         public MouseBinding(MouseButton mouseButton, params InputBinding[] modifiers)
             : base(modifiers)
         {
@@ -133,7 +154,22 @@ namespace Engine.Input
         }
 
         /// <summary>
-        /// True if the Mouse button (without modifiers) is pressed
+        ///   The mouse button which is checked for activity
+        /// </summary>
+        public MouseButton Button { get; protected set; }
+
+        /// <summary>
+        ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
+        /// </summary>
+        public override bool IsEqual(InputBinding other, bool includeModifiers = false)
+        {
+            var mb = other as MouseBinding;
+            if (mb == null) return false;
+            return mb.Button == Button && base.IsEqual(other, includeModifiers);
+        }
+
+        /// <summary>
+        ///   True if the Mouse button (without modifiers) is pressed
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
@@ -161,64 +197,86 @@ namespace Engine.Input
     }
 
     /// <summary>
-    /// An InputBinding that checks if a certain Thumbstick is active
-    /// (beyond some threshold as defined in an InputManager's InputSettings)
-    /// (direction doesn't matter)
+    ///   An InputBinding that checks if a certain Thumbstick is active
+    ///   (beyond some threshold as defined in an InputManager's InputSettings)
+    ///   (direction doesn't matter)
     /// </summary>
     public class ThumbstickBinding : DefaultBinding
     {
         /// <summary>
-        /// The Thumbstick (left or right) which is checked for activity past a threshold
+        ///   An InputBinding wrapper for a Thumbstick
+        /// </summary>
+        /// <param name="thumbstick"> </param>
+        /// <param name="modifiers"> </param>
+        public ThumbstickBinding(Thumbstick thumbstick, params InputBinding[] modifiers)
+            : base(modifiers)
+        {
+            Thumbstick = thumbstick;
+        }
+
+        /// <summary>
+        ///   The Thumbstick (left or right) which is checked for activity past a threshold
         /// </summary>
         public Thumbstick Thumbstick { get; protected set; }
 
         /// <summary>
-        /// An InputBinding wrapper for a Thumbstick
+        ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
         /// </summary>
-        /// <param name="thumbstick"></param>
-        /// <param name="modifiers"></param>
-        public ThumbstickBinding(Thumbstick thumbstick, params InputBinding[] modifiers)
-            : base(modifiers)
+        public override bool IsEqual(InputBinding other, bool includeModifiers = false)
         {
-            this.Thumbstick = thumbstick;
+            var tb = other as ThumbstickBinding;
+            if (tb == null) return false;
+            return tb.Thumbstick == Thumbstick && base.IsEqual(other, includeModifiers);
         }
 
         /// <summary>
-        /// True if the thumbstick (without modifiers) is past the settings threshold
+        ///   True if the thumbstick (without modifiers) is past the settings threshold
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
             if (!inputSnapshot.GamePadState.HasValue)
                 return false;
             var gamePadState = inputSnapshot.GamePadState.Value;
-            Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
+            Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left
+                                               ? gamePadState.ThumbSticks.Left
+                                               : gamePadState.ThumbSticks.Right;
             return gamepadThumbstickMag.Length() >= inputSnapshot.InputSettings.ThumbstickThreshold;
         }
     }
 
     /// <summary>
-    /// An InputBinding wrapper for a Button
+    ///   An InputBinding wrapper for a Button
     /// </summary>
     public class ButtonBinding : DefaultBinding
     {
         /// <summary>
-        /// The Button which is checked for activity
+        ///   An InputBinding wrapper for a Button
+        /// </summary>
+        /// <param name="button"> </param>
+        /// <param name="modifiers"> </param>
+        public ButtonBinding(Buttons button, params InputBinding[] modifiers)
+            : base(modifiers)
+        {
+            Button = button;
+        }
+
+        /// <summary>
+        ///   The Button which is checked for activity
         /// </summary>
         public Buttons Button { get; protected set; }
 
         /// <summary>
-        /// An InputBinding wrapper for a Button
+        ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
         /// </summary>
-        /// <param name="button"></param>
-        /// <param name="modifiers"></param>
-        public ButtonBinding(Buttons button, params InputBinding[] modifiers)
-            : base(modifiers)
+        public override bool IsEqual(InputBinding other, bool includeModifiers = false)
         {
-            this.Button = button;
+            var bb = other as ButtonBinding;
+            if (bb == null) return false;
+            return bb.Button == Button && base.IsEqual(other, includeModifiers);
         }
 
         /// <summary>
-        /// True if the Button (without modifiers) is pressed
+        ///   True if the Button (without modifiers) is pressed
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
@@ -229,28 +287,38 @@ namespace Engine.Input
     }
 
     /// <summary>
-    /// An InputBinding wrapper for a keyboard Key
+    ///   An InputBinding wrapper for a keyboard Key
     /// </summary>
     public class KeyBinding : DefaultBinding
     {
         /// <summary>
-        /// The Key which is checked for activity
+        ///   InputBinding wrapper for a keyboard Key
         /// </summary>
-        public Keys Key { get; protected set; }
-        
-        /// <summary>
-        /// InputBinding wrapper for a keyboard Key
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="modifiers"></param>
+        /// <param name="key"> </param>
+        /// <param name="modifiers"> </param>
         public KeyBinding(Keys key, params InputBinding[] modifiers)
             : base(modifiers)
         {
-            this.Key = key;
+            Key = key;
         }
 
         /// <summary>
-        /// True if the key (without modifiers) is pressed
+        ///   The Key which is checked for activity
+        /// </summary>
+        public Keys Key { get; protected set; }
+
+        /// <summary>
+        ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
+        /// </summary>
+        public override bool IsEqual(InputBinding other, bool includeModifiers = false)
+        {
+            var kb = other as KeyBinding;
+            if (kb == null) return false;
+            return kb.Key == Key && base.IsEqual(other, includeModifiers);
+        }
+
+        /// <summary>
+        ///   True if the key (without modifiers) is pressed
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
@@ -261,29 +329,39 @@ namespace Engine.Input
     }
 
     /// <summary>
-    /// An InputBinding that checks if a certain Trigger is active
-    /// (beyond some threshold as defined in an InputManager's InputSettings)
+    ///   An InputBinding that checks if a certain Trigger is active
+    ///   (beyond some threshold as defined in an InputManager's InputSettings)
     /// </summary>
     public class TriggerBinding : DefaultBinding
     {
         /// <summary>
-        /// The left or right trigger
+        ///   InputBinding wrapper for GamePad triggers
+        /// </summary>
+        /// <param name="trigger"> </param>
+        /// <param name="modifiers"> </param>
+        public TriggerBinding(Trigger trigger, params InputBinding[] modifiers)
+            : base(modifiers)
+        {
+            Trigger = trigger;
+        }
+
+        /// <summary>
+        ///   The left or right trigger
         /// </summary>
         public Trigger Trigger { get; protected set; }
 
         /// <summary>
-        /// InputBinding wrapper for GamePad triggers
+        ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
         /// </summary>
-        /// <param name="trigger"></param>
-        /// <param name="modifiers"></param>
-        public TriggerBinding(Trigger trigger, params InputBinding[] modifiers)
-            : base(modifiers)
+        public override bool IsEqual(InputBinding other, bool includeModifiers = false)
         {
-            this.Trigger = trigger;
+            var tb = other as TriggerBinding;
+            if (tb == null) return false;
+            return tb.Trigger == Trigger && base.IsEqual(other, includeModifiers);
         }
 
         /// <summary>
-        /// True if the trigger (without modifiers) is past the settings threshold
+        ///   True if the trigger (without modifiers) is past the settings threshold
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {

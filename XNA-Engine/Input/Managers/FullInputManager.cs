@@ -99,6 +99,9 @@ namespace Engine.Input.Managers
 
         #region InputManager Members
 
+        /// <summary>
+        ///   All the modifiers currently being tracked.
+        /// </summary>
         public IEnumerable<InputBinding> GetModifiers
         {
             get
