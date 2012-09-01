@@ -122,6 +122,8 @@
     <Compile Include="Events\GameObjectEvents\GameObjectCreatedEvent.cs" />
     <Compile Include="Events\GameObjectEvents\GameObjectDestroyedEvent.cs" />
     <Compile Include="Input\Binding\InputBinding.cs" />
+    <Compile Include="Input\Devices\BasicDevices.cs" />
+    <Compile Include="Input\Devices\InputDevice.cs" />
     <Compile Include="Input\EventInput.cs" />
     <Compile Include="Input\InputSnapshot.cs" />
     <Compile Include="Input\Managers\BasicInputManager.cs" />
@@ -149,7 +151,7 @@
     <Compile Include="Rendering\Pipeline\RenderEffect.cs" />
     <Compile Include="Rendering\Pipeline\PixelShaderPipeline.cs" />
     <Compile Include="Input\Enums.cs" />
-    <Compile Include="Input\Binding\BasicInputBindings.cs" />
+    <Compile Include="Input\Binding\BasicBindings.cs" />
     <Compile Include="Input\Managers\DefaultInputManager.cs" />
     <Compile Include="Input\InputSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

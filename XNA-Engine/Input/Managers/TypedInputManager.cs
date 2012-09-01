@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Engine.DataStructures;
+using Engine.Input.Devices;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Input.Managers
@@ -9,13 +10,8 @@ namespace Engine.Input.Managers
     /// <summary>
     ///   Manages bindings of keys
     /// </summary>
-    public abstract class TypedInputManager<TInputBinding> : InputManager where TInputBinding : class, InputBinding
+    public abstract class TypedInputManager<TInputBinding, TInputDevice> : InputManager where TInputBinding : class, InputBinding where TInputDevice : class, InputDevice, new()
     {
-        /// <summary>
-        ///   True when the InputManager is polling the device
-        /// </summary>
-        protected bool _IsPolling;
-
         /// <summary>
         ///   Constructor
         /// </summary>
@@ -23,7 +19,13 @@ namespace Engine.Input.Managers
         {
             Bindings = new MultiKeyObjDict<string, PlayerIndex, List<InputBinding>>();
             Modifiers = new CountedCollection<InputBinding>();
+            Device = new TInputDevice();
         }
+
+        /// <summary>
+        /// The device that this manager relies on
+        /// </summary>
+        protected TInputDevice Device { get; set; }
 
         /// <summary>
         ///   The Bindings being tracked by the Manager
@@ -46,15 +48,7 @@ namespace Engine.Input.Managers
         ///   Enable/Disable grabbing device state when updating the manager.
         ///   Disable for performance when you know the user can't use the device, or no bindings will need the state of the device.
         /// </summary>
-        public bool IsPolling
-        {
-            get { return _IsPolling; }
-            set
-            {
-                _IsPolling = value;
-                if (!value) return;
-            }
-        }
+        public bool IsPolling { get; set; }
 
         #region InputManager Members
 
@@ -94,7 +88,9 @@ namespace Engine.Input.Managers
         public bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
             var tBinding = binding as TInputBinding;
-            if (tBinding == null) return false;
+            if (tBinding == null) 
+                return false;
+            
             var bindings = Bindings[bindingName, player];
             if (bindings.Contains(binding))
                 return true;
@@ -167,8 +163,8 @@ namespace Engine.Input.Managers
         public virtual void ClearBinding(string bindingName, PlayerIndex player)
         {
             // Make sure we clean up any modifiers
-            var old_bindings = new List<InputBinding>(Bindings[bindingName, player]);
-            foreach (var binding in old_bindings)
+            var oldBindings = new List<InputBinding>(Bindings[bindingName, player]);
+            foreach (var binding in oldBindings)
                 RemoveBinding(bindingName, binding, player);
             Bindings[bindingName, player] = new List<InputBinding>();
         }
@@ -189,7 +185,22 @@ namespace Engine.Input.Managers
         /// <param name="player"> The player to check the binding's activity for </param>
         /// <param name="state"> The FrameState in which to check for activity </param>
         /// <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
-        public abstract bool IsActive(string bindingName, PlayerIndex player, FrameState state);
+        public virtual bool IsActive(string bindingName, PlayerIndex player, FrameState state)
+        {
+            var bindings = Bindings[bindingName, player];
+
+            var inputSnapshot = Device.GetDeviceSnapshot(player, state);
+
+            return bindings.Any(binding => binding.IsActive(inputSnapshot) && IsModifiersActive(binding, inputSnapshot));
+        }
+
+        /// <summary>
+        ///   Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
+        /// </summary>
+        protected virtual bool IsModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
+        {
+            return false;
+        }
 
         /// <summary>
         ///   Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
@@ -253,7 +264,7 @@ namespace Engine.Input.Managers
         /// </remarks>
         public void Update()
         {
-            throw new NotImplementedException();
+            if(IsPolling) Device.Update();
         }
 
         #endregion
