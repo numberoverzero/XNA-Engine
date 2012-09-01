@@ -82,8 +82,12 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            var settings = inputSnapshot.InputSettings;
-            var gamePadState = inputSnapshot.GamePadState;
+            if (!(inputSnapshot.GamePadState.HasValue && inputSnapshot.InputSettings.HasValue))
+                return false;
+
+            var gamePadState = inputSnapshot.GamePadState.Value;
+            var settings = inputSnapshot.InputSettings.Value;
+
             Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
             bool isActive = false;
             switch (Direction)
@@ -133,7 +137,9 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            var mouseState = inputSnapshot.MouseState;
+            if (!inputSnapshot.MouseState.HasValue)
+                return false;
+            var mouseState = inputSnapshot.MouseState.Value;
             ButtonState buttonState;
             switch (Button)
             {
@@ -182,9 +188,11 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            var gamePadState = inputSnapshot.GamePadState;
+            if (!(inputSnapshot.GamePadState.HasValue && inputSnapshot.InputSettings.HasValue))
+                return false;
+            var gamePadState = inputSnapshot.GamePadState.Value;
             Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
-            return gamepadThumbstickMag.Length() >= inputSnapshot.InputSettings.ThumbstickThreshold;
+            return gamepadThumbstickMag.Length() >= inputSnapshot.InputSettings.Value.ThumbstickThreshold;
         }
     }
 
@@ -214,7 +222,9 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            return inputSnapshot.GamePadState.IsButtonDown(Button);
+            if (!inputSnapshot.GamePadState.HasValue)
+                return false;
+            return inputSnapshot.GamePadState.Value.IsButtonDown(Button);
         }
     }
 
@@ -244,7 +254,9 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            return inputSnapshot.KeyboardState.IsKeyDown(Key);
+            if (!inputSnapshot.KeyboardState.HasValue)
+                return false;
+            return inputSnapshot.KeyboardState.Value.IsKeyDown(Key);
         }
     }
 
@@ -275,9 +287,11 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            var gamePadState = inputSnapshot.GamePadState;
+            if (!(inputSnapshot.GamePadState.HasValue && inputSnapshot.InputSettings.HasValue))
+                return false;
+            var gamePadState = inputSnapshot.GamePadState.Value;
             float triggerMag = Trigger == Trigger.Left ? gamePadState.Triggers.Left : gamePadState.Triggers.Right;
-            return triggerMag >= inputSnapshot.InputSettings.TriggerThreshold;
+            return triggerMag >= inputSnapshot.InputSettings.Value.TriggerThreshold;
         }
     }
 }
