@@ -157,7 +157,7 @@ namespace Engine.Input.Managers
 
             var inputSnapshot = Device.GetDeviceSnapshot(player, state).Merge(InputSnapshot.With(Settings));
 
-            return bindings.Any(binding => binding.IsActive(inputSnapshot) && IsModifiersActive(binding, inputSnapshot));
+            return bindings.Any(binding => binding.IsActive(inputSnapshot) && IsModifiersActive(binding, player, inputSnapshot));
         }
 
         /// <summary>
@@ -230,31 +230,30 @@ namespace Engine.Input.Managers
         /// <summary>
         ///   Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
         /// </summary>
-        protected virtual bool IsModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
+        protected virtual bool IsModifiersActive(InputBinding inputBinding, PlayerIndex player, InputSnapshot inputSnapshot)
         {
-            if (inputSnapshot.InputSettings == null)
-                return false;
+            if (inputSnapshot.InputSettings == null) return false;
+
+            Func<InputBinding, PlayerIndex, InputSnapshot, bool> isActive = null;
+
             var checkType = inputSnapshot.InputSettings.ModifierCheckType;
-            var active = false;
             switch (checkType)
             {
                 case ModifierCheckType.Strict:
-                    active = IsStrictModifiersActive(inputBinding, inputSnapshot);
+                    isActive = IsStrictModifiersActive;
                     break;
                 case ModifierCheckType.Smart:
-                    active = IsSmartModifiersActive(inputBinding, inputSnapshot);
-                    break;
-                default:
-                    active = false;
+                    isActive = IsSmartModifiersActive;
                     break;
             }
-            return active;
+
+            return isActive != null && isActive(inputBinding, player, inputSnapshot);
         }
 
         /// <summary>
         ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
-        protected virtual bool IsStrictModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
+        protected virtual bool IsStrictModifiersActive(InputBinding inputBinding, PlayerIndex player,InputSnapshot inputSnapshot)
         {
             return !(from trackedModifier in Modifiers
                      let modifierActive = trackedModifier.IsActive(inputSnapshot)
@@ -266,7 +265,13 @@ namespace Engine.Input.Managers
         /// <summary>
         ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
-        protected virtual bool IsSmartModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
+        protected virtual bool IsSmartModifiersActive(InputBinding inputBinding, PlayerIndex player,InputSnapshot inputSnapshot)
+        {
+            var similarBindings = GetSimilarBindings(inputBinding, player, false);
+            return false;
+        }
+
+        protected IEnumerable<InputBinding> GetSimilarBindings(InputBinding inputBinding, PlayerIndex player, bool includeModifiers)
         {
             throw new NotImplementedException("Smart modifiers are not supported yet.");
         }
