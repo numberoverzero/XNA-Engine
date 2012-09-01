@@ -30,10 +30,6 @@ namespace Engine.Input
         /// <returns> The position of the mouse in screen space </returns>
         Vector2 GetMousePosition(FrameState state);
 
-        // ===================
-        // Binding Mutation
-        // ===================
-
         /// <summary>
         ///   Add a binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
@@ -83,10 +79,6 @@ namespace Engine.Input
         /// </summary>
         void ClearAllBindings();
 
-        // ===================
-        // Single Binding Query
-        // ===================
-
         /// <summary>
         ///   Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
         /// </summary>
@@ -120,10 +112,6 @@ namespace Engine.Input
         /// <returns> Returns a copy of the Bindings associated with the bindingName for a givem player </returns>
         List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player);
 
-        // ===================
-        // Manager Query
-        // ===================
-
         /// <summary>
         ///   Used to get a list of strings that map to the given binding for a given player.
         ///   This is useful when you want to unbind a key from current bindings and remap to a new binding:
@@ -133,10 +121,6 @@ namespace Engine.Input
         /// <param name="player"> The player to search for bindings on </param>
         /// <returns> A list of the bindingNames that, for a given player, track the given binding as a possible input </returns>
         List<string> BindingsUsing(InputBinding binding, PlayerIndex player);
-
-        // ===================
-        // Per-frame input polling
-        // ===================
 
         /// <summary>
         ///   Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
@@ -148,9 +132,5 @@ namespace Engine.Input
         ///   means you will not be able to read the most recent input.
         /// </remarks>
         void Update();
-
-        // ===================
-        // Modifiers
-        // ===================
     }
 }
