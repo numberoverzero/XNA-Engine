@@ -12,26 +12,11 @@ namespace Engine.Input.Managers
     /// </summary>
     public class FullInputManager : InputManager
     {
-        private readonly TypedInputManager<GamePadDevice> gamePadManager;
-        private readonly InjectableInputManager injectableManager;
-        private readonly TypedInputManager<KeyboardDevice> keyboardManager;
-        private readonly TypedInputManager<MouseDevice> mouseManager;
+        private readonly TypedInputManager<GamePadDevice> _gamePadManager;
+        private readonly InjectableInputManager _injectableManager;
+        private readonly TypedInputManager<KeyboardDevice> _keyboardManager;
+        private readonly TypedInputManager<MouseDevice> _mouseManager;
         private ModifierCheckType _modifierCheckType;
-
-        /// <summary>
-        /// How the manager checks modifiers
-        /// </summary>
-        public ModifierCheckType ModifierCheckType
-        {
-            get { return _modifierCheckType; }
-            set 
-            { 
-                _modifierCheckType = value;
-                gamePadManager.Settings.ModifierCheckType = value;
-                keyboardManager.Settings.ModifierCheckType = value;
-                mouseManager.Settings.ModifierCheckType = value;
-            }
-        }
 
         /// <summary>
         ///   Constructor
@@ -39,10 +24,25 @@ namespace Engine.Input.Managers
         public FullInputManager()
         {
             ModifierCheckType = ModifierCheckType.Strict;
-            gamePadManager = new TypedInputManager<GamePadDevice>();
-            keyboardManager = new TypedInputManager<KeyboardDevice>();
-            mouseManager = new TypedInputManager<MouseDevice>();
-            injectableManager = new InjectableInputManager();
+            _gamePadManager = new TypedInputManager<GamePadDevice>();
+            _keyboardManager = new TypedInputManager<KeyboardDevice>();
+            _mouseManager = new TypedInputManager<MouseDevice>();
+            _injectableManager = new InjectableInputManager();
+        }
+
+        /// <summary>
+        ///   How the manager checks modifiers
+        /// </summary>
+        public ModifierCheckType ModifierCheckType
+        {
+            get { return _modifierCheckType; }
+            set
+            {
+                _modifierCheckType = value;
+                _gamePadManager.Settings.ModifierCheckType = value;
+                _keyboardManager.Settings.ModifierCheckType = value;
+                _mouseManager.Settings.ModifierCheckType = value;
+            }
         }
 
         #region InputManager Members
@@ -52,10 +52,10 @@ namespace Engine.Input.Managers
             get
             {
                 var collection = new CountedCollection<InputBinding>();
-                collection.Merge((CountedCollection<InputBinding>) gamePadManager.GetModifiers);
-                collection.Merge((CountedCollection<InputBinding>) keyboardManager.GetModifiers);
-                collection.Merge((CountedCollection<InputBinding>) mouseManager.GetModifiers);
-                collection.Merge((CountedCollection<InputBinding>) injectableManager.GetModifiers);
+                collection.Merge((CountedCollection<InputBinding>) _gamePadManager.GetModifiers);
+                collection.Merge((CountedCollection<InputBinding>) _keyboardManager.GetModifiers);
+                collection.Merge((CountedCollection<InputBinding>) _mouseManager.GetModifiers);
+                collection.Merge((CountedCollection<InputBinding>) _injectableManager.GetModifiers);
                 return collection;
             }
         }
@@ -65,58 +65,50 @@ namespace Engine.Input.Managers
             bool added = false;
 
             if (binding is KeyBinding)
-                added = keyboardManager.AddBinding(bindingName, binding, player);
+                added = _keyboardManager.AddBinding(bindingName, binding, player);
             else if (binding is MouseBinding)
-                added = mouseManager.AddBinding(bindingName, binding, player);
+                added = _mouseManager.AddBinding(bindingName, binding, player);
             else if (binding is ThumbstickDirectionBinding ||
                      binding is ThumbstickBinding ||
                      binding is ButtonBinding ||
                      binding is TriggerBinding)
-                added = gamePadManager.AddBinding(bindingName, binding, player);
+                added = _gamePadManager.AddBinding(bindingName, binding, player);
 
-            if (added) injectableManager.AddBinding(bindingName, binding, player);
+            if (added) _injectableManager.AddBinding(bindingName, binding, player);
 
             return added;
         }
 
-        public void RemoveBinding(string bindingName, int index, PlayerIndex player)
-        {
-            keyboardManager.RemoveBinding(bindingName, index, player);
-            mouseManager.RemoveBinding(bindingName, index, player);
-            gamePadManager.RemoveBinding(bindingName, index, player);
-            injectableManager.RemoveBinding(bindingName, index, player);
-        }
-
         public void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
-            keyboardManager.RemoveBinding(bindingName, binding, player);
-            mouseManager.RemoveBinding(bindingName, binding, player);
-            gamePadManager.RemoveBinding(bindingName, binding, player);
-            injectableManager.RemoveBinding(bindingName, binding, player);
+            _keyboardManager.RemoveBinding(bindingName, binding, player);
+            _mouseManager.RemoveBinding(bindingName, binding, player);
+            _gamePadManager.RemoveBinding(bindingName, binding, player);
+            _injectableManager.RemoveBinding(bindingName, binding, player);
         }
 
         public bool ContainsBinding(string bindingName, PlayerIndex player)
         {
-            return injectableManager.ContainsBinding(bindingName, player) ||
-                   keyboardManager.ContainsBinding(bindingName, player) ||
-                   mouseManager.ContainsBinding(bindingName, player) ||
-                   gamePadManager.ContainsBinding(bindingName, player);
+            return _injectableManager.ContainsBinding(bindingName, player) ||
+                   _keyboardManager.ContainsBinding(bindingName, player) ||
+                   _mouseManager.ContainsBinding(bindingName, player) ||
+                   _gamePadManager.ContainsBinding(bindingName, player);
         }
 
         public void ClearBinding(string bindingName, PlayerIndex player)
         {
-            keyboardManager.ClearBinding(bindingName, player);
-            mouseManager.ClearBinding(bindingName, player);
-            gamePadManager.ClearBinding(bindingName, player);
-            injectableManager.ClearBinding(bindingName, player);
+            _keyboardManager.ClearBinding(bindingName, player);
+            _mouseManager.ClearBinding(bindingName, player);
+            _gamePadManager.ClearBinding(bindingName, player);
+            _injectableManager.ClearBinding(bindingName, player);
         }
 
         public void ClearAllBindings()
         {
-            keyboardManager.ClearAllBindings();
-            mouseManager.ClearAllBindings();
-            gamePadManager.ClearAllBindings();
-            injectableManager.ClearAllBindings();
+            _keyboardManager.ClearAllBindings();
+            _mouseManager.ClearAllBindings();
+            _gamePadManager.ClearAllBindings();
+            _injectableManager.ClearAllBindings();
         }
 
         public bool IsActive(string bindingName, PlayerIndex player, FrameState state)
@@ -138,26 +130,26 @@ namespace Engine.Input.Managers
 
         public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
-            var kb = keyboardManager.GetCurrentBindings(bindingName, player);
-            var mb = mouseManager.GetCurrentBindings(bindingName, player);
-            var gpb = gamePadManager.GetCurrentBindings(bindingName, player);
+            var kb = _keyboardManager.GetCurrentBindings(bindingName, player);
+            var mb = _mouseManager.GetCurrentBindings(bindingName, player);
+            var gpb = _gamePadManager.GetCurrentBindings(bindingName, player);
             return kb.Union(mb).Union(gpb).ToList();
         }
 
         public List<string> BindingsUsing(InputBinding binding, PlayerIndex player)
         {
-            var kb = keyboardManager.BindingsUsing(binding, player);
-            var mb = mouseManager.BindingsUsing(binding, player);
-            var gpb = gamePadManager.BindingsUsing(binding, player);
+            var kb = _keyboardManager.BindingsUsing(binding, player);
+            var mb = _mouseManager.BindingsUsing(binding, player);
+            var gpb = _gamePadManager.BindingsUsing(binding, player);
             return kb.Union(mb).Union(gpb).ToList();
         }
 
         public void Update()
         {
-            gamePadManager.Update();
-            keyboardManager.Update();
-            mouseManager.Update();
-            injectableManager.Update();
+            _gamePadManager.Update();
+            _keyboardManager.Update();
+            _mouseManager.Update();
+            _injectableManager.Update();
         }
 
         #endregion
@@ -178,7 +170,7 @@ namespace Engine.Input.Managers
         /// <returns> The position of the mouse in screen space </returns>
         public Vector2 GetMousePosition(FrameState state)
         {
-            var mouseDevice = mouseManager.Device;
+            var mouseDevice = _mouseManager.Device;
             var mouseState = state == FrameState.Current
                                  ? mouseDevice.CurrentMouseState
                                  : mouseDevice.PreviousMouseState;

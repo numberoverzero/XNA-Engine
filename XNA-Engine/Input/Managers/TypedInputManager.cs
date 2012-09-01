@@ -94,32 +94,6 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
-        ///   For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
-        ///   RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
-        ///   This is useful when you know the index of the binding in its list of bindings
-        /// </summary>
-        /// <param name="bindingName"> The string used to query the binding state </param>
-        /// <param name="index"> The index of the binding in the list of bindings associated with the bindingName </param>
-        /// <param name="player"> The player the binding is being removed for </param>
-        public virtual void RemoveBinding(string bindingName, int index, PlayerIndex player)
-        {
-            if (!ContainsBinding(bindingName, player))
-                return;
-
-            var bindings = Bindings[bindingName, player];
-
-            if (index < 0 || index >= bindings.Count)
-                return;
-
-            var binding = bindings[index];
-
-            foreach (var modifier in binding.Modifiers)
-                Modifiers.Remove(modifier);
-            bindings.RemoveAt(index);
-        }
-
-        /// <summary>
         ///   Remove a binding from the InputManager.  Removes the exact binding from the relation.
         ///   This can be used when you don't know the binding's index in its list of bindings.
         /// </summary>
@@ -133,7 +107,6 @@ namespace Engine.Input.Managers
 
             var bindings = Bindings[bindingName, player];
             int index = bindings.IndexOf(binding);
-            RemoveBinding(bindingName, index, player);
         }
 
         /// <summary>

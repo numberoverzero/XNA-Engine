@@ -51,19 +51,13 @@ namespace Engine.Input
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.RemoveBinding(string, int, PlayerIndex)" />
-        /// </summary>
-        public void RemoveBinding(string bindingName, int index, PlayerIndex player)
-        {
-            RemoveBinding(bindingName, player);
-        }
-
-        /// <summary>
         ///   See <see cref="InputManager.RemoveBinding(string, InputBinding, PlayerIndex)" />
         /// </summary>
         public void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
-            RemoveBinding(bindingName, player);
+            PressableKeys[player].Remove(bindingName);
+            InjectedPressedKeys[FrameState.Current, player].Remove(bindingName);
+            InjectedPressedKeys[FrameState.Previous, player].Remove(bindingName);
         }
 
         /// <summary>
@@ -183,13 +177,6 @@ namespace Engine.Input
         {
             if (!ContainsBinding(bindingName, player)) return;
             InjectedPressedKeys[state, player].Remove(bindingName);
-        }
-
-        private void RemoveBinding(string bindingName, PlayerIndex player)
-        {
-            PressableKeys[player].Remove(bindingName);
-            InjectedPressedKeys[FrameState.Current, player].Remove(bindingName);
-            InjectedPressedKeys[FrameState.Previous, player].Remove(bindingName);
         }
     }
 }
