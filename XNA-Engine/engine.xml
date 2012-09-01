@@ -126,17 +126,6 @@
             <param name="player"> The player to add the binding for </param>
             <returns> true if the binding was added </returns>
         </member>
-        <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
-              For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
-              RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
-              This is useful when you know the index of the binding in its list of bindings
-            </summary>
-            <param name="bindingName"> The string used to query the binding state </param>
-            <param name="index"> The index of the binding in the list of bindings associated with the bindingName </param>
-            <param name="player"> The player the binding is being removed for </param>
-        </member>
         <member name="M:Engine.Input.InputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Remove a binding from the InputManager.  Removes the exact binding from the relation.
@@ -243,17 +232,6 @@
             <param name="bindingName"> The string used to query the binding state </param>
             <param name="binding"> The binding to associate with the bindingName </param>
             <param name="player"> The player to add the binding for </param>
-        </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
-              For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
-              RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
-              This is useful when you know the index of the binding in its list of bindings
-            </summary>
-            <param name="bindingName"> The string used to query the binding state </param>
-            <param name="index"> The index of the binding in the list of bindings associated with the bindingName </param>
-            <param name="player"> The player the binding is being removed for </param>
         </member>
         <member name="M:Engine.Input.Managers.TypedInputManager`1.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
@@ -686,17 +664,6 @@
             <param name="bindingName"> The string used to query the binding state </param>
             <param name="binding"> The binding to associate with the bindingName </param>
             <param name="player"> The player to add the binding for </param>
-        </member>
-        <member name="M:Engine.Input.DefaultInputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              Remove a binding from the InputManager.  This removes a binding by its index against a bindingName.
-              For the binding {"jump": [Binding{Keys.Space}, Binding{Buttons.A}, Binding{Keys.W}]} the command
-              RemoveBinding("jump", 1, PlayerIndex.One) removes the Buttons.A binding for "jump".
-              This is useful when you know the index of the binding in its list of bindings
-            </summary>
-            <param name="bindingName"> The string used to query the binding state </param>
-            <param name="index"> The index of the binding in the list of bindings associated with the bindingName </param>
-            <param name="player"> The player the binding is being removed for </param>
         </member>
         <member name="M:Engine.Input.DefaultInputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
@@ -3212,11 +3179,6 @@
               See <see cref="M:Engine.Input.InputManager.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)"/>
             </summary>
         </member>
-        <member name="M:Engine.Input.InjectableInputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              See <see cref="M:Engine.Input.InputManager.RemoveBinding(System.String,System.Int32,Microsoft.Xna.Framework.PlayerIndex)"/>
-            </summary>
-        </member>
         <member name="M:Engine.Input.InjectableInputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               See <see cref="M:Engine.Input.InputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)"/>
@@ -4639,6 +4601,54 @@
               Constructor
             </summary>
         </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveTextInput(System.Char)">
+            <summary>
+              Handle a single character of input
+            </summary>
+            <param name="inputChar"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveTextInput(System.String)">
+            <summary>
+              Handle a string of input
+            </summary>
+            <param name="text"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveCommandInput(System.Char)">
+            <summary>
+              Handle a special command
+            </summary>
+            <param name="command"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+              Handle a Key input
+            </summary>
+            <param name="key"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.Press(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+              "Press" a key in a given frame.
+              Cannot press a binding unless it has been added to the InputManager
+            </summary>
+            <param name="bindingName"> The binding to press </param>
+            <param name="player"> The player to press the binding for </param>
+            <param name="state"> The frame to press it in </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.Release(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+              "Release" a key in a given frame.
+              Cannot release a binding unless it has been added to the InputManager
+            </summary>
+            <param name="bindingName"> The binding to release </param>
+            <param name="player"> The player to release the binding for </param>
+            <param name="state"> The frame to release it in </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.Initialize(Microsoft.Xna.Framework.GameWindow)">
+            <summary>
+              Initialize InputManager dependencies (For event-driven input)
+            </summary>
+            <param name="window"> </param>
+        </member>
         <member name="M:Engine.Input.Managers.FullInputManager.GetBufferedText">
             <summary>
               The buffered text input since the last frame.  This is cleared per frame,
@@ -4654,7 +4664,12 @@
         </member>
         <member name="P:Engine.Input.Managers.FullInputManager.ModifierCheckType">
             <summary>
-            How the manager checks modifiers
+              How the manager checks modifiers
+            </summary>
+        </member>
+        <member name="P:Engine.Input.Managers.FullInputManager.Selected">
+            <summary>
+              Does this Subscriber have the (possibly exclusive) focus
             </summary>
         </member>
     </members>

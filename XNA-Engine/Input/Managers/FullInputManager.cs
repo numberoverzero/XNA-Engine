@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using Engine.DataStructures;
 using Engine.Input.Devices;
+using Engine.Input.EventInput;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input.Managers
 {
     /// <summary>
     ///   Manages all types of InputBindings - mouse, keyboard, gamepad.
     /// </summary>
-    public class FullInputManager : InputManager
+    public class FullInputManager : InputManager, IKeyboardSubscriber
     {
+        private static bool initialized;
+        private readonly DoubleBuffer<char> BufferedText;
         private readonly TypedInputManager<GamePadDevice> _gamePadManager;
         private readonly InjectableInputManager _injectableManager;
         private readonly TypedInputManager<KeyboardDevice> _keyboardManager;
         private readonly TypedInputManager<MouseDevice> _mouseManager;
+
         private ModifierCheckType _modifierCheckType;
 
         /// <summary>
@@ -24,6 +29,7 @@ namespace Engine.Input.Managers
         public FullInputManager()
         {
             ModifierCheckType = ModifierCheckType.Strict;
+            BufferedText = new DoubleBuffer<char>();
             _gamePadManager = new TypedInputManager<GamePadDevice>();
             _keyboardManager = new TypedInputManager<KeyboardDevice>();
             _mouseManager = new TypedInputManager<MouseDevice>();
@@ -44,6 +50,52 @@ namespace Engine.Input.Managers
                 _mouseManager.Settings.ModifierCheckType = value;
             }
         }
+
+        #region IKeyboardSubscriber Members
+
+        /// <summary>
+        ///   Handle a single character of input
+        /// </summary>
+        /// <param name="inputChar"> </param>
+        public void ReceiveTextInput(char inputChar)
+        {
+            BufferedText.Push(inputChar);
+        }
+
+        /// <summary>
+        ///   Handle a string of input
+        /// </summary>
+        /// <param name="text"> </param>
+        public void ReceiveTextInput(string text)
+        {
+            foreach (char c in text)
+                BufferedText.Push(c);
+        }
+
+        /// <summary>
+        ///   Handle a special command
+        /// </summary>
+        /// <param name="command"> </param>
+        public void ReceiveCommandInput(char command)
+        {
+            BufferedText.Push(command);
+        }
+
+        /// <summary>
+        ///   Handle a Key input
+        /// </summary>
+        /// <param name="key"> </param>
+        public void ReceiveSpecialInput(Keys key)
+        {
+            //throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///   Does this Subscriber have the (possibly exclusive) focus
+        /// </summary>
+        public bool Selected { get; set; }
+
+        #endregion
 
         #region InputManager Members
 
@@ -113,7 +165,13 @@ namespace Engine.Input.Managers
 
         public bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
-            throw new NotImplementedException();
+            if (!ContainsBinding(bindingName, player))
+                return false;
+
+            return _injectableManager.IsActive(bindingName, player, state) ||
+                   _keyboardManager.IsActive(bindingName, player, state) ||
+                   _mouseManager.IsActive(bindingName, player, state) ||
+                   _gamePadManager.IsActive(bindingName, player, state);
         }
 
         public bool IsPressed(string bindingName, PlayerIndex player)
@@ -150,9 +208,47 @@ namespace Engine.Input.Managers
             _keyboardManager.Update();
             _mouseManager.Update();
             _injectableManager.Update();
+            BufferedText.Flip();
         }
 
         #endregion
+
+        /// <summary>
+        ///   "Press" a key in a given frame.
+        ///   Cannot press a binding unless it has been added to the InputManager
+        /// </summary>
+        /// <param name="bindingName"> The binding to press </param>
+        /// <param name="player"> The player to press the binding for </param>
+        /// <param name="state"> The frame to press it in </param>
+        public void Press(string bindingName, PlayerIndex player, FrameState state)
+        {
+            _injectableManager.Press(bindingName, player, state);
+        }
+
+        /// <summary>
+        ///   "Release" a key in a given frame.
+        ///   Cannot release a binding unless it has been added to the InputManager
+        /// </summary>
+        /// <param name="bindingName"> The binding to release </param>
+        /// <param name="player"> The player to release the binding for </param>
+        /// <param name="state"> The frame to release it in </param>
+        public void Release(string bindingName, PlayerIndex player, FrameState state)
+        {
+            _injectableManager.Release(bindingName, player, state);
+        }
+
+        /// <summary>
+        ///   Initialize InputManager dependencies (For event-driven input)
+        /// </summary>
+        /// <param name="window"> </param>
+        public static void Initialize(GameWindow window)
+        {
+            if (!initialized)
+            {
+                KeyboardDispatcher.Initialize(window);
+                initialized = true;
+            }
+        }
 
         /// <summary>
         ///   The buffered text input since the last frame.  This is cleared per frame,
@@ -160,7 +256,7 @@ namespace Engine.Input.Managers
         /// </summary>
         public List<char> GetBufferedText()
         {
-            throw new NotImplementedException();
+            return BufferedText.Front;
         }
 
         /// <summary>
