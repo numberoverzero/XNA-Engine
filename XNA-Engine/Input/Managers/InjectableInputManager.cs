@@ -42,25 +42,6 @@ namespace Engine.Input
         #region InputManager Members
 
         /// <summary>
-        ///   The buffered text input since the last frame.  This is cleared per frame,
-        ///   regardless of whether it has been read.
-        /// </summary>
-        public List<char> GetBufferedText()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///   Get the position of the mouse in the specified frame.
-        /// </summary>
-        /// <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
-        /// <returns> The position of the mouse in screen space </returns>
-        public Vector2 GetMousePosition(FrameState state)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         ///   See <see cref="InputManager.AddBinding" />
         /// </summary>
         public bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player)

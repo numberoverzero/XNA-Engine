@@ -10,22 +10,37 @@ namespace Engine.Input.Managers
     /// <summary>
     ///   Manages bindings of keys
     /// </summary>
-    public abstract class TypedInputManager<TInputBinding, TInputDevice> : InputManager where TInputBinding : class, InputBinding where TInputDevice : class, InputDevice, new()
+    public class TypedInputManager<TInputDevice> : InputManager where TInputDevice : class, InputDevice, new()
     {
         /// <summary>
         ///   Constructor
         /// </summary>
         public TypedInputManager()
         {
+            Settings = new InputSettings(0, 0, ModifierCheckType.Strict);
             Bindings = new MultiKeyObjDict<string, PlayerIndex, List<InputBinding>>();
             Modifiers = new CountedCollection<InputBinding>();
             Device = new TInputDevice();
+            IsPolling = true;
         }
 
         /// <summary>
-        /// The device that this manager relies on
+        ///   Copy Constructor
         /// </summary>
-        protected TInputDevice Device { get; set; }
+        /// <param name="inputManager"> </param>
+        public TypedInputManager(TypedInputManager<TInputDevice> inputManager)
+        {
+            Settings = inputManager.Settings;
+            Bindings = new MultiKeyObjDict<string, PlayerIndex, List<InputBinding>>(inputManager.Bindings);
+            Modifiers = new CountedCollection<InputBinding>(inputManager.Modifiers);
+            Device = new TInputDevice();
+            IsPolling = inputManager.IsPolling;
+        }
+
+        /// <summary>
+        ///   The device that this manager relies on
+        /// </summary>
+        public TInputDevice Device { get; protected set; }
 
         /// <summary>
         ///   The Bindings being tracked by the Manager
@@ -35,14 +50,14 @@ namespace Engine.Input.Managers
         /// <summary>
         ///   The InputSettings for this InputManager (trigger thresholds, etc)
         /// </summary>
-        protected InputSettings Settings { get; set; }
+        public InputSettings Settings { get; set; }
 
         /// <summary>
         ///   A unique set of modifiers of the bindings this manager tracks.
         ///   Keeps track of how many bindings use this modifier; 
         ///   stops checking for modifiers once no bindings use that modifier
         /// </summary>
-        public ICollection<InputBinding> Modifiers { get; protected set; }
+        public CountedCollection<InputBinding> Modifiers { get; protected set; }
 
         /// <summary>
         ///   Enable/Disable grabbing device state when updating the manager.
@@ -61,25 +76,6 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   The buffered text input since the last frame.  This is cleared per frame,
-        ///   regardless of whether it has been read.
-        /// </summary>
-        public List<char> GetBufferedText()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///   Get the position of the mouse in the specified frame.
-        /// </summary>
-        /// <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
-        /// <returns> The position of the mouse in screen space </returns>
-        public Vector2 GetMousePosition(FrameState state)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         ///   Add a binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
@@ -87,10 +83,6 @@ namespace Engine.Input.Managers
         /// <param name="player"> The player to add the binding for </param>
         public bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
-            var tBinding = binding as TInputBinding;
-            if (tBinding == null) 
-                return false;
-            
             var bindings = Bindings[bindingName, player];
             if (bindings.Contains(binding))
                 return true;
@@ -187,19 +179,12 @@ namespace Engine.Input.Managers
         /// <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
         public virtual bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
+            if (!ContainsBinding(bindingName, player)) return false;
             var bindings = Bindings[bindingName, player];
 
-            var inputSnapshot = Device.GetDeviceSnapshot(player, state);
+            var inputSnapshot = Device.GetDeviceSnapshot(player, state).Merge(InputSnapshot.With(Settings));
 
             return bindings.Any(binding => binding.IsActive(inputSnapshot) && IsModifiersActive(binding, inputSnapshot));
-        }
-
-        /// <summary>
-        ///   Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
-        /// </summary>
-        protected virtual bool IsModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
-        {
-            return false;
         }
 
         /// <summary>
@@ -264,9 +249,17 @@ namespace Engine.Input.Managers
         /// </remarks>
         public void Update()
         {
-            if(IsPolling) Device.Update();
+            if (IsPolling) Device.Update();
         }
 
         #endregion
+
+        /// <summary>
+        ///   Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
+        /// </summary>
+        protected virtual bool IsModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
+        {
+            throw new NotImplementedException("Need to do!");
+        }
     }
 }

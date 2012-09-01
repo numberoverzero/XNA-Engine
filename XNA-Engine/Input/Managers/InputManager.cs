@@ -18,19 +18,6 @@ namespace Engine.Input
         IEnumerable<InputBinding> GetModifiers { get; }
 
         /// <summary>
-        ///   The buffered text input since the last frame.  This is cleared per frame,
-        ///   regardless of whether it has been read.
-        /// </summary>
-        List<char> GetBufferedText();
-
-        /// <summary>
-        ///   Get the position of the mouse in the specified frame.
-        /// </summary>
-        /// <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
-        /// <returns> The position of the mouse in screen space </returns>
-        Vector2 GetMousePosition(FrameState state);
-
-        /// <summary>
         ///   Add a binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
