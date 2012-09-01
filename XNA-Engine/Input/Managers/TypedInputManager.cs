@@ -232,7 +232,43 @@ namespace Engine.Input.Managers
         /// </summary>
         protected virtual bool IsModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
         {
-            throw new NotImplementedException("Need to do!");
+            if (inputSnapshot.InputSettings == null)
+                return false;
+            var checkType = inputSnapshot.InputSettings.ModifierCheckType;
+            var active = false;
+            switch (checkType)
+            {
+                case ModifierCheckType.Strict:
+                    active = IsStrictModifiersActive(inputBinding, inputSnapshot);
+                    break;
+                case ModifierCheckType.Smart:
+                    active = IsSmartModifiersActive(inputBinding, inputSnapshot);
+                    break;
+                default:
+                    active = false;
+                    break;
+            }
+            return active;
+        }
+
+        /// <summary>
+        ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
+        /// </summary>
+        protected virtual bool IsStrictModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
+        {
+            return !(from trackedModifier in Modifiers
+                     let modifierActive = trackedModifier.IsActive(inputSnapshot)
+                     let keyTracksModifier = inputBinding.Modifiers.Contains(trackedModifier)
+                     where modifierActive != keyTracksModifier
+                     select modifierActive).Any();
+        }
+
+        /// <summary>
+        ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
+        /// </summary>
+        protected virtual bool IsSmartModifiersActive(InputBinding inputBinding, InputSnapshot inputSnapshot)
+        {
+            throw new NotImplementedException("Smart modifiers are not supported yet.");
         }
     }
 }
