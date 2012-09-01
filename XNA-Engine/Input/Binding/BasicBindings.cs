@@ -14,7 +14,7 @@ namespace Engine.Input
     /// <summary>
     /// See <see cref="InputBinding"/>
     /// </summary>
-    public abstract class DefaultInputBinding : InputBinding
+    public abstract class DefaultBinding : InputBinding
     {
         /// <summary>
         /// Any modifiers required for this binding to be considered 'active'
@@ -28,7 +28,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="modifiers">Optional modifiers- Ctrl, Alt, Shift</param>
         /// 
-        public DefaultInputBinding(params InputBinding[] modifiers)
+        public DefaultBinding(params InputBinding[] modifiers)
         {
             Modifiers = new InputBinding[modifiers.Length];
             Array.Copy(modifiers, Modifiers, modifiers.Length);
@@ -38,7 +38,7 @@ namespace Engine.Input
         /// Copy Constructor
         /// </summary>
         /// <param name="other"></param>
-        public DefaultInputBinding(DefaultInputBinding other) : this(other.Modifiers) { }
+        public DefaultBinding(DefaultBinding other) : this(other.Modifiers) { }
 
         #endregion
 
@@ -52,7 +52,7 @@ namespace Engine.Input
     /// An InputBinding that checks if a certain ThumbstickDirection is active
     /// (beyond some threshold as defined in an InputManager's InputSettings)
     /// </summary>
-    public class ThumbstickDirectionInputBinding : DefaultInputBinding
+    public class ThumbstickDirectionBinding : DefaultBinding
     {
         /// <summary>
         /// The Thumbstick (left or right) which is checked for activity past a threshold
@@ -70,7 +70,7 @@ namespace Engine.Input
         /// <param name="thumbstickDirection"></param>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
-        public ThumbstickDirectionInputBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params InputBinding[] modifiers)
+        public ThumbstickDirectionBinding(ThumbstickDirection thumbstickDirection, Thumbstick thumbstick, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Thumbstick = thumbstick;
@@ -82,11 +82,11 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            if (!(inputSnapshot.GamePadState.HasValue && inputSnapshot.InputSettings.HasValue))
+            if (!inputSnapshot.GamePadState.HasValue)
                 return false;
 
             var gamePadState = inputSnapshot.GamePadState.Value;
-            var settings = inputSnapshot.InputSettings.Value;
+            var settings = inputSnapshot.InputSettings;
 
             Vector2 gamepadThumbstick = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
             bool isActive = false;
@@ -114,7 +114,7 @@ namespace Engine.Input
     /// <summary>
     /// An InputBinding wrapper for a Thumbstick
     /// </summary>
-    public class MouseInputBinding : DefaultInputBinding
+    public class MouseBinding : DefaultBinding
     {
         /// <summary>
         /// The mouse button which is checked for activity
@@ -126,7 +126,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="mouseButton"></param>
         /// <param name="modifiers"></param>
-        public MouseInputBinding(MouseButton mouseButton, params InputBinding[] modifiers)
+        public MouseBinding(MouseButton mouseButton, params InputBinding[] modifiers)
             : base(modifiers)
         {
             Button = mouseButton;
@@ -165,7 +165,7 @@ namespace Engine.Input
     /// (beyond some threshold as defined in an InputManager's InputSettings)
     /// (direction doesn't matter)
     /// </summary>
-    public class ThumbstickInputBinding : DefaultInputBinding
+    public class ThumbstickBinding : DefaultBinding
     {
         /// <summary>
         /// The Thumbstick (left or right) which is checked for activity past a threshold
@@ -177,7 +177,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="thumbstick"></param>
         /// <param name="modifiers"></param>
-        public ThumbstickInputBinding(Thumbstick thumbstick, params InputBinding[] modifiers)
+        public ThumbstickBinding(Thumbstick thumbstick, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Thumbstick = thumbstick;
@@ -188,18 +188,18 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            if (!(inputSnapshot.GamePadState.HasValue && inputSnapshot.InputSettings.HasValue))
+            if (!inputSnapshot.GamePadState.HasValue)
                 return false;
             var gamePadState = inputSnapshot.GamePadState.Value;
             Vector2 gamepadThumbstickMag = Thumbstick == Thumbstick.Left ? gamePadState.ThumbSticks.Left : gamePadState.ThumbSticks.Right;
-            return gamepadThumbstickMag.Length() >= inputSnapshot.InputSettings.Value.ThumbstickThreshold;
+            return gamepadThumbstickMag.Length() >= inputSnapshot.InputSettings.ThumbstickThreshold;
         }
     }
 
     /// <summary>
     /// An InputBinding wrapper for a Button
     /// </summary>
-    public class ButtonInputBinding : DefaultInputBinding
+    public class ButtonBinding : DefaultBinding
     {
         /// <summary>
         /// The Button which is checked for activity
@@ -211,7 +211,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="button"></param>
         /// <param name="modifiers"></param>
-        public ButtonInputBinding(Buttons button, params InputBinding[] modifiers)
+        public ButtonBinding(Buttons button, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Button = button;
@@ -231,7 +231,7 @@ namespace Engine.Input
     /// <summary>
     /// An InputBinding wrapper for a keyboard Key
     /// </summary>
-    public class KeyInputBinding : DefaultInputBinding
+    public class KeyBinding : DefaultBinding
     {
         /// <summary>
         /// The Key which is checked for activity
@@ -243,7 +243,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="key"></param>
         /// <param name="modifiers"></param>
-        public KeyInputBinding(Keys key, params InputBinding[] modifiers)
+        public KeyBinding(Keys key, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Key = key;
@@ -264,7 +264,7 @@ namespace Engine.Input
     /// An InputBinding that checks if a certain Trigger is active
     /// (beyond some threshold as defined in an InputManager's InputSettings)
     /// </summary>
-    public class TriggerInputBinding : DefaultInputBinding
+    public class TriggerBinding : DefaultBinding
     {
         /// <summary>
         /// The left or right trigger
@@ -276,7 +276,7 @@ namespace Engine.Input
         /// </summary>
         /// <param name="trigger"></param>
         /// <param name="modifiers"></param>
-        public TriggerInputBinding(Trigger trigger, params InputBinding[] modifiers)
+        public TriggerBinding(Trigger trigger, params InputBinding[] modifiers)
             : base(modifiers)
         {
             this.Trigger = trigger;
@@ -287,11 +287,11 @@ namespace Engine.Input
         /// </summary>
         public override bool IsActive(InputSnapshot inputSnapshot)
         {
-            if (!(inputSnapshot.GamePadState.HasValue && inputSnapshot.InputSettings.HasValue))
+            if (!inputSnapshot.GamePadState.HasValue)
                 return false;
             var gamePadState = inputSnapshot.GamePadState.Value;
             float triggerMag = Trigger == Trigger.Left ? gamePadState.Triggers.Left : gamePadState.Triggers.Right;
-            return triggerMag >= inputSnapshot.InputSettings.Value.TriggerThreshold;
+            return triggerMag >= inputSnapshot.InputSettings.TriggerThreshold;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Engine.Input
     /// <summary>
     /// A set of limits and thresholds that some bindings must pass to be considered active
     /// </summary>
-    public struct InputSettings
+    public class InputSettings
     {
         /// <summary>
         /// The minimum value for a trigger to register as 'pulled'
