@@ -7,6 +7,7 @@ using Engine.Utility;
 
 namespace Engine.Networking.Packets
 {
+#pragma warning disable 659
     /// <summary>
     /// Wrapper around the byte array that is sent to/read from a network stream
     /// </summary>
@@ -114,5 +115,6 @@ namespace Engine.Networking.Packets
                 return _nullPacket;
             }
         }
-    }    
+    }
+#pragma warning restore 659
 }

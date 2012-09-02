@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Engine.DataStructures;
 using Engine.Input.Devices;
@@ -16,10 +15,11 @@ namespace Engine.Input.Managers
     {
         private static bool initialized;
         private readonly DoubleBuffer<char> BufferedText;
-        private readonly TypedInputManager<GamePadDevice> _gamePadManager;
+        private readonly TypedInputManager _gamePadManager;
         private readonly InjectableInputManager _injectableManager;
-        private readonly TypedInputManager<KeyboardDevice> _keyboardManager;
-        private readonly TypedInputManager<MouseDevice> _mouseManager;
+        private readonly TypedInputManager _keyboardManager, _mouseManager;
+
+        private readonly List<TypedInputManager> _typedManagers;
 
         private ModifierCheckType _modifierCheckType;
 
@@ -30,10 +30,11 @@ namespace Engine.Input.Managers
         {
             ModifierCheckType = ModifierCheckType.Strict;
             BufferedText = new DoubleBuffer<char>();
-            _gamePadManager = new TypedInputManager<GamePadDevice>();
-            _keyboardManager = new TypedInputManager<KeyboardDevice>();
-            _mouseManager = new TypedInputManager<MouseDevice>();
+            _gamePadManager = new TypedInputManager(new GamePadDevice());
+            _keyboardManager = new TypedInputManager(new KeyboardDevice());
+            _mouseManager = new TypedInputManager(new MouseDevice());
             _injectableManager = new InjectableInputManager();
+            _typedManagers = new List<TypedInputManager> {_gamePadManager, _keyboardManager, _mouseManager};
         }
 
         /// <summary>
@@ -45,9 +46,7 @@ namespace Engine.Input.Managers
             set
             {
                 _modifierCheckType = value;
-                _gamePadManager.Settings.ModifierCheckType = value;
-                _keyboardManager.Settings.ModifierCheckType = value;
-                _mouseManager.Settings.ModifierCheckType = value;
+                foreach (var t in _typedManagers) t.Settings.ModifierCheckType = value;
             }
         }
 
@@ -87,7 +86,6 @@ namespace Engine.Input.Managers
         /// <param name="key"> </param>
         public void ReceiveSpecialInput(Keys key)
         {
-            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -107,10 +105,7 @@ namespace Engine.Input.Managers
             get
             {
                 var collection = new CountedCollection<InputBinding>();
-                collection.Merge((CountedCollection<InputBinding>) _gamePadManager.GetModifiers);
-                collection.Merge((CountedCollection<InputBinding>) _keyboardManager.GetModifiers);
-                collection.Merge((CountedCollection<InputBinding>) _mouseManager.GetModifiers);
-                collection.Merge((CountedCollection<InputBinding>) _injectableManager.GetModifiers);
+                foreach (var t in _typedManagers) collection.Merge((CountedCollection<InputBinding>) t.GetModifiers);
                 return collection;
             }
         }
@@ -136,33 +131,24 @@ namespace Engine.Input.Managers
 
         public void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
-            _keyboardManager.RemoveBinding(bindingName, binding, player);
-            _mouseManager.RemoveBinding(bindingName, binding, player);
-            _gamePadManager.RemoveBinding(bindingName, binding, player);
-            _injectableManager.RemoveBinding(bindingName, binding, player);
+            foreach (var t in _typedManagers) t.RemoveBinding(bindingName, binding, player);
         }
 
         public bool ContainsBinding(string bindingName, PlayerIndex player)
         {
             return _injectableManager.ContainsBinding(bindingName, player) ||
-                   _keyboardManager.ContainsBinding(bindingName, player) ||
-                   _mouseManager.ContainsBinding(bindingName, player) ||
-                   _gamePadManager.ContainsBinding(bindingName, player);
+                   _typedManagers.Any(t => t.ContainsBinding(bindingName, player));
         }
 
         public void ClearBinding(string bindingName, PlayerIndex player)
         {
-            _keyboardManager.ClearBinding(bindingName, player);
-            _mouseManager.ClearBinding(bindingName, player);
-            _gamePadManager.ClearBinding(bindingName, player);
+            foreach (var t in _typedManagers) t.ClearBinding(bindingName, player);
             _injectableManager.ClearBinding(bindingName, player);
         }
 
         public void ClearAllBindings()
         {
-            _keyboardManager.ClearAllBindings();
-            _mouseManager.ClearAllBindings();
-            _gamePadManager.ClearAllBindings();
+            foreach (var t in _typedManagers) t.ClearAllBindings();
             _injectableManager.ClearAllBindings();
         }
 
@@ -172,9 +158,7 @@ namespace Engine.Input.Managers
                 return false;
 
             return _injectableManager.IsActive(bindingName, player, state) ||
-                   _keyboardManager.IsActive(bindingName, player, state) ||
-                   _mouseManager.IsActive(bindingName, player, state) ||
-                   _gamePadManager.IsActive(bindingName, player, state);
+                   _typedManagers.Any(t => t.IsActive(bindingName, player, state));
         }
 
         public bool IsPressed(string bindingName, PlayerIndex player)
@@ -207,11 +191,14 @@ namespace Engine.Input.Managers
 
         public void Update()
         {
-            _gamePadManager.Update();
-            _keyboardManager.Update();
-            _mouseManager.Update();
+            foreach (var t in _typedManagers) t.Update();
             _injectableManager.Update();
             BufferedText.Flip();
+        }
+
+        public bool ContainsBinding(InputBinding binding, PlayerIndex player)
+        {
+            return _typedManagers.Any(t => t.ContainsBinding(binding, player));
         }
 
         #endregion
@@ -269,7 +256,7 @@ namespace Engine.Input.Managers
         /// <returns> The position of the mouse in screen space </returns>
         public Vector2 GetMousePosition(FrameState state)
         {
-            var mouseDevice = _mouseManager.Device;
+            var mouseDevice = (MouseDevice) _mouseManager.Device;
             var mouseState = state == FrameState.Current
                                  ? mouseDevice.CurrentMouseState
                                  : mouseDevice.PreviousMouseState;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Engine.DataStructures;
 using Engine.Input.Devices;
+using Engine.Utility;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Input.Managers
@@ -10,17 +11,17 @@ namespace Engine.Input.Managers
     /// <summary>
     ///   Manages bindings of keys
     /// </summary>
-    public class TypedInputManager<TInputDevice> : InputManager where TInputDevice : class, InputDevice, new()
+    public class TypedInputManager : InputManager
     {
         /// <summary>
         ///   Constructor
         /// </summary>
-        public TypedInputManager()
+        public TypedInputManager(InputDevice inputDevice)
         {
             Settings = new InputSettings(0, 0, ModifierCheckType.Strict);
             Bindings = new MultiKeyObjDict<string, PlayerIndex, List<InputBinding>>();
             Modifiers = new CountedCollection<InputBinding>();
-            Device = new TInputDevice();
+            Device = inputDevice;
             IsPolling = true;
         }
 
@@ -28,19 +29,19 @@ namespace Engine.Input.Managers
         ///   Copy Constructor
         /// </summary>
         /// <param name="inputManager"> </param>
-        public TypedInputManager(TypedInputManager<TInputDevice> inputManager)
+        public TypedInputManager(TypedInputManager inputManager)
         {
             Settings = inputManager.Settings;
             Bindings = new MultiKeyObjDict<string, PlayerIndex, List<InputBinding>>(inputManager.Bindings);
             Modifiers = new CountedCollection<InputBinding>(inputManager.Modifiers);
-            Device = new TInputDevice();
+            Device = inputManager.Device;
             IsPolling = inputManager.IsPolling;
         }
 
         /// <summary>
         ///   The device that this manager relies on
         /// </summary>
-        public TInputDevice Device { get; protected set; }
+        public InputDevice Device { get; protected set; }
 
         /// <summary>
         ///   The Bindings being tracked by the Manager
@@ -120,6 +121,11 @@ namespace Engine.Input.Managers
             return Bindings[bindingName, player].Count > 0;
         }
 
+        public bool ContainsBinding(InputBinding binding, PlayerIndex player)
+        {
+            return Bindings.Keys.Any(bindingName => Bindings[bindingName, player].Contains(binding));
+        }
+
         /// <summary>
         ///   Clears all bindings associated with the given bindingName for a particular player
         /// </summary>
@@ -157,7 +163,9 @@ namespace Engine.Input.Managers
 
             var inputSnapshot = Device.GetDeviceSnapshot(player, state).Merge(InputSnapshot.With(Settings));
 
-            return bindings.Any(binding => binding.IsActive(inputSnapshot) && IsModifiersActive(binding, player, inputSnapshot));
+            return
+                bindings.Any(
+                    binding => binding.IsActive(inputSnapshot) && IsModifiersActive(binding, player, inputSnapshot));
         }
 
         /// <summary>
@@ -230,7 +238,8 @@ namespace Engine.Input.Managers
         /// <summary>
         ///   Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
         /// </summary>
-        protected virtual bool IsModifiersActive(InputBinding inputBinding, PlayerIndex player, InputSnapshot inputSnapshot)
+        protected virtual bool IsModifiersActive(InputBinding inputBinding, PlayerIndex player,
+                                                 InputSnapshot inputSnapshot)
         {
             if (inputSnapshot.InputSettings == null) return false;
 
@@ -246,14 +255,14 @@ namespace Engine.Input.Managers
                     isActive = IsSmartModifiersActive;
                     break;
             }
-
             return isActive != null && isActive(inputBinding, player, inputSnapshot);
         }
 
         /// <summary>
         ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
-        protected virtual bool IsStrictModifiersActive(InputBinding inputBinding, PlayerIndex player,InputSnapshot inputSnapshot)
+        protected virtual bool IsStrictModifiersActive(InputBinding inputBinding, PlayerIndex player,
+                                                       InputSnapshot inputSnapshot)
         {
             return !(from trackedModifier in Modifiers
                      let modifierActive = trackedModifier.IsActive(inputSnapshot)
@@ -265,13 +274,8 @@ namespace Engine.Input.Managers
         /// <summary>
         ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
-        protected virtual bool IsSmartModifiersActive(InputBinding inputBinding, PlayerIndex player,InputSnapshot inputSnapshot)
-        {
-            var similarBindings = GetSimilarBindings(inputBinding, player, false);
-            return false;
-        }
-
-        protected IEnumerable<InputBinding> GetSimilarBindings(InputBinding inputBinding, PlayerIndex player, bool includeModifiers)
+        protected virtual bool IsSmartModifiersActive(InputBinding inputBinding, PlayerIndex player,
+                                                      InputSnapshot inputSnapshot)
         {
             throw new NotImplementedException("Smart modifiers are not supported yet.");
         }

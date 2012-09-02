@@ -164,6 +164,7 @@
     <Compile Include="Utility\DictionaryExtensions.cs" />
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
     <Compile Include="Utility\InvokeExtensions.cs" />
+    <Compile Include="Utility\IterableExtensions.cs" />
     <Compile Include="Utility\MathFunctions.cs" />
     <Compile Include="Utility\NetworkingExtensions.cs" />
     <Compile Include="Utility\StringAndRegexExtensions.cs" />

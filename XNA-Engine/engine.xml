@@ -107,7 +107,7 @@
             Debug information
             </summary>
         </member>
-        <member name="T:Engine.Input.Managers.TypedInputManager`1">
+        <member name="T:Engine.Input.Managers.TypedInputManager">
             <summary>
               Manages bindings of keys
             </summary>
@@ -142,6 +142,14 @@
             <param name="bindingName"> The name of the binding to check for </param>
             <param name="player"> The player to check the binding for </param>
             <returns> True if there are bindings associated with the bindingName for the given player </returns>
+        </member>
+        <member name="M:Engine.Input.InputManager.ContainsBinding(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              Check if the manager has a specific binding
+            </summary>
+            <param name="binding"> The binding to check for </param>
+            <param name="player"> The player to check the binding for </param>
+            <returns> True if the binding exists for the given player </returns>
         </member>
         <member name="M:Engine.Input.InputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
@@ -214,18 +222,18 @@
               All the modifiers currently being tracked.
             </summary>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.#ctor">
+        <member name="M:Engine.Input.Managers.TypedInputManager.#ctor(Engine.Input.Devices.InputDevice)">
             <summary>
               Constructor
             </summary>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.#ctor(Engine.Input.Managers.TypedInputManager{`0})">
+        <member name="M:Engine.Input.Managers.TypedInputManager.#ctor(Engine.Input.Managers.TypedInputManager)">
             <summary>
               Copy Constructor
             </summary>
             <param name="inputManager"> </param>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.AddBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Add a binding that can be checked for state (Pressed, Released, Active)
             </summary>
@@ -233,7 +241,7 @@
             <param name="binding"> The binding to associate with the bindingName </param>
             <param name="player"> The player to add the binding for </param>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.RemoveBinding(System.String,Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Remove a binding from the InputManager.  Removes the exact binding from the relation.
               This can be used when you don't know the binding's index in its list of bindings.
@@ -242,7 +250,7 @@
             <param name="binding"> The binding to remove from the association with the bindingName </param>
             <param name="player"> The player the binding is being removed for </param>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Check if the manager has a binding associated with a bindingName for a player
             </summary>
@@ -250,19 +258,19 @@
             <param name="player"> The player to check the binding for </param>
             <returns> True if there are bindings associated with the bindingName for the given player </returns>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Clears all bindings associated with the given bindingName for a particular player
             </summary>
             <param name="bindingName"> The name of the binding to clear </param>
             <param name="player"> The player to clear the binding for </param>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.ClearAllBindings">
+        <member name="M:Engine.Input.Managers.TypedInputManager.ClearAllBindings">
             <summary>
               Clears all bindings for all players
             </summary>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
             <summary>
               Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
             </summary>
@@ -271,7 +279,7 @@
             <param name="state"> The FrameState in which to check for activity </param>
             <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
             </summary>
@@ -279,7 +287,7 @@
             <param name="player"> The player to check the binding's activity for </param>
             <returns> True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous). </returns>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
             </summary>
@@ -287,7 +295,7 @@
             <param name="player"> The player to check the binding's activity for </param>
             <returns> True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous). </returns>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Gets the list of bindings associated with a particular bindingName for a given player
             </summary>
@@ -295,7 +303,7 @@
             <param name="player"> The player to get the list of bindings for </param>
             <returns> Returns a copy of the Bindings associated with the bindingName for a givem player </returns>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.BindingsUsing(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.BindingsUsing(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Used to get a list of strings that map to the given binding for a given player.
               This is useful when you want to unbind a key from current bindings and remap to a new binding:
@@ -305,7 +313,7 @@
             <param name="player"> The player to search for bindings on </param>
             <returns> A list of the bindingNames that, for a given player, track the given binding as a possible input </returns>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.Update">
+        <member name="M:Engine.Input.Managers.TypedInputManager.Update">
             <summary>
               Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
             </summary>
@@ -316,72 +324,192 @@
               means you will not be able to read the most recent input.
             </remarks>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.IsModifiersActive(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.InputSnapshot)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.IsModifiersActive(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.InputSnapshot)">
             <summary>
               Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
             </summary>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.IsStrictModifiersActive(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.InputSnapshot)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.IsStrictModifiersActive(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.InputSnapshot)">
             <summary>
               Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
             </summary>
         </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager`1.IsSmartModifiersActive(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.InputSnapshot)">
+        <member name="M:Engine.Input.Managers.TypedInputManager.IsSmartModifiersActive(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.InputSnapshot)">
             <summary>
               Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
             </summary>
         </member>
-        <member name="P:Engine.Input.Managers.TypedInputManager`1.Device">
+        <member name="P:Engine.Input.Managers.TypedInputManager.Device">
             <summary>
               The device that this manager relies on
             </summary>
         </member>
-        <member name="P:Engine.Input.Managers.TypedInputManager`1.Bindings">
+        <member name="P:Engine.Input.Managers.TypedInputManager.Bindings">
             <summary>
               The Bindings being tracked by the Manager
             </summary>
         </member>
-        <member name="P:Engine.Input.Managers.TypedInputManager`1.Settings">
+        <member name="P:Engine.Input.Managers.TypedInputManager.Settings">
             <summary>
               The InputSettings for this InputManager (trigger thresholds, etc)
             </summary>
         </member>
-        <member name="P:Engine.Input.Managers.TypedInputManager`1.Modifiers">
+        <member name="P:Engine.Input.Managers.TypedInputManager.Modifiers">
             <summary>
               A unique set of modifiers of the bindings this manager tracks.
               Keeps track of how many bindings use this modifier; 
               stops checking for modifiers once no bindings use that modifier
             </summary>
         </member>
-        <member name="P:Engine.Input.Managers.TypedInputManager`1.IsPolling">
+        <member name="P:Engine.Input.Managers.TypedInputManager.IsPolling">
             <summary>
               Enable/Disable grabbing device state when updating the manager.
               Disable for performance when you know the user can't use the device, or no bindings will need the state of the device.
             </summary>
         </member>
-        <member name="P:Engine.Input.Managers.TypedInputManager`1.GetModifiers">
+        <member name="P:Engine.Input.Managers.TypedInputManager.GetModifiers">
+            <summary>
+              All the modifiers currently being tracked.
+            </summary>
+        </member>
+        <member name="T:Engine.Input.Managers.FullInputManager">
+            <summary>
+              Manages all types of InputBindings - mouse, keyboard, gamepad.
+            </summary>
+        </member>
+        <member name="T:Engine.Input.EventInput.IKeyboardSubscriber">
+            <summary>
+            Receives event-driven input in the form of strings, characters, and Keys
+            </summary>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.Char)">
+            <summary>
+            Handle a single character of input
+            </summary>
+            <param name="inputChar"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.String)">
+            <summary>
+            Handle a string of input
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveCommandInput(System.Char)">
+            <summary>
+            Handle a special command
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Handle a Key input
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="P:Engine.Input.EventInput.IKeyboardSubscriber.Selected">
+            <summary>
+            Does this Subscriber have the (possibly exclusive) focus
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.#ctor">
+            <summary>
+              Constructor
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveTextInput(System.Char)">
+            <summary>
+              Handle a single character of input
+            </summary>
+            <param name="inputChar"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveTextInput(System.String)">
+            <summary>
+              Handle a string of input
+            </summary>
+            <param name="text"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveCommandInput(System.Char)">
+            <summary>
+              Handle a special command
+            </summary>
+            <param name="command"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+              Handle a Key input
+            </summary>
+            <param name="key"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.Press(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+              "Press" a key in a given frame.
+              Cannot press a binding unless it has been added to the InputManager
+            </summary>
+            <param name="bindingName"> The binding to press </param>
+            <param name="player"> The player to press the binding for </param>
+            <param name="state"> The frame to press it in </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.Release(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
+            <summary>
+              "Release" a key in a given frame.
+              Cannot release a binding unless it has been added to the InputManager
+            </summary>
+            <param name="bindingName"> The binding to release </param>
+            <param name="player"> The player to release the binding for </param>
+            <param name="state"> The frame to release it in </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.Initialize(Microsoft.Xna.Framework.GameWindow)">
+            <summary>
+              Initialize InputManager dependencies (For event-driven input)
+            </summary>
+            <param name="window"> </param>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.GetBufferedText">
+            <summary>
+              The buffered text input since the last frame.  This is cleared per frame,
+              regardless of whether it has been read.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.FullInputManager.GetMousePosition(Engine.Input.FrameState)">
+            <summary>
+              Get the position of the mouse in the specified frame.
+            </summary>
+            <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
+            <returns> The position of the mouse in screen space </returns>
+        </member>
+        <member name="P:Engine.Input.Managers.FullInputManager.ModifierCheckType">
+            <summary>
+              How the manager checks modifiers
+            </summary>
+        </member>
+        <member name="P:Engine.Input.Managers.FullInputManager.Selected">
+            <summary>
+              Does this Subscriber have the (possibly exclusive) focus
+            </summary>
+        </member>
+        <member name="P:Engine.Input.Managers.FullInputManager.GetModifiers">
             <summary>
               All the modifiers currently being tracked.
             </summary>
         </member>
         <member name="T:Engine.Input.InputBinding">
             <summary>
-            A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
+              A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
             </summary>
         </member>
         <member name="M:Engine.Input.InputBinding.IsActive(Engine.Input.InputSnapshot)">
             <summary>
-            True if the InputBinding is active in the given FrameState of the given InputManager
+              True if the InputBinding is active in the given FrameState of the given InputManager
             </summary>
         </member>
         <member name="M:Engine.Input.InputBinding.IsEqual(Engine.Input.InputBinding,System.Boolean)">
             <summary>
-            Compares this Binding to another, and returns whether they are the same (with/without modifiers)
+              Compares this Binding to another, and returns whether they are the same (with/without modifiers)
             </summary>
         </member>
         <member name="P:Engine.Input.InputBinding.Modifiers">
             <summary>
-            Returns the list of modifiers necessary to be active before the binding is considered "active"
+              Returns the list of modifiers necessary to be active before the binding is considered "active"
             </summary>
         </member>
         <member name="T:Engine.Events.GameObjectEvents.GameObjectDestroyedEvent">
@@ -1080,39 +1208,39 @@
         </member>
         <member name="T:Engine.DataStructures.MultiKeyObjDict`3">
             <summary>
-            A DefaultDict that supports two keys.
+              A DefaultDict that supports two keys.
             </summary>
-            <typeparam name="TKey1">The first key type</typeparam>
-            <typeparam name="TKey2">The second key type</typeparam>
-            <typeparam name="TValue">The value type stored in the dictionary</typeparam>
+            <typeparam name="TKey1"> The first key type </typeparam>
+            <typeparam name="TKey2"> The second key type </typeparam>
+            <typeparam name="TValue"> The value type stored in the dictionary </typeparam>
         </member>
         <member name="M:Engine.DataStructures.MultiKeyObjDict`3.#ctor">
             <summary>
-            Construct an empty Double-keyed dictionary
+              Construct an empty Double-keyed dictionary
             </summary>
         </member>
         <member name="M:Engine.DataStructures.MultiKeyObjDict`3.#ctor(Engine.DataStructures.MultiKeyObjDict{`0,`1,`2})">
             <summary>
-            Copy Constructor
+              Copy Constructor
             </summary>
-            <param name="defaultMultiKeyDict"></param>
+            <param name="defaultMultiKeyDict"> </param>
         </member>
         <member name="M:Engine.DataStructures.MultiKeyObjDict`3.Clear">
             <summary>
-            Clear all values from the DefaultMultiKeyDict
+              Clear all values from the DefaultMultiKeyDict
             </summary>
         </member>
         <member name="P:Engine.DataStructures.MultiKeyObjDict`3.Item(`0,`1)">
             <summary>
-            Gets or sets the value associated with the specified keys.
+              Gets or sets the value associated with the specified keys.
             </summary>
-            <param name="key1">The first key of the value to get or set.</param>
-            <param name="key2">The second key of the value to get or set.</param>
-            <returns></returns>
+            <param name="key1"> The first key of the value to get or set. </param>
+            <param name="key2"> The second key of the value to get or set. </param>
+            <returns> </returns>
         </member>
         <member name="P:Engine.DataStructures.MultiKeyObjDict`3.Keys">
             <summary>
-            Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
+              Gets a collection containing the keys in the Engine.Utility.DefaultMultiKeyDict&lt;TKey1, TKey2, TValue&gt;.
             </summary>
         </member>
         <member name="M:Engine.Rendering.ColorScheme`1.#ctor">
@@ -1797,6 +1925,41 @@
             </summary>
             <param name="msg"></param>
         </member>
+        <member name="T:Engine.Input.InputManagerExtensions">
+            <summary>
+              Shortcut methods for adding various specific input bindings
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
+            <summary>
+              Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.MouseButton,Engine.Input.InputBinding[])">
+            <summary>
+              Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
+            <summary>
+              Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Trigger,Engine.Input.InputBinding[])">
+            <summary>
+              Add a Trigger binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Buttons,Engine.Input.InputBinding[])">
+            <summary>
+              Add a Button binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Keys,Engine.Input.InputBinding[])">
+            <summary>
+              Add a key binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+        </member>
         <member name="T:Engine.Rendering.Pipeline.IRenderEffect">
             <summary>
             Renders an effect on a preEffect texture, out to a postEffect texture.
@@ -2178,6 +2341,31 @@
             <param name="key1"></param>
             <param name="key2"></param>
             <returns></returns>
+        </member>
+        <member name="T:Engine.Utility.IterableExtensions">
+            <summary>
+              Extensions for generic Iterables
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.IterableExtensions.Combinations``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+              Return r-length subsequences of elements from the input iterable.
+              Combinations are emitted in lexicographic sort order.
+              Elements are treated as unique based on their position, not on their value.
+            </summary>
+            <example>
+              'ABCD'.Combinations(2) --> AB AC AD BC BD CD
+            </example>
+        </member>
+        <member name="M:Engine.Utility.IterableExtensions.ListCombinations``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+              Return r-length subsequences (as lists) of elements from the input iterable.
+              Combinations are emitted in lexicographic sort order.
+              Elements are treated as unique based on their position, not on their value.
+            </summary>
+            <example>
+              'ABCD'.Combinations(2) --> AB AC AD BC BD CD
+            </example>
         </member>
         <member name="T:Engine.Globals">
             <summary>
@@ -2833,7 +3021,12 @@
         </member>
         <member name="M:Engine.Input.InjectableInputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
-              See <see cref="M:Engine.Input.InputManager.ContainsBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
+              See InputManager.ContainsBinding
+            </summary>
+        </member>
+        <member name="M:Engine.Input.InjectableInputManager.ContainsBinding(Engine.Input.InputBinding,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              See InputManager.ContainsBinding
             </summary>
         </member>
         <member name="M:Engine.Input.InjectableInputManager.ClearBinding(System.String,Microsoft.Xna.Framework.PlayerIndex)">
@@ -3822,40 +4015,6 @@
             Event raised when a key has been released.
             </summary>
         </member>
-        <member name="T:Engine.Input.EventInput.IKeyboardSubscriber">
-            <summary>
-            Receives event-driven input in the form of strings, characters, and Keys
-            </summary>
-        </member>
-        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.Char)">
-            <summary>
-            Handle a single character of input
-            </summary>
-            <param name="inputChar"></param>
-        </member>
-        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.String)">
-            <summary>
-            Handle a string of input
-            </summary>
-            <param name="text"></param>
-        </member>
-        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveCommandInput(System.Char)">
-            <summary>
-            Handle a special command
-            </summary>
-            <param name="command"></param>
-        </member>
-        <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
-            <summary>
-            Handle a Key input
-            </summary>
-            <param name="key"></param>
-        </member>
-        <member name="P:Engine.Input.EventInput.IKeyboardSubscriber.Selected">
-            <summary>
-            Does this Subscriber have the (possibly exclusive) focus
-            </summary>
-        </member>
         <member name="T:Engine.Input.EventInput.KeyboardDispatcher">
             <summary>
             Sends out read calls when input is handled from EventInput
@@ -4305,127 +4464,6 @@
             In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
             In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
             </example>
-        </member>
-        <member name="T:Engine.Input.Managers.FullInputManager">
-            <summary>
-              Manages all types of InputBindings - mouse, keyboard, gamepad.
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.#ctor">
-            <summary>
-              Constructor
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveTextInput(System.Char)">
-            <summary>
-              Handle a single character of input
-            </summary>
-            <param name="inputChar"> </param>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveTextInput(System.String)">
-            <summary>
-              Handle a string of input
-            </summary>
-            <param name="text"> </param>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveCommandInput(System.Char)">
-            <summary>
-              Handle a special command
-            </summary>
-            <param name="command"> </param>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
-            <summary>
-              Handle a Key input
-            </summary>
-            <param name="key"> </param>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.Press(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
-            <summary>
-              "Press" a key in a given frame.
-              Cannot press a binding unless it has been added to the InputManager
-            </summary>
-            <param name="bindingName"> The binding to press </param>
-            <param name="player"> The player to press the binding for </param>
-            <param name="state"> The frame to press it in </param>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.Release(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)">
-            <summary>
-              "Release" a key in a given frame.
-              Cannot release a binding unless it has been added to the InputManager
-            </summary>
-            <param name="bindingName"> The binding to release </param>
-            <param name="player"> The player to release the binding for </param>
-            <param name="state"> The frame to release it in </param>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.Initialize(Microsoft.Xna.Framework.GameWindow)">
-            <summary>
-              Initialize InputManager dependencies (For event-driven input)
-            </summary>
-            <param name="window"> </param>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.GetBufferedText">
-            <summary>
-              The buffered text input since the last frame.  This is cleared per frame,
-              regardless of whether it has been read.
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.FullInputManager.GetMousePosition(Engine.Input.FrameState)">
-            <summary>
-              Get the position of the mouse in the specified frame.
-            </summary>
-            <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
-            <returns> The position of the mouse in screen space </returns>
-        </member>
-        <member name="P:Engine.Input.Managers.FullInputManager.ModifierCheckType">
-            <summary>
-              How the manager checks modifiers
-            </summary>
-        </member>
-        <member name="P:Engine.Input.Managers.FullInputManager.Selected">
-            <summary>
-              Does this Subscriber have the (possibly exclusive) focus
-            </summary>
-        </member>
-        <member name="P:Engine.Input.Managers.FullInputManager.GetModifiers">
-            <summary>
-              All the modifiers currently being tracked.
-            </summary>
-        </member>
-        <member name="T:Engine.Input.InputManagerExtensions">
-            <summary>
-              Shortcut methods for adding various specific input bindings
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.ThumbstickDirection,Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
-            <summary>
-              Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.MouseButton,Engine.Input.InputBinding[])">
-            <summary>
-              Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Thumbstick,Engine.Input.InputBinding[])">
-            <summary>
-              Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.Trigger,Engine.Input.InputBinding[])">
-            <summary>
-              Add a Trigger binding that can be checked for state (Pressed, Released, Active)
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Buttons,Engine.Input.InputBinding[])">
-            <summary>
-              Add a Button binding that can be checked for state (Pressed, Released, Active)
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputManagerExtensions.AddBinding(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex,Microsoft.Xna.Framework.Input.Keys,Engine.Input.InputBinding[])">
-            <summary>
-              Add a key binding that can be checked for state (Pressed, Released, Active)
-            </summary>
         </member>
     </members>
 </doc>

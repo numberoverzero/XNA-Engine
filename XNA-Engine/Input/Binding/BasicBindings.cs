@@ -19,7 +19,7 @@ namespace Engine.Input
         /// <summary>
         ///   Any modifiers required for this binding to be considered 'active'
         /// </summary>
-        public InputBinding[] Modifiers { get; private set; }
+        public InputBinding[] Modifiers { get; set; }
 
         /// <summary>
         ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)

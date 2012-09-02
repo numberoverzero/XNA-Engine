@@ -61,11 +61,19 @@ namespace Engine.Input
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.ContainsBinding" />
+        ///   See InputManager.ContainsBinding
         /// </summary>
         public bool ContainsBinding(string bindingName, PlayerIndex player)
         {
             return PressableKeys[player].Contains(bindingName);
+        }
+
+        /// <summary>
+        ///   See InputManager.ContainsBinding
+        /// </summary>
+        public bool ContainsBinding(InputBinding binding, PlayerIndex player)
+        {
+            throw new NotImplementedException("InjectableInputManager has no concept of actual InputBindings");
         }
 
         /// <summary>

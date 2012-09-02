@@ -44,6 +44,14 @@ namespace Engine.Input
         bool ContainsBinding(string bindingName, PlayerIndex player);
 
         /// <summary>
+        ///   Check if the manager has a specific binding
+        /// </summary>
+        /// <param name="binding"> The binding to check for </param>
+        /// <param name="player"> The player to check the binding for </param>
+        /// <returns> True if the binding exists for the given player </returns>
+        bool ContainsBinding(InputBinding binding, PlayerIndex player);
+
+        /// <summary>
         ///   Clears all bindings associated with the given bindingName for a particular player
         /// </summary>
         /// <param name="bindingName"> The name of the binding to clear </param>
