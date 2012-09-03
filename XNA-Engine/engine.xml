@@ -4072,6 +4072,22 @@
             <param name="collection"></param>
             <returns></returns>
         </member>
+        <member name="T:Engine.Input.Managers.OptimizedKeyboardManager">
+            <summary>
+              Only supports keyboard input, only supports one binding per name.
+              So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.OptimizedKeyboardManager.#ctor">
+            <summary>
+              Constructor
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.OptimizedKeyboardManager.CoerceRawInputBinding(Engine.Input.InputBinding,System.Boolean)">
+            <summary>
+              Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings
+            </summary>
+        </member>
         <member name="T:Engine.Entities.Components.PhysicsComponent">
             <summary>
             Handles all physics interactions of a GameObject
@@ -4463,17 +4479,6 @@
             In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
             In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
             </example>
-        </member>
-        <member name="T:Engine.Input.Managers.OptimizedKeyboardManager">
-            <summary>
-              Only supports keyboard input, only supports one binding per name.
-              So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.OptimizedKeyboardManager.#ctor">
-            <summary>
-            Constructor
-            </summary>
         </member>
     </members>
 </doc>

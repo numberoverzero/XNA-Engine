@@ -17,8 +17,11 @@ namespace Engine.Input.Managers
             new List<ModifierKey> {ModifierKey.Alt, ModifierKey.Ctrl, ModifierKey.Shift};
 
         private readonly DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>> bindings;
+        private readonly BidirectionalDict<string, KeyBinding> exactBindings;
         private readonly BidirectionalDict<string, KeyBinding> noModifiers;
+
         private List<ModifierKey> _cachedPressedModifiers;
+        private InputSnapshot _previousSnapshot, _currentSnapshot;
         private KeyboardState _current;
         private bool _dirty = true;
         private KeyboardState _previous;
@@ -30,6 +33,7 @@ namespace Engine.Input.Managers
         {
             ModifierCheckType = ModifierCheckType.Smart;
             bindings = new DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>>();
+            exactBindings = new BidirectionalDict<string, KeyBinding>();
             noModifiers = new BidirectionalDict<string, KeyBinding>();
         }
 
@@ -41,8 +45,7 @@ namespace Engine.Input.Managers
             {
                 if (_dirty)
                 {
-                    _cachedPressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
-                    _dirty = false;
+                    UpdateCachedValues();
                 }
                 return _cachedPressedModifiers;
             }
@@ -57,65 +60,64 @@ namespace Engine.Input.Managers
 
         public bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
-            var kbinding = binding as KeyBinding;
-            if (kbinding == null) return false;
+            var rawBinding = CoerceRawInputBinding(binding, false);
+            if (rawBinding == null) return false;
+            var exactBinding = CoerceRawInputBinding(binding, true);
 
             //Make sure we don't have the binding lingering around in any of the modifiers
             if (ContainsBinding(bindingName, player)) ClearBinding(bindingName, player);
 
             //Strip modifiers off for storage in specific modifiers dict
-            var rawBinding = new KeyBinding(kbinding.Key);
 
-            if (binding.Modifiers.Count == 0)
-                noModifiers.Add(rawBinding, bindingName);
+            if (exactBinding.Modifiers.Count == 0)
+                noModifiers.Add(exactBinding, bindingName);
             else
-                foreach (var mod in modifiers.Where(mod => binding.Modifiers.Contains(mod)))
-                    bindings[mod].Add(rawBinding, bindingName);
+                foreach (var mod in exactBinding.Modifiers)
+                    bindings[(ModifierKey) mod].Add(rawBinding, bindingName);
+
+            //Copy of the binding where we only save proper modifiers
+            exactBindings.Add(bindingName, CoerceRawInputBinding(binding, true));
+
             return true;
         }
 
         public void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
-            //We can ignore the actual binding, since we have a 1:1 requirement, and just use the name.
-            noModifiers.Remove(bindingName);
-            foreach (var mod in modifiers)
-                bindings[mod].Remove(bindingName);
+            ClearBinding(bindingName, player);
         }
 
         public bool ContainsBinding(string bindingName, PlayerIndex player)
         {
-            return noModifiers.Contains(bindingName) ||
-                   (modifiers.Any(mod => bindings[mod].Contains(bindingName)));
+            return exactBindings.Contains(bindingName);
         }
 
         public bool ContainsBinding(InputBinding binding, PlayerIndex player)
         {
-            var kbinding = binding as KeyBinding;
-            if (kbinding == null) return false;
-
-            //Strip modifiers off for storage in specific modifiers dict
-            var rawBinding = new KeyBinding(kbinding.Key);
-
-            return noModifiers.Contains(rawBinding) ||
-                   (modifiers.Any(mod => bindings[mod].Contains(rawBinding)));
+            var cbinding = CoerceRawInputBinding(binding, true);
+            return cbinding != null && exactBindings.Contains(cbinding);
         }
 
         public void ClearBinding(string bindingName, PlayerIndex player)
         {
+            //We can ignore the actual binding, since we have a 1:1 requirement, and just use the name.
             foreach (var mod in modifiers) bindings[mod].Remove(bindingName);
+            exactBindings.Remove(bindingName);
             noModifiers.Remove(bindingName);
         }
 
         public void ClearAllBindings()
         {
             foreach (var mod in modifiers) bindings[mod].Clear();
+            exactBindings.Clear();
             noModifiers.Clear();
         }
 
         public bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player)) return false;
-            var snapshot = InputSnapshot.With(state == FrameState.Current ? _current : _previous);
+            if(_dirty) UpdateCachedValues();
+
+            var snapshot = state == FrameState.Current ? _currentSnapshot : _previousSnapshot;
             Func<string, InputSnapshot, bool> isActive = null;
             switch (ModifierCheckType)
             {
@@ -131,27 +133,18 @@ namespace Engine.Input.Managers
 
         public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
-            var binding = GetExactBinding(bindingName);
-            var cbindings = new List<InputBinding>();
-            if (binding != null) cbindings.Add(binding);
-            return cbindings;
+            //Max 1 binding, if any
+            return ContainsBinding(bindingName, player)
+                       ? new List<InputBinding> {exactBindings[bindingName]}
+                       : new List<InputBinding>();
         }
 
         public List<string> BindingsUsing(InputBinding binding, PlayerIndex player)
         {
-            if (!ContainsBinding(binding, player)) return new List<string>();
-
-            var rawBinding = new KeyBinding(((KeyBinding) binding).Key);
-            string bindingName = null;
-            if (noModifiers.Contains(rawBinding))
-                bindingName = noModifiers[rawBinding];
-            else
-            {
-                foreach (var mod in modifiers.Where(mod => bindings[mod].Contains(rawBinding)))
-                    bindingName = bindings[mod][rawBinding];
-            }
-
-            return string.IsNullOrEmpty(bindingName) ? new List<string>() : new List<string> {bindingName};
+            var bindingsUsing = new List<string>();
+            var cbinding = exactBindings[CoerceRawInputBinding(binding, true)];
+            if (cbinding != null) bindingsUsing.Add(cbinding);
+            return bindingsUsing;
         }
 
         public void Update()
@@ -160,25 +153,23 @@ namespace Engine.Input.Managers
             _current = Keyboard.GetState();
 
             // Update pressed modifiers
-            _dirty = true;
+            UpdateCachedValues();
         }
 
         #endregion
 
-        private KeyBinding GetExactBinding(string bindingName)
+        /// <summary>
+        ///   Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings
+        /// </summary>
+        private static KeyBinding CoerceRawInputBinding(InputBinding binding, bool includeModifiers)
         {
-            //We can use PlayerIndex.One here because this class has no concept of more than one player.
-            if (!ContainsBinding(bindingName, PlayerIndex.One)) return null;
-
-            //Gather all the modifiers on this binding together
-            var bindingModifiers = modifiers.Where(mod => bindings[mod].Contains(bindingName)).ToList();
-
-            var rawBinding = noModifiers.Contains(bindingName)
-                                 ? noModifiers[bindingName]
-                                 : bindings[bindingModifiers[0]][bindingName];
-
-            var iBindingModifiers = bindingModifiers.Cast<InputBinding>().ToArray();
-            return new KeyBinding(rawBinding.Key, iBindingModifiers);
+            var keyBinding = binding as KeyBinding;
+            if (keyBinding == null) return null;
+            var coercedBinding = new KeyBinding(keyBinding.Key);
+            if (!includeModifiers) return coercedBinding;
+            foreach (var mod in modifiers.Where(mod => binding.Modifiers.Contains(mod)))
+                coercedBinding.Modifiers.Add(mod);
+            return coercedBinding;
         }
 
         private bool IsStrictActive(string bindingName, InputSnapshot snapshot)
@@ -186,12 +177,20 @@ namespace Engine.Input.Managers
             return (modifiers.Any(mod => PressedModifiers.Contains(mod) != bindings[mod].Contains(bindingName)));
         }
 
+        private void UpdateCachedValues()
+        {
+            _cachedPressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
+            _currentSnapshot = InputSnapshot.With(_current);
+            _previousSnapshot = InputSnapshot.With(_previous);
+            _dirty = false;
+        }
+
         private bool IsSmartActive(string bindingName, InputSnapshot snapshot)
         {
             // Quick check exact conditions met
             if (IsStrictActive(bindingName, snapshot)) return true;
 
-            var binding = GetExactBinding(bindingName);
+            var binding = exactBindings[bindingName];
             var baseBinding = new KeyBinding(binding.Key);
 
             // The key can't be pressed if any of its required modifiers aren't also pressed.
@@ -203,12 +202,21 @@ namespace Engine.Input.Managers
             // For that to be the case, we would need to know that there was no binding for Space that also used Ctrl. 
             // If there is, a binding for Space that uses Ctrl, then Ctrl + Shift + Space is ambiguous and we can't say that Shift + Space is pressed.
 
+            // Generate a list of pressed modifiers which the binding doesn't care about.
             var significantModifiers = new List<ModifierKey>(PressedModifiers);
             foreach (var mod in binding.Modifiers)
                 significantModifiers.Remove((ModifierKey) mod);
 
-
             return significantModifiers.All(mod => !bindings[mod].Contains(baseBinding));
+        }
+
+        public void LoadBindings(string filename)
+        {
+        }
+
+        public void SaveBindings(string filename)
+        {
+
         }
     }
 }
