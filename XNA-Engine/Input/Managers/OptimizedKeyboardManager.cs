@@ -13,26 +13,39 @@ namespace Engine.Input.Managers
     /// </summary>
     public class OptimizedKeyboardManager : InputManager
     {
-        public ModifierCheckType ModifierCheckType { get; set; }
-
         private static readonly List<ModifierKey> modifiers =
             new List<ModifierKey> {ModifierKey.Alt, ModifierKey.Ctrl, ModifierKey.Shift};
 
         private readonly DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>> bindings;
         private readonly BidirectionalDict<string, KeyBinding> noModifiers;
-        private KeyboardState _current;
-        private KeyboardState _previous;
         private List<ModifierKey> _cachedPressedModifiers;
+        private KeyboardState _current;
         private bool _dirty = true;
+        private KeyboardState _previous;
 
         /// <summary>
-        /// Constructor
+        ///   Constructor
         /// </summary>
         public OptimizedKeyboardManager()
         {
             ModifierCheckType = ModifierCheckType.Smart;
             bindings = new DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>>();
             noModifiers = new BidirectionalDict<string, KeyBinding>();
+        }
+
+        public ModifierCheckType ModifierCheckType { get; set; }
+
+        private List<ModifierKey> PressedModifiers
+        {
+            get
+            {
+                if (_dirty)
+                {
+                    _cachedPressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
+                    _dirty = false;
+                }
+                return _cachedPressedModifiers;
+            }
         }
 
         #region InputManager Members
@@ -48,7 +61,7 @@ namespace Engine.Input.Managers
             if (kbinding == null) return false;
 
             //Make sure we don't have the binding lingering around in any of the modifiers
-            if(ContainsBinding(bindingName, player)) ClearBinding(bindingName, player);
+            if (ContainsBinding(bindingName, player)) ClearBinding(bindingName, player);
 
             //Strip modifiers off for storage in specific modifiers dict
             var rawBinding = new KeyBinding(kbinding.Key);
@@ -72,7 +85,7 @@ namespace Engine.Input.Managers
         public bool ContainsBinding(string bindingName, PlayerIndex player)
         {
             return noModifiers.Contains(bindingName) ||
-                (modifiers.Any(mod => bindings[mod].Contains(bindingName)));
+                   (modifiers.Any(mod => bindings[mod].Contains(bindingName)));
         }
 
         public bool ContainsBinding(InputBinding binding, PlayerIndex player)
@@ -84,12 +97,12 @@ namespace Engine.Input.Managers
             var rawBinding = new KeyBinding(kbinding.Key);
 
             return noModifiers.Contains(rawBinding) ||
-                (modifiers.Any(mod => bindings[mod].Contains(rawBinding)));
+                   (modifiers.Any(mod => bindings[mod].Contains(rawBinding)));
         }
 
         public void ClearBinding(string bindingName, PlayerIndex player)
         {
-            foreach(var mod in modifiers) bindings[mod].Remove(bindingName);
+            foreach (var mod in modifiers) bindings[mod].Remove(bindingName);
             noModifiers.Remove(bindingName);
         }
 
@@ -104,7 +117,7 @@ namespace Engine.Input.Managers
             if (!ContainsBinding(bindingName, player)) return false;
             var snapshot = InputSnapshot.With(state == FrameState.Current ? _current : _previous);
             Func<string, InputSnapshot, bool> isActive = null;
-            switch(ModifierCheckType)
+            switch (ModifierCheckType)
             {
                 case ModifierCheckType.Strict:
                     isActive = IsStrictActive;
@@ -120,13 +133,13 @@ namespace Engine.Input.Managers
         {
             var binding = GetExactBinding(bindingName);
             var cbindings = new List<InputBinding>();
-            if(binding != null) cbindings.Add(binding);
+            if (binding != null) cbindings.Add(binding);
             return cbindings;
         }
 
         public List<string> BindingsUsing(InputBinding binding, PlayerIndex player)
         {
-            if(!ContainsBinding(binding, player)) return new List<string>();
+            if (!ContainsBinding(binding, player)) return new List<string>();
 
             var rawBinding = new KeyBinding(((KeyBinding) binding).Key);
             string bindingName = null;
@@ -138,8 +151,7 @@ namespace Engine.Input.Managers
                     bindingName = bindings[mod][rawBinding];
             }
 
-            return string.IsNullOrEmpty(bindingName) ? new List<string>() : new List<string>() { bindingName };
-
+            return string.IsNullOrEmpty(bindingName) ? new List<string>() : new List<string> {bindingName};
         }
 
         public void Update()
@@ -155,29 +167,18 @@ namespace Engine.Input.Managers
 
         private KeyBinding GetExactBinding(string bindingName)
         {
-            //We can use PlayerIndex.One here because this class has not concept of more than one player.
+            //We can use PlayerIndex.One here because this class has no concept of more than one player.
             if (!ContainsBinding(bindingName, PlayerIndex.One)) return null;
-            
+
             //Gather all the modifiers on this binding together
             var bindingModifiers = modifiers.Where(mod => bindings[mod].Contains(bindingName)).ToList();
-            
-            var rawBinding = noModifiers.Contains(bindingName) ? noModifiers[bindingName] : bindings[bindingModifiers[0]][bindingName];
+
+            var rawBinding = noModifiers.Contains(bindingName)
+                                 ? noModifiers[bindingName]
+                                 : bindings[bindingModifiers[0]][bindingName];
 
             var iBindingModifiers = bindingModifiers.Cast<InputBinding>().ToArray();
             return new KeyBinding(rawBinding.Key, iBindingModifiers);
-        }
-
-        private List<ModifierKey> PressedModifiers
-        {
-            get
-            {
-                if (_dirty)
-                {
-                    _cachedPressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
-                    _dirty = false;
-                }
-                return _cachedPressedModifiers;
-            }
         }
 
         private bool IsStrictActive(string bindingName, InputSnapshot snapshot)
@@ -189,7 +190,7 @@ namespace Engine.Input.Managers
         {
             // Quick check exact conditions met
             if (IsStrictActive(bindingName, snapshot)) return true;
-            
+
             var binding = GetExactBinding(bindingName);
             var baseBinding = new KeyBinding(binding.Key);
 
@@ -204,9 +205,9 @@ namespace Engine.Input.Managers
 
             var significantModifiers = new List<ModifierKey>(PressedModifiers);
             foreach (var mod in binding.Modifiers)
-                significantModifiers.Remove((ModifierKey)mod);
+                significantModifiers.Remove((ModifierKey) mod);
 
-            
+
             return significantModifiers.All(mod => !bindings[mod].Contains(baseBinding));
         }
     }
