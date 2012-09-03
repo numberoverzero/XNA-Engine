@@ -172,22 +172,6 @@
             <param name="state"> The FrameState in which to check for activity </param>
             <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
         </member>
-        <member name="M:Engine.Input.InputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <param name="player"> The player to check the binding's activity for </param>
-            <returns> True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous). </returns>
-        </member>
-        <member name="M:Engine.Input.InputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <param name="player"> The player to check the binding's activity for </param>
-            <returns> True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous). </returns>
-        </member>
         <member name="M:Engine.Input.InputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               Gets the list of bindings associated with a particular bindingName for a given player
@@ -278,22 +262,6 @@
             <param name="player"> The player to check the binding's activity for </param>
             <param name="state"> The FrameState in which to check for activity </param>
             <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <param name="player"> The player to check the binding's activity for </param>
-            <returns> True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous). </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.TypedInputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <param name="player"> The player to check the binding's activity for </param>
-            <returns> True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous). </returns>
         </member>
         <member name="M:Engine.Input.Managers.TypedInputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
@@ -1960,6 +1928,22 @@
               Add a key binding that can be checked for state (Pressed, Released, Active)
             </summary>
         </member>
+        <member name="M:Engine.Input.InputManagerExtensions.IsPressed(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <param name="player"> The player to check the binding's activity for </param>
+            <returns> True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous). </returns>
+        </member>
+        <member name="M:Engine.Input.InputManagerExtensions.IsReleased(Engine.Input.InputManager,System.String,Microsoft.Xna.Framework.PlayerIndex)">
+            <summary>
+              Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <param name="player"> The player to check the binding's activity for </param>
+            <returns> True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous). </returns>
+        </member>
         <member name="T:Engine.Rendering.Pipeline.IRenderEffect">
             <summary>
             Renders an effect on a preEffect texture, out to a postEffect texture.
@@ -3044,16 +3028,6 @@
               See <see cref="M:Engine.Input.InputManager.IsActive(System.String,Microsoft.Xna.Framework.PlayerIndex,Engine.Input.FrameState)"/>
             </summary>
         </member>
-        <member name="M:Engine.Input.InjectableInputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              See <see cref="M:Engine.Input.InputManager.IsPressed(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InjectableInputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)">
-            <summary>
-              See <see cref="M:Engine.Input.InputManager.IsReleased(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
-            </summary>
-        </member>
         <member name="M:Engine.Input.InjectableInputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)">
             <summary>
               See <see cref="M:Engine.Input.InputManager.GetCurrentBindings(System.String,Microsoft.Xna.Framework.PlayerIndex)"/>
@@ -3094,94 +3068,99 @@
         </member>
         <member name="T:Engine.DataStructures.BidirectionalDict`2">
             <summary>
-            Provides strict 1:1 mapping between two types.
-            Not thread safe by any stretch of the imagination
+              Provides strict 1:1 mapping between two types.
+              Not thread safe by any stretch of the imagination
             </summary>
-            <typeparam name="T1"></typeparam>
-            <typeparam name="T2"></typeparam>
+            <typeparam name="T1"> </typeparam>
+            <typeparam name="T2"> </typeparam>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.#ctor">
             <summary>
-            Empty Bidirectional Dictionary
+              Empty Bidirectional Dictionary
             </summary>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.#ctor(System.Collections.Generic.IDictionary{`0,`1})">
             <summary>
-            Construct the equivalent bi-directional dictionary from a single-direction dictionary
+              Construct the equivalent bi-directional dictionary from a single-direction dictionary
             </summary>
-            <param name="dictionary"></param>
+            <param name="dictionary"> </param>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.#ctor(System.Collections.Generic.IDictionary{`1,`0})">
             <summary>
-            Construct the equivalent bi-directional dictionary from a T2 -> T1 dictionary
+              Construct the equivalent bi-directional dictionary from a T2 -> T1 dictionary
             </summary>
-            <param name="dictionary"></param>
+            <param name="dictionary"> </param>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.Add(`0,`1)">
             <summary>
-            Add the specified pairing to the dictionary
+              Add the specified pairing to the dictionary
             </summary>
-            <param name="key"></param>
-            <param name="value"></param>
+            <param name="key"> </param>
+            <param name="value"> </param>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.Add(`1,`0)">
             <summary>
-            Add the specified pairing to the dictionary
+              Add the specified pairing to the dictionary
             </summary>
-            <param name="key"></param>
-            <param name="value"></param>
+            <param name="key"> </param>
+            <param name="value"> </param>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.Remove(`0)">
             <summary>
-            Remove the item and its corresponding value from the dictionary
+              Remove the item and its corresponding value from the dictionary
             </summary>
-            <param name="k"></param>
+            <param name="k"> </param>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.Remove(`1)">
             <summary>
-            Remove the item and its corresponding value from the dictionary
+              Remove the item and its corresponding value from the dictionary
             </summary>
-            <param name="k"></param>
+            <param name="k"> </param>
         </member>
-        <member name="M:Engine.DataStructures.BidirectionalDict`2.HasItem(`0)">
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.Contains(`0)">
             <summary>
-            True if there is a pairing with the given value
+              True if there is a pairing with the given value
             </summary>
-            <param name="key"></param>
-            <returns></returns>
+            <param name="key"> </param>
+            <returns> </returns>
         </member>
-        <member name="M:Engine.DataStructures.BidirectionalDict`2.HasItem(`1)">
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.Contains(`1)">
             <summary>
-            True if there is a pairing with the given value
+              True if there is a pairing with the given value
             </summary>
-            <param name="key"></param>
-            <returns></returns>
+            <param name="key"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Engine.DataStructures.BidirectionalDict`2.Clear">
+            <summary>
+              Clears all values
+            </summary>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.GetValuesType1">
             <summary>
-            Returns the values of the first type specification in the table
+              Returns the values of the first type specification in the table
             </summary>
-            <returns></returns>
+            <returns> </returns>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.GetValuesType2">
             <summary>
-            Returns the values of the second type specification in the table
+              Returns the values of the second type specification in the table
             </summary>
-            <returns></returns>
+            <returns> </returns>
         </member>
         <member name="P:Engine.DataStructures.BidirectionalDict`2.Item(`1)">
             <summary>
-            Gets or sets the values associated with the specified key
+              Gets or sets the values associated with the specified key
             </summary>
-            <param name="key"></param>
-            <returns></returns>
+            <param name="key"> </param>
+            <returns> </returns>
         </member>
         <member name="P:Engine.DataStructures.BidirectionalDict`2.Item(`0)">
             <summary>
-            Gets or sets the values associated with the specified key
+              Gets or sets the values associated with the specified key
             </summary>
-            <param name="key"></param>
-            <returns></returns>
+            <param name="key"> </param>
+            <returns> </returns>
         </member>
         <member name="T:Engine.Input.DefaultBinding">
             <summary>
@@ -3357,6 +3336,26 @@
         <member name="P:Engine.Input.KeyBinding.Key">
             <summary>
               The Key which is checked for activity
+            </summary>
+        </member>
+        <member name="T:Engine.Input.ModifierKey">
+            <summary>
+              Custom KeyBinding for double-keyed modifiers
+            </summary>
+        </member>
+        <member name="P:Engine.Input.ModifierKey.Ctrl">
+            <summary>
+              Control key
+            </summary>
+        </member>
+        <member name="P:Engine.Input.ModifierKey.Alt">
+            <summary>
+              Alt key
+            </summary>
+        </member>
+        <member name="P:Engine.Input.ModifierKey.Shift">
+            <summary>
+              Shift key
             </summary>
         </member>
         <member name="T:Engine.Input.TriggerBinding">
@@ -4464,6 +4463,17 @@
             In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
             In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
             </example>
+        </member>
+        <member name="T:Engine.Input.Managers.OptimizedKeyboardManager">
+            <summary>
+              Only supports keyboard input, only supports one binding per name.
+              So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.OptimizedKeyboardManager.#ctor">
+            <summary>
+            Constructor
+            </summary>
         </member>
     </members>
 </doc>
