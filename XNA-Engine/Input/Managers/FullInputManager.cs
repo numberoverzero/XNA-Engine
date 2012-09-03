@@ -161,18 +161,6 @@ namespace Engine.Input.Managers
                    _typedManagers.Any(t => t.IsActive(bindingName, player, state));
         }
 
-        public bool IsPressed(string bindingName, PlayerIndex player)
-        {
-            return IsActive(bindingName, player, FrameState.Current) &&
-                   !IsActive(bindingName, player, FrameState.Previous);
-        }
-
-        public bool IsReleased(string bindingName, PlayerIndex player)
-        {
-            return IsActive(bindingName, player, FrameState.Previous) &&
-                   !IsActive(bindingName, player, FrameState.Current);
-        }
-
         public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
             var kb = _keyboardManager.GetCurrentBindings(bindingName, player);

@@ -239,7 +239,7 @@ namespace Engine.Networking
         protected virtual void OnClientReadException(string reason, Client client)
         {
             // Nothing to do if we didn't track the client
-            if (!clientTable.HasItem(client))
+            if (!clientTable.Contains(client))
             {
                 log.Debug("Server:InvalidFunctionCall:OnClientReadException:UnknownClient:Data:IP:<{0}>".format(client.IPString));
                 return;
@@ -429,7 +429,7 @@ namespace Engine.Networking
         protected virtual void OnSendPacketException(Packet packet, string reason, Client client)
         {
             // Nothing to do if we didn't track the client
-            if (!clientTable.HasItem(client))
+            if (!clientTable.Contains(client))
             {
                 log.Debug("Server:InvalidFunctionCall:OnSendPacketException:UnknownClient:Data:IP:<{0}>".format(client.IPString));
                 return;
