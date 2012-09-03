@@ -1,4 +1,6 @@
-﻿namespace Engine.Input
+﻿using System.Collections.Generic;
+
+namespace Engine.Input
 {
     /// <summary>
     ///   A Binding for input that can be checked for activity, using states for the keyboard, mouse, and gamepads.
@@ -8,7 +10,7 @@
         /// <summary>
         ///   Returns the list of modifiers necessary to be active before the binding is considered "active"
         /// </summary>
-        InputBinding[] Modifiers { get; set; }
+        List<InputBinding> Modifiers { get; set; }
 
         /// <summary>
         ///   True if the InputBinding is active in the given FrameState of the given InputManager

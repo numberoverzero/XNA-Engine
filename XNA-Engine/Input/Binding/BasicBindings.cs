@@ -1,6 +1,6 @@
 ﻿#region Using Statements
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -19,7 +19,7 @@ namespace Engine.Input
         /// <summary>
         ///   Any modifiers required for this binding to be considered 'active'
         /// </summary>
-        public InputBinding[] Modifiers { get; set; }
+        public List<InputBinding> Modifiers { get; set; }
 
         /// <summary>
         ///   Compares this Binding to another, and returns whether they are the same (with/without modifiers)
@@ -44,15 +44,14 @@ namespace Engine.Input
         /// <param name="modifiers"> Optional modifiers- Ctrl, Alt, Shift </param>
         public DefaultBinding(params InputBinding[] modifiers)
         {
-            Modifiers = new InputBinding[modifiers.Length];
-            Array.Copy(modifiers, Modifiers, modifiers.Length);
+            Modifiers = new List<InputBinding>(modifiers);
         }
 
         /// <summary>
         ///   Copy Constructor
         /// </summary>
         /// <param name="other"> </param>
-        public DefaultBinding(DefaultBinding other) : this(other.Modifiers)
+        public DefaultBinding(DefaultBinding other) : this(other.Modifiers.ToArray())
         {
         }
 
@@ -325,6 +324,68 @@ namespace Engine.Input
             if (!inputSnapshot.KeyboardState.HasValue)
                 return false;
             return inputSnapshot.KeyboardState.Value.IsKeyDown(Key);
+        }
+    }
+
+    /// <summary>
+    ///   Custom KeyBinding for double-keyed modifiers
+    /// </summary>
+    public class ModifierKey : KeyBinding
+    {
+        private static ModifierKey _Ctrl;
+        private static ModifierKey _Alt;
+        private static ModifierKey _Shift;
+        private readonly Keys key1;
+        private readonly Keys key2;
+
+        private ModifierKey(Keys key1, Keys key2)
+            : base(Keys.None)
+        {
+            this.key1 = key1;
+            this.key2 = key2;
+        }
+
+        /// <summary>
+        ///   Control key
+        /// </summary>
+        public static ModifierKey Ctrl
+        {
+            get { return _Ctrl ?? (_Ctrl = new ModifierKey(Keys.LeftControl, Keys.RightControl)); }
+        }
+
+        /// <summary>
+        ///   Alt key
+        /// </summary>
+        public static ModifierKey Alt
+        {
+            get { return _Alt ?? (_Alt = new ModifierKey(Keys.LeftAlt, Keys.RightAlt)); }
+        }
+
+        /// <summary>
+        ///   Shift key
+        /// </summary>
+        public static ModifierKey Shift
+        {
+            get { return _Shift ?? (_Shift = new ModifierKey(Keys.LeftShift, Keys.RightShift)); }
+        }
+
+        public override bool IsActive(InputSnapshot inputSnapshot)
+        {
+            return inputSnapshot.KeyboardState.HasValue && IsActive(inputSnapshot.KeyboardState.Value);
+        }
+
+        public bool IsActive(KeyboardState keyboardState)
+        {
+            return keyboardState.IsKeyDown(key1) ||
+                   keyboardState.IsKeyDown(key2);
+        }
+
+        public override bool IsEqual(InputBinding other, bool includeModifiers = false)
+        {
+            var kb = other as KeyBinding;
+            if (kb == null) return false;
+            if (includeModifiers && other.Modifiers.Count > 0) return false;
+            return (kb.Key == key1 || kb.Key == key2);
         }
     }
 
