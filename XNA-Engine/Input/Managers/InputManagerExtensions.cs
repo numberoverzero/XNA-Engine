@@ -68,5 +68,29 @@ namespace Engine.Input
             DefaultBinding inputBinding = new KeyBinding(key, modifiers);
             return inputManager.AddBinding(bindingName, inputBinding, player);
         }
+
+        /// <summary>
+        ///   Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
+        /// </summary>
+        /// <param name="bindingName"> The name of the binding to query for active state </param>
+        /// <param name="player"> The player to check the binding's activity for </param>
+        /// <returns> True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous). </returns>
+        public static bool IsPressed(this InputManager inputManager, string bindingName, PlayerIndex player)
+        {
+            return inputManager.IsActive(bindingName, player, FrameState.Current) &&
+                   !inputManager.IsActive(bindingName, player, FrameState.Previous);
+        }
+
+        /// <summary>
+        ///   Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
+        /// </summary>
+        /// <param name="bindingName"> The name of the binding to query for active state </param>
+        /// <param name="player"> The player to check the binding's activity for </param>
+        /// <returns> True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous). </returns>
+        public static bool IsReleased(this InputManager inputManager, string bindingName, PlayerIndex player)
+        {
+            return inputManager.IsActive(bindingName, player, FrameState.Previous) &&
+                   !inputManager.IsActive(bindingName, player, FrameState.Current);
+        }
     }
 }

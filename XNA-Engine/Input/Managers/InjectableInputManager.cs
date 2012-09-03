@@ -104,24 +104,6 @@ namespace Engine.Input
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.IsPressed" />
-        /// </summary>
-        public bool IsPressed(string bindingName, PlayerIndex player)
-        {
-            return IsActive(bindingName, player, FrameState.Current) &&
-                   !IsActive(bindingName, player, FrameState.Previous);
-        }
-
-        /// <summary>
-        ///   See <see cref="InputManager.IsReleased" />
-        /// </summary>
-        public bool IsReleased(string bindingName, PlayerIndex player)
-        {
-            return IsActive(bindingName, player, FrameState.Previous) &&
-                   !IsActive(bindingName, player, FrameState.Current);
-        }
-
-        /// <summary>
         ///   See <see cref="InputManager.GetCurrentBindings" />
         /// </summary>
         public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)

@@ -169,30 +169,6 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
-        /// </summary>
-        /// <param name="bindingName"> The name of the binding to query for active state </param>
-        /// <param name="player"> The player to check the binding's activity for </param>
-        /// <returns> True if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous). </returns>
-        public virtual bool IsPressed(string bindingName, PlayerIndex player)
-        {
-            return IsActive(bindingName, player, FrameState.Current) &&
-                   !IsActive(bindingName, player, FrameState.Previous);
-        }
-
-        /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
-        /// </summary>
-        /// <param name="bindingName"> The name of the binding to query for active state </param>
-        /// <param name="player"> The player to check the binding's activity for </param>
-        /// <returns> True if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous). </returns>
-        public virtual bool IsReleased(string bindingName, PlayerIndex player)
-        {
-            return IsActive(bindingName, player, FrameState.Previous) &&
-                   !IsActive(bindingName, player, FrameState.Current);
-        }
-
-        /// <summary>
         ///   Gets the list of bindings associated with a particular bindingName for a given player
         /// </summary>
         /// <param name="bindingName"> The bindingName associated with the list of Bindings </param>
