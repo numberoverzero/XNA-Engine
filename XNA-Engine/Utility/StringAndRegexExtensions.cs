@@ -82,7 +82,7 @@ namespace Engine.Utility
         /// <returns></returns>
         public static string Join<T>(this string separator, IEnumerable<T> enumerable)
         {
-            return enumerable.PrettyPrint(separator);
+            return String.Join(separator, enumerable);
         }
 
         /// <summary>
@@ -156,6 +156,17 @@ namespace Engine.Utility
         public static byte[] GetBytesUTF8(this string str)
         {
             return str.GetBytes(Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Returns the substring from the beginning until the first occurance of the character c.
+        /// Returns the whole string if that character isn't found.
+        /// </summary>
+        public static string Until(this string str, char c)
+        {
+            if (String.IsNullOrEmpty(str)) return str;
+            var index = str.IndexOf(c);
+            return index < 0 ? str : str.Substring(0, index);
         }
     }
 }

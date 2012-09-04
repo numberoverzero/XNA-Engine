@@ -122,6 +122,7 @@
     <Compile Include="Events\GameObjectEvents\GameObjectCreatedEvent.cs" />
     <Compile Include="Events\GameObjectEvents\GameObjectDestroyedEvent.cs" />
     <Compile Include="Input\Binding\InputBinding.cs" />
+    <Compile Include="Input\Binding\InputBindingExtensions.cs" />
     <Compile Include="Input\Devices\BasicDevices.cs" />
     <Compile Include="Input\Devices\InputDevice.cs" />
     <Compile Include="Input\EventInput.cs" />

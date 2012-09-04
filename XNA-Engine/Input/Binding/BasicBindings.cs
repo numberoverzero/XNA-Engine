@@ -325,6 +325,11 @@ namespace Engine.Input
                 return false;
             return inputSnapshot.KeyboardState.Value.IsKeyDown(Key);
         }
+
+        public override string ToString()
+        {
+            return Key.ToString();
+        }
     }
 
     /// <summary>
@@ -337,12 +342,14 @@ namespace Engine.Input
         private static ModifierKey _Shift;
         private readonly Keys key1;
         private readonly Keys key2;
+        private readonly string name;
 
-        private ModifierKey(Keys key1, Keys key2)
+        private ModifierKey(Keys key1, Keys key2, string name)
             : base(Keys.None)
         {
             this.key1 = key1;
             this.key2 = key2;
+            this.name = name;
         }
 
         /// <summary>
@@ -350,7 +357,7 @@ namespace Engine.Input
         /// </summary>
         public static ModifierKey Ctrl
         {
-            get { return _Ctrl ?? (_Ctrl = new ModifierKey(Keys.LeftControl, Keys.RightControl)); }
+            get { return _Ctrl ?? (_Ctrl = new ModifierKey(Keys.LeftControl, Keys.RightControl, "Ctrl")); }
         }
 
         /// <summary>
@@ -358,7 +365,7 @@ namespace Engine.Input
         /// </summary>
         public static ModifierKey Alt
         {
-            get { return _Alt ?? (_Alt = new ModifierKey(Keys.LeftAlt, Keys.RightAlt)); }
+            get { return _Alt ?? (_Alt = new ModifierKey(Keys.LeftAlt, Keys.RightAlt, "Alt")); }
         }
 
         /// <summary>
@@ -366,7 +373,7 @@ namespace Engine.Input
         /// </summary>
         public static ModifierKey Shift
         {
-            get { return _Shift ?? (_Shift = new ModifierKey(Keys.LeftShift, Keys.RightShift)); }
+            get { return _Shift ?? (_Shift = new ModifierKey(Keys.LeftShift, Keys.RightShift, "Shift")); }
         }
 
         public override bool IsActive(InputSnapshot inputSnapshot)
@@ -386,6 +393,11 @@ namespace Engine.Input
             if (kb == null) return false;
             if (includeModifiers && other.Modifiers.Count > 0) return false;
             return (kb.Key == key1 || kb.Key == key2);
+        }
+
+        public override string ToString()
+        {
+            return name;
         }
     }
 

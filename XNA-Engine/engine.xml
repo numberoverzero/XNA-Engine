@@ -1042,6 +1042,12 @@
             <param name="str"></param>
             <returns></returns>
         </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.Until(System.String,System.Char)">
+            <summary>
+            Returns the substring from the beginning until the first occurance of the character c.
+            Returns the whole string if that character isn't found.
+            </summary>
+        </member>
         <member name="T:Engine.Utility.DictionaryExtensions">
             <summary>
             Extensions for manipulating dictionaries, such as merging

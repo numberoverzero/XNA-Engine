@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Engine.DataStructures;
+using Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -20,36 +22,24 @@ namespace Engine.Input.Managers
         private readonly BidirectionalDict<string, KeyBinding> exactBindings;
         private readonly BidirectionalDict<string, KeyBinding> noModifiers;
 
-        private List<ModifierKey> _cachedPressedModifiers;
-        private InputSnapshot _previousSnapshot, _currentSnapshot;
-        private KeyboardState _current;
-        private bool _dirty = true;
-        private KeyboardState _previous;
+        private List<ModifierKey> _pressedModifiers;
+        private InputSnapshot _previous, _current;
 
         /// <summary>
         ///   Constructor
         /// </summary>
         public OptimizedKeyboardManager()
         {
+            _pressedModifiers = new List<ModifierKey>();
             ModifierCheckType = ModifierCheckType.Smart;
             bindings = new DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>>();
             exactBindings = new BidirectionalDict<string, KeyBinding>();
             noModifiers = new BidirectionalDict<string, KeyBinding>();
+            _previous = InputSnapshot.With(Keyboard.GetState());
+            _current = InputSnapshot.With(Keyboard.GetState());
         }
 
         public ModifierCheckType ModifierCheckType { get; set; }
-
-        private List<ModifierKey> PressedModifiers
-        {
-            get
-            {
-                if (_dirty)
-                {
-                    UpdateCachedValues();
-                }
-                return _cachedPressedModifiers;
-            }
-        }
 
         #region InputManager Members
 
@@ -115,9 +105,8 @@ namespace Engine.Input.Managers
         public bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player)) return false;
-            if(_dirty) UpdateCachedValues();
 
-            var snapshot = state == FrameState.Current ? _currentSnapshot : _previousSnapshot;
+            var snapshot = state == FrameState.Current ? _current : _previous;
             Func<string, InputSnapshot, bool> isActive = null;
             switch (ModifierCheckType)
             {
@@ -149,11 +138,12 @@ namespace Engine.Input.Managers
 
         public void Update()
         {
-            _previous = _current;
-            _current = Keyboard.GetState();
-
+            if (_current.KeyboardState.HasValue)
+                _previous = InputSnapshot.With(_current.KeyboardState.Value);
+            _current = InputSnapshot.With(Keyboard.GetState());
+            
             // Update pressed modifiers
-            UpdateCachedValues();
+            _pressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
         }
 
         #endregion
@@ -174,15 +164,7 @@ namespace Engine.Input.Managers
 
         private bool IsStrictActive(string bindingName, InputSnapshot snapshot)
         {
-            return (modifiers.Any(mod => PressedModifiers.Contains(mod) != bindings[mod].Contains(bindingName)));
-        }
-
-        private void UpdateCachedValues()
-        {
-            _cachedPressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
-            _currentSnapshot = InputSnapshot.With(_current);
-            _previousSnapshot = InputSnapshot.With(_previous);
-            _dirty = false;
+            return (modifiers.Any(mod => _pressedModifiers.Contains(mod) != bindings[mod].Contains(bindingName)));
         }
 
         private bool IsSmartActive(string bindingName, InputSnapshot snapshot)
@@ -194,7 +176,7 @@ namespace Engine.Input.Managers
             var baseBinding = new KeyBinding(binding.Key);
 
             // The key can't be pressed if any of its required modifiers aren't also pressed.
-            if (binding.Modifiers.Any(mod => !PressedModifiers.Contains(mod))) return false;
+            if (binding.Modifiers.Any(mod => !_pressedModifiers.Contains(mod))) return false;
 
             // We're now at a point where at least the modifiers necessary to trigger the binding are active.
             // We want to make sure that the additional modifiers pressed couldn't be interpreted as OTHER bindings we know.
@@ -203,7 +185,7 @@ namespace Engine.Input.Managers
             // If there is, a binding for Space that uses Ctrl, then Ctrl + Shift + Space is ambiguous and we can't say that Shift + Space is pressed.
 
             // Generate a list of pressed modifiers which the binding doesn't care about.
-            var significantModifiers = new List<ModifierKey>(PressedModifiers);
+            var significantModifiers = new List<ModifierKey>(_pressedModifiers);
             foreach (var mod in binding.Modifiers)
                 significantModifiers.Remove((ModifierKey) mod);
 
@@ -218,5 +200,55 @@ namespace Engine.Input.Managers
         {
 
         }
+
+        private string SerializeBiding(string bindingName)
+        {
+            if (!ContainsBinding(bindingName, PlayerIndex.One)) return null;
+            var sb = new StringBuilder();
+            sb.Append(bindingName);
+            var binding = exactBindings[bindingName];
+            sb.Append(" {0}".format(binding.Key));
+            foreach (var mod in binding.Modifiers) sb.Append(mod);
+            return sb.ToString();
+        }
+
+        private KeyBinding DeserializeBinding(string keybindString, out string bindingName)
+        {
+            bindingName = null;
+            keybindString = keybindString.Until('#');
+            if (String.IsNullOrEmpty(keybindString)) return null;
+            var pieces = keybindString.Split(' ');
+            if (pieces.Length < 2) return null;
+
+            bindingName = pieces[0];
+            Keys key;
+            var parsed = Enum.TryParse(pieces[1], out key);
+            if (!parsed) return null;
+
+            var binding = new KeyBinding(key);
+            if (pieces.Length == 2) return binding;
+
+            for(var i=2;i<pieces.Length;i++)
+            {
+                ModifierKey mkey = null;
+                switch(pieces[i])
+                {
+                    case "Ctrl":
+                        mkey = ModifierKey.Ctrl;
+                        break;
+                    case "Shift":
+                        mkey = ModifierKey.Shift;
+                        break;
+                    case "Alt":
+                        mkey = ModifierKey.Alt;
+                        break;
+                }
+                if(mkey != null) binding.Modifiers.Add(mkey);
+            }
+
+            return binding;
+
+        }
+
     }
 }
