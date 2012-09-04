@@ -4260,86 +4260,86 @@
         </member>
         <member name="T:Engine.Logging.Log">
             <summary>
-            See <see cref="T:Engine.Logging.ILog"/>
+              See <see cref="T:Engine.Logging.ILog"/>
             </summary>
         </member>
         <member name="F:Engine.Logging.Log.Filename">
             <summary>
-            The file to log to.
+              The file to log to.
             </summary>
         </member>
         <member name="M:Engine.Logging.Log.#ctor(System.String,Engine.Logging.Frequency)">
             <summary>
-            Create a log file at the given location,
-            with a given expected frequency of logging
+              Create a log file at the given location,
+              with a given expected frequency of logging
             </summary>
-            <param name="filename"></param>
-            <param name="frequency"></param>
-        </member>
-        <member name="M:Engine.Logging.Log.Flush">
-            <summary>
-            Write any pending messages to disk
-            </summary>
+            <param name="filename"> </param>
+            <param name="frequency"> </param>
         </member>
         <member name="M:Engine.Logging.Log.Error(System.String)">
             <summary>
-            See <see cref="M:Engine.Logging.ILog.Error(System.String)"/>
+              See <see cref="M:Engine.Logging.ILog.Error(System.String)"/>
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
         </member>
         <member name="M:Engine.Logging.Log.Warn(System.String)">
             <summary>
-            See <see cref="M:Engine.Logging.ILog.Warn(System.String)"/>
+              See <see cref="M:Engine.Logging.ILog.Warn(System.String)"/>
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
         </member>
         <member name="M:Engine.Logging.Log.Info(System.String)">
             <summary>
-            See <see cref="M:Engine.Logging.ILog.Info(System.String)"/>
+              See <see cref="M:Engine.Logging.ILog.Info(System.String)"/>
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
         </member>
         <member name="M:Engine.Logging.Log.Debug(System.String)">
             <summary>
-            See <see cref="M:Engine.Logging.ILog.Debug(System.String)"/>
+              See <see cref="M:Engine.Logging.ILog.Debug(System.String)"/>
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
+        </member>
+        <member name="M:Engine.Logging.Log.Flush">
+            <summary>
+              Write any pending messages to disk
+            </summary>
         </member>
         <member name="T:Engine.Logging.LogLine">
             <summary>
-            Used for injecting text into another log message
+              Used for injecting text into another log message
             </summary>
         </member>
         <member name="M:Engine.Logging.LogLine.Error(System.String)">
             <summary>
-            Log an error message
+              Log an error message
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
         </member>
         <member name="M:Engine.Logging.LogLine.Warn(System.String)">
             <summary>
-            Log a warning message
+              Log a warning message
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
         </member>
         <member name="M:Engine.Logging.LogLine.Info(System.String)">
             <summary>
-            Log an info message
+              Log an info message
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
         </member>
         <member name="M:Engine.Logging.LogLine.Debug(System.String)">
             <summary>
-            Log a debug message
+              Log a debug message
             </summary>
-            <param name="msg"></param>
+            <param name="msg"> </param>
         </member>
         <member name="M:Engine.Logging.LogLine.InjectMsg(System.Action{System.String},System.String)">
             <summary>
-            Called by Error/Warn/Info/Debug, used for injecting into the message
+              Called by Error/Warn/Info/Debug, used for injecting into the message
             </summary>
-            <param name="func"></param>
-            <param name="msg"></param>
+            <param name="func"> </param>
+            <param name="msg"> </param>
         </member>
         <member name="T:Engine.Utility.InvokeExtensions">
             <summary>

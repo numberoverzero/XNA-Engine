@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
+
 namespace Engine.Utility
 {
     /// <summary>
-    /// Adds a few handy methods for dealing with strings and regex
+    ///   Adds a few handy methods for dealing with strings and regex
     /// </summary>
     public static class StringAndRegexExtensions
     {
+        private const string dflt_time_fmt = "HH:mm:ff ";
+        private static readonly UnicodeEncoding _uni = new UnicodeEncoding();
+
         /// <summary>
-        /// Returns a Dictionary&lt;CapturingGroupName, CapturedGroupValue&gt;
-        /// of the regex of the input string
+        ///   Returns a Dictionary&lt;CapturingGroupName, CapturedGroupValue&gt;
+        ///   of the regex of the input string
         /// </summary>
-        /// <param name="regex"></param>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="regex"> </param>
+        /// <param name="input"> </param>
+        /// <returns> </returns>
         public static Dictionary<string, string> MatchNamedCaptures(this Regex regex, string input)
         {
             var namedCaptureDictionary = new Dictionary<string, string>();
@@ -30,25 +33,25 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        /// Checks if the regex has a named group for the given input string
+        ///   Checks if the regex has a named group for the given input string
         /// </summary>
-        /// <param name="regex"></param>
-        /// <param name="input"></param>
-        /// <param name="groupname"></param>
-        /// <returns></returns>
+        /// <param name="regex"> </param>
+        /// <param name="input"> </param>
+        /// <param name="groupname"> </param>
+        /// <returns> </returns>
         public static bool HasNamedCapture(this Regex regex, string input, string groupname)
         {
             return regex.Match(input).Groups[groupname].Success;
         }
 
         /// <summary>
-        /// If the regex has a named group for the given input string, returns the value of that groupname.
-        /// Otherwise, returns null.
+        ///   If the regex has a named group for the given input string, returns the value of that groupname.
+        ///   Otherwise, returns null.
         /// </summary>
-        /// <param name="regex"></param>
-        /// <param name="input"></param>
-        /// <param name="groupname"></param>
-        /// <returns></returns>
+        /// <param name="regex"> </param>
+        /// <param name="input"> </param>
+        /// <param name="groupname"> </param>
+        /// <returns> </returns>
         public static string GetNamedCapture(this Regex regex, string input, string groupname)
         {
             var groups = regex.Match(input).Groups;
@@ -56,10 +59,10 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        /// Generator that yields each line of a file
+        ///   Generator that yields each line of a file
         /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
+        /// <param name="file"> </param>
+        /// <returns> </returns>
         public static IEnumerable<string> ReadLines(this string file)
         {
             string line;
@@ -73,25 +76,25 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        /// Takes an enumerable and returns the string such that each element is printed,
-        /// separated by the given separator.
+        ///   Takes an enumerable and returns the string such that each element is printed,
+        ///   separated by the given separator.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="enumerable"></param>
-        /// <param name="separator"></param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="enumerable"> </param>
+        /// <param name="separator"> </param>
+        /// <returns> </returns>
         public static string Join<T>(this string separator, IEnumerable<T> enumerable)
         {
             return String.Join(separator, enumerable);
         }
 
         /// <summary>
-        /// Removes any occurrences of the character sequence trim from the end of the string.
-        /// Uses repeated substring and assignment - do not use for heavy lifting.
+        ///   Removes any occurrences of the character sequence trim from the end of the string.
+        ///   Uses repeated substring and assignment - do not use for heavy lifting.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="trim"></param>
-        /// <returns></returns>
+        /// <param name="source"> </param>
+        /// <param name="trim"> </param>
+        /// <returns> </returns>
         public static string TrimEnd(this string source, string trim)
         {
             while (source.EndsWith(trim))
@@ -102,24 +105,23 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        /// Returns the formatted string.  Lowercase because there's already a static method with this signature
+        ///   Returns the formatted string.  Lowercase because there's already a static method with this signature
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="str"> </param>
+        /// <param name="args"> </param>
+        /// <returns> </returns>
         public static string format(this string str, params object[] args)
         {
             return String.Format(str, args);
         }
 
-        private const string dflt_time_fmt = "HH:mm:ff ";
         /// <summary>
-        /// Returns the string prepended with the time in the format:
-        /// "HH:mm:ffff "
+        ///   Returns the string prepended with the time in the format:
+        ///   "HH:mm:ffff "
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="time_fmt"></param>
-        /// <returns></returns>
+        /// <param name="str"> </param>
+        /// <param name="time_fmt"> </param>
+        /// <returns> </returns>
         public static string Timestamped(this string str, string time_fmt = null)
         {
             if (time_fmt == null) time_fmt = dflt_time_fmt;
@@ -127,46 +129,59 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        /// Gets the byte count of the string in the given encoding
+        ///   Gets the byte count of the string in the given encoding
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
+        /// <param name="str"> </param>
+        /// <param name="encoding"> </param>
+        /// <returns> </returns>
         public static int ByteCount(this string str, Encoding encoding)
         {
             return encoding.GetByteCount(str);
         }
 
         /// <summary>
-        /// Get the bytes of a string in a given encoding
+        ///   Get the bytes of a string in a given encoding
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
+        /// <param name="str"> </param>
+        /// <param name="encoding"> </param>
+        /// <returns> </returns>
         public static byte[] GetBytes(this string str, Encoding encoding)
         {
             return encoding.GetBytes(str);
         }
 
         /// <summary>
-        /// bytes of a UTF8-encoded string
+        ///   bytes of a UTF8-encoded string
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str"> </param>
+        /// <returns> </returns>
         public static byte[] GetBytesUTF8(this string str)
         {
             return str.GetBytes(Encoding.UTF8);
         }
 
         /// <summary>
-        /// Returns the substring from the beginning until the first occurance of the character c.
-        /// Returns the whole string if that character isn't found.
+        ///   Returns the substring from the beginning until the first occurance of the character c.
+        ///   Returns the whole string if that character isn't found.
         /// </summary>
         public static string Until(this string str, char c)
         {
             if (String.IsNullOrEmpty(str)) return str;
             var index = str.IndexOf(c);
             return index < 0 ? str : str.Substring(0, index);
+        }
+
+        public static void WriteToFile(this string msg, string filename)
+        {
+            using (var file = File.OpenWrite(filename))
+            {
+                file.Write(_uni.GetBytes(msg), 0, _uni.GetByteCount(msg));
+            }
+        }
+
+        public static void WriteLineToFile(this string msg, string filename)
+        {
+            WriteToFile(msg + "\r\n", filename);
         }
     }
 }
