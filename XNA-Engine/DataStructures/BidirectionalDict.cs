@@ -102,27 +102,27 @@ namespace Engine.DataStructures
         ///   Remove the item and its corresponding value from the dictionary
         /// </summary>
         /// <param name="k"> </param>
-        public void Remove(T1 k)
+        public void Remove(T1 t1)
         {
-            Remove(k, this[k]);
+            if(Contains(t1) && Contains(this[t1]))
+                Remove(t1, this[t1]);
         }
 
         /// <summary>
         ///   Remove the item and its corresponding value from the dictionary
         /// </summary>
         /// <param name="k"> </param>
-        public void Remove(T2 k)
+        public void Remove(T2 t2)
         {
-            Remove(this[k], k);
+            if (Contains(t2) && Contains(this[t2]))
+                Remove(this[t2], t2);
         }
 
         private void Remove(T1 key, T2 value)
         {
-            if (t1_t2.ContainsKey(key) || t2_t1.ContainsKey(value))
-            {
-                t1_t2.Remove(key);
-                t2_t1.Remove(value);
-            }
+            if (!t1_t2.ContainsKey(key) && !t2_t1.ContainsKey(value)) return;
+            t1_t2.Remove(key);
+            t2_t1.Remove(value);
         }
 
         /// <summary>
