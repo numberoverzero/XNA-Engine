@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Engine.DataStructures;
 using Engine.Input.Devices;
-using Engine.Utility;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Input.Managers

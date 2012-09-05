@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Engine.DataStructures;
 using Microsoft.Xna.Framework;
 
-namespace Engine.Input
+namespace Engine.Input.Managers
 {
     /// <summary>
     ///   Can inject presses

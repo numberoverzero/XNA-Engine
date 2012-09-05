@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 #endregion
 
-namespace Engine.Input
+namespace Engine.Input.Managers
 {
     /// <summary>
     ///   Allows input querying and offers hooks for event-driven keyboard input

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using Engine.Utility;
 
 namespace Engine.Logging
@@ -109,7 +107,7 @@ namespace Engine.Logging
 
         private void LogWrite(string msg)
         {
-            msg.WriteLineToFile(Filename);
+            msg.AppendLineToFile(Filename);
         }
     }
 
