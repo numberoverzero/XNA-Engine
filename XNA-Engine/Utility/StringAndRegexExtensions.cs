@@ -171,17 +171,17 @@ namespace Engine.Utility
             return index < 0 ? str : str.Substring(0, index);
         }
 
-        public static void WriteToFile(this string msg, string filename)
+        public static void AppendToFile(this string msg, string filename)
         {
-            using (var file = File.Open(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
+            using (var file = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
             {
                 file.Write(_uni.GetBytes(msg), 0, _uni.GetByteCount(msg));
             }
         }
 
-        public static void WriteLineToFile(this string msg, string filename)
+        public static void AppendLineToFile(this string msg, string filename)
         {
-            WriteToFile(msg + "\r\n", filename);
+            AppendToFile(msg + "\r\n", filename);
         }
 
         public static IEnumerable<string> ReadLines(this StreamReader reader)
@@ -189,6 +189,12 @@ namespace Engine.Utility
             string line = null;
             while ((line = reader.ReadLine()) != null)
                 yield return line;
+        }
+
+        public static void WriteLine(this FileStream stream, string msg)
+        {
+            msg = msg + "\r\n";
+            stream.Write(_uni.GetBytes(msg), 0, _uni.GetByteCount(msg));
         }
     }
 }
