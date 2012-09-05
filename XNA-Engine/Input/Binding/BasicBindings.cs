@@ -330,6 +330,17 @@ namespace Engine.Input
         {
             return Key.ToString();
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as KeyBinding;
+            return other != null && other.Key == Key;
+        }
+
+        public override int GetHashCode()
+        {
+            return Key.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -398,6 +409,17 @@ namespace Engine.Input
         public override string ToString()
         {
             return name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as ModifierKey;
+            return other != null && other.key1 == key1 && other.key2 == key2;
+        }
+
+        public override int GetHashCode()
+        {
+            return name.GetHashCode();
         }
     }
 
