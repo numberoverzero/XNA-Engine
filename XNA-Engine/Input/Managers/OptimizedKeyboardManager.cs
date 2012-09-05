@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Engine.DataStructures;
+using Engine.Logging;
 using Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -26,6 +27,7 @@ namespace Engine.Input.Managers
 
         private List<ModifierKey> _pressedModifiers;
         private InputSnapshot _previous;
+        private FullFileBuffer bindingsFile;
 
         /// <summary>
         ///   Constructor
@@ -165,7 +167,8 @@ namespace Engine.Input.Managers
 
         private bool IsStrictActive(string bindingName, InputSnapshot snapshot)
         {
-            return noModifiers[bindingName].IsActive(snapshot) && modifiers.All(mod => _pressedModifiers.Contains(mod) == bindings[mod].Contains(bindingName));
+            return noModifiers[bindingName].IsActive(snapshot) &&
+                   modifiers.All(mod => _pressedModifiers.Contains(mod) == bindings[mod].Contains(bindingName));
         }
 
         private bool IsSmartActive(string bindingName, InputSnapshot snapshot)
@@ -190,16 +193,43 @@ namespace Engine.Input.Managers
             foreach (var mod in binding.Modifiers)
                 significantModifiers.Remove((ModifierKey) mod);
 
-            bool noSignificantModifiersTrackBaseBinding = !significantModifiers.Any(mod => bindings[mod].Contains(baseBinding));
+            bool noSignificantModifiersTrackBaseBinding =
+                !significantModifiers.Any(mod => bindings[mod].Contains(baseBinding));
             return noSignificantModifiersTrackBaseBinding && noModifiers[bindingName].IsActive(snapshot);
         }
 
         public void LoadBindings(string filename)
         {
+            ClearAllBindings();
+            foreach (var line in new StreamReader(filename).ReadLines())
+            {
+                string bindingName = null;
+                var key = DeserializeBinding(line, out bindingName);
+                if (key != null) AddBinding(bindingName, key, PlayerIndex.One);
+            }
+            bindingsFile = new FullFileBuffer(filename);
         }
 
         public void SaveBindings(string filename)
         {
+            if (bindingsFile == null)
+                bindingsFile = new FullFileBuffer(filename);
+            else
+                bindingsFile.Filename = filename;
+
+            const string pattern = "^{0}";
+            foreach (var bindingName in exactBindings.GetValuesType1())
+            {
+                var binding = SerializeBiding(bindingName);
+
+                //Replace existing line instead of duplicating declaration
+                var lineno = bindingsFile.LineMatching(pattern.format(bindingName));
+                if (lineno < 0)
+                    bindingsFile.Append(binding);
+                else
+                    bindingsFile.WriteLine(binding, lineno);
+            }
+            bindingsFile.SaveToFile();
         }
 
         private string SerializeBiding(string bindingName)
@@ -209,7 +239,7 @@ namespace Engine.Input.Managers
             sb.Append(bindingName);
             var binding = exactBindings[bindingName];
             sb.Append(" {0}".format(binding.Key));
-            foreach (var mod in binding.Modifiers) sb.Append(mod);
+            foreach (var mod in binding.Modifiers) sb.Append(" {0}".format(mod));
             return sb.ToString();
         }
 
@@ -247,24 +277,6 @@ namespace Engine.Input.Managers
                 if (mkey != null) binding.Modifiers.Add(mkey);
             }
             return binding;
-        }
-
-        public void SaveBindingsToFile(string filename)
-        {
-            foreach (var bindingName in exactBindings.GetValuesType1())
-                SerializeBiding(bindingName).WriteLineToFile(filename);
-        }
-
-        public static OptimizedKeyboardManager LoadBindingsFromFile(string filename)
-        {
-            var okm = new OptimizedKeyboardManager();
-            foreach (var line in new StreamReader(filename).ReadLines())
-            {
-                string bindingName = null;
-                var key = DeserializeBinding(line, out bindingName);
-                if (key != null) okm.AddBinding(bindingName, key, PlayerIndex.One);
-            }
-            return okm;
         }
     }
 }
