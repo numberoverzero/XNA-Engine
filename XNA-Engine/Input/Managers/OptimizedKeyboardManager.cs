@@ -19,7 +19,7 @@ namespace Engine.Input.Managers
         private static readonly List<ModifierKey> modifiers =
             new List<ModifierKey> {ModifierKey.Alt, ModifierKey.Ctrl, ModifierKey.Shift};
 
-        private readonly DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>> bindings;
+        private readonly DefaultObjDict<ModifierKey, BidirectionalDict<string, KeyBinding>> bindings;
         private readonly BidirectionalDict<string, KeyBinding> exactBindings;
         private readonly BidirectionalDict<string, KeyBinding> noModifiers;
         private InputSnapshot _current;
@@ -34,7 +34,7 @@ namespace Engine.Input.Managers
         {
             _pressedModifiers = new List<ModifierKey>();
             ModifierCheckType = ModifierCheckType.Smart;
-            bindings = new DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>>();
+            bindings = new DefaultObjDict<ModifierKey, BidirectionalDict<string, KeyBinding>>();
             exactBindings = new BidirectionalDict<string, KeyBinding>();
             noModifiers = new BidirectionalDict<string, KeyBinding>();
             _previous = InputSnapshot.With(Keyboard.GetState());
@@ -61,9 +61,8 @@ namespace Engine.Input.Managers
 
             //Strip modifiers off for storage in specific modifiers dict
 
-            if (exactBinding.Modifiers.Count == 0)
-                noModifiers.Add(exactBinding, bindingName);
-            else
+            noModifiers.Add(exactBinding, bindingName);
+            if (exactBinding.Modifiers.Count >= 0)
                 foreach (var mod in exactBinding.Modifiers)
                     bindings[(ModifierKey) mod].Add(rawBinding, bindingName);
 
@@ -166,7 +165,7 @@ namespace Engine.Input.Managers
 
         private bool IsStrictActive(string bindingName, InputSnapshot snapshot)
         {
-            return (modifiers.Any(mod => _pressedModifiers.Contains(mod) != bindings[mod].Contains(bindingName)));
+            return noModifiers[bindingName].IsActive(snapshot) && modifiers.All(mod => _pressedModifiers.Contains(mod) == bindings[mod].Contains(bindingName));
         }
 
         private bool IsSmartActive(string bindingName, InputSnapshot snapshot)
@@ -191,7 +190,8 @@ namespace Engine.Input.Managers
             foreach (var mod in binding.Modifiers)
                 significantModifiers.Remove((ModifierKey) mod);
 
-            return significantModifiers.All(mod => !bindings[mod].Contains(baseBinding));
+            bool noSignificantModifiersTrackBaseBinding = !significantModifiers.Any(mod => bindings[mod].Contains(baseBinding));
+            return noSignificantModifiersTrackBaseBinding && noModifiers[bindingName].IsActive(snapshot);
         }
 
         public void LoadBindings(string filename)
@@ -246,7 +246,6 @@ namespace Engine.Input.Managers
                 }
                 if (mkey != null) binding.Modifiers.Add(mkey);
             }
-
             return binding;
         }
 
