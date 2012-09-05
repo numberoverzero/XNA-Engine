@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Engine.DataStructures;
@@ -21,9 +22,10 @@ namespace Engine.Input.Managers
         private readonly DefaultDict<ModifierKey, BidirectionalDict<string, KeyBinding>> bindings;
         private readonly BidirectionalDict<string, KeyBinding> exactBindings;
         private readonly BidirectionalDict<string, KeyBinding> noModifiers;
+        private InputSnapshot _current;
 
         private List<ModifierKey> _pressedModifiers;
-        private InputSnapshot _previous, _current;
+        private InputSnapshot _previous;
 
         /// <summary>
         ///   Constructor
@@ -141,7 +143,7 @@ namespace Engine.Input.Managers
             if (_current.KeyboardState.HasValue)
                 _previous = InputSnapshot.With(_current.KeyboardState.Value);
             _current = InputSnapshot.With(Keyboard.GetState());
-            
+
             // Update pressed modifiers
             _pressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
         }
@@ -198,7 +200,6 @@ namespace Engine.Input.Managers
 
         public void SaveBindings(string filename)
         {
-
         }
 
         private string SerializeBiding(string bindingName)
@@ -212,7 +213,7 @@ namespace Engine.Input.Managers
             return sb.ToString();
         }
 
-        private KeyBinding DeserializeBinding(string keybindString, out string bindingName)
+        private static KeyBinding DeserializeBinding(string keybindString, out string bindingName)
         {
             bindingName = null;
             keybindString = keybindString.Until('#');
@@ -228,10 +229,10 @@ namespace Engine.Input.Managers
             var binding = new KeyBinding(key);
             if (pieces.Length == 2) return binding;
 
-            for(var i=2;i<pieces.Length;i++)
+            for (var i = 2; i < pieces.Length; i++)
             {
                 ModifierKey mkey = null;
-                switch(pieces[i])
+                switch (pieces[i])
                 {
                     case "Ctrl":
                         mkey = ModifierKey.Ctrl;
@@ -243,12 +244,28 @@ namespace Engine.Input.Managers
                         mkey = ModifierKey.Alt;
                         break;
                 }
-                if(mkey != null) binding.Modifiers.Add(mkey);
+                if (mkey != null) binding.Modifiers.Add(mkey);
             }
 
             return binding;
-
         }
 
+        public void SaveBindingsToFile(string filename)
+        {
+            foreach (var bindingName in exactBindings.GetValuesType1())
+                SerializeBiding(bindingName).WriteLineToFile(filename);
+        }
+
+        public static OptimizedKeyboardManager LoadBindingsFromFile(string filename)
+        {
+            var okm = new OptimizedKeyboardManager();
+            foreach (var line in new StreamReader(filename).ReadLines())
+            {
+                string bindingName = null;
+                var key = DeserializeBinding(line, out bindingName);
+                if (key != null) okm.AddBinding(bindingName, key, PlayerIndex.One);
+            }
+            return okm;
+        }
     }
 }

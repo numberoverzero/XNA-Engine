@@ -136,7 +136,6 @@
     <Compile Include="Logging\Enums.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\Log.cs" />
-    <Compile Include="Logging\Writer.cs" />
     <Compile Include="Networking\Packets\ChatPacket.cs" />
     <Compile Include="Networking\Packets\Packet.cs" />
     <Compile Include="Networking\Packets\ServerInfoPacket.cs" />

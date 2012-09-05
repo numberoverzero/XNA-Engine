@@ -945,107 +945,107 @@
         </member>
         <member name="T:Engine.Utility.StringAndRegexExtensions">
             <summary>
-            Adds a few handy methods for dealing with strings and regex
+              Adds a few handy methods for dealing with strings and regex
             </summary>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.MatchNamedCaptures(System.Text.RegularExpressions.Regex,System.String)">
             <summary>
-            Returns a Dictionary&lt;CapturingGroupName, CapturedGroupValue&gt;
-            of the regex of the input string
+              Returns a Dictionary&lt;CapturingGroupName, CapturedGroupValue&gt;
+              of the regex of the input string
             </summary>
-            <param name="regex"></param>
-            <param name="input"></param>
-            <returns></returns>
+            <param name="regex"> </param>
+            <param name="input"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.HasNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
             <summary>
-            Checks if the regex has a named group for the given input string
+              Checks if the regex has a named group for the given input string
             </summary>
-            <param name="regex"></param>
-            <param name="input"></param>
-            <param name="groupname"></param>
-            <returns></returns>
+            <param name="regex"> </param>
+            <param name="input"> </param>
+            <param name="groupname"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.GetNamedCapture(System.Text.RegularExpressions.Regex,System.String,System.String)">
             <summary>
-            If the regex has a named group for the given input string, returns the value of that groupname.
-            Otherwise, returns null.
+              If the regex has a named group for the given input string, returns the value of that groupname.
+              Otherwise, returns null.
             </summary>
-            <param name="regex"></param>
-            <param name="input"></param>
-            <param name="groupname"></param>
-            <returns></returns>
+            <param name="regex"> </param>
+            <param name="input"> </param>
+            <param name="groupname"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.ReadLines(System.String)">
             <summary>
-            Generator that yields each line of a file
+              Generator that yields each line of a file
             </summary>
-            <param name="file"></param>
-            <returns></returns>
+            <param name="file"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.Join``1(System.String,System.Collections.Generic.IEnumerable{``0})">
             <summary>
-            Takes an enumerable and returns the string such that each element is printed,
-            separated by the given separator.
+              Takes an enumerable and returns the string such that each element is printed,
+              separated by the given separator.
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="enumerable"></param>
-            <param name="separator"></param>
-            <returns></returns>
+            <typeparam name="T"> </typeparam>
+            <param name="enumerable"> </param>
+            <param name="separator"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.TrimEnd(System.String,System.String)">
             <summary>
-            Removes any occurrences of the character sequence trim from the end of the string.
-            Uses repeated substring and assignment - do not use for heavy lifting.
+              Removes any occurrences of the character sequence trim from the end of the string.
+              Uses repeated substring and assignment - do not use for heavy lifting.
             </summary>
-            <param name="source"></param>
-            <param name="trim"></param>
-            <returns></returns>
+            <param name="source"> </param>
+            <param name="trim"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.format(System.String,System.Object[])">
             <summary>
-            Returns the formatted string.  Lowercase because there's already a static method with this signature
+              Returns the formatted string.  Lowercase because there's already a static method with this signature
             </summary>
-            <param name="str"></param>
-            <param name="args"></param>
-            <returns></returns>
+            <param name="str"> </param>
+            <param name="args"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.Timestamped(System.String,System.String)">
             <summary>
-            Returns the string prepended with the time in the format:
-            "HH:mm:ffff "
+              Returns the string prepended with the time in the format:
+              "HH:mm:ffff "
             </summary>
-            <param name="str"></param>
-            <param name="time_fmt"></param>
-            <returns></returns>
+            <param name="str"> </param>
+            <param name="time_fmt"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.ByteCount(System.String,System.Text.Encoding)">
             <summary>
-            Gets the byte count of the string in the given encoding
+              Gets the byte count of the string in the given encoding
             </summary>
-            <param name="str"></param>
-            <param name="encoding"></param>
-            <returns></returns>
+            <param name="str"> </param>
+            <param name="encoding"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.GetBytes(System.String,System.Text.Encoding)">
             <summary>
-            Get the bytes of a string in a given encoding
+              Get the bytes of a string in a given encoding
             </summary>
-            <param name="str"></param>
-            <param name="encoding"></param>
-            <returns></returns>
+            <param name="str"> </param>
+            <param name="encoding"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.GetBytesUTF8(System.String)">
             <summary>
-            bytes of a UTF8-encoded string
+              bytes of a UTF8-encoded string
             </summary>
-            <param name="str"></param>
-            <returns></returns>
+            <param name="str"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.Until(System.String,System.Char)">
             <summary>
-            Returns the substring from the beginning until the first occurance of the character c.
-            Returns the whole string if that character isn't found.
+              Returns the substring from the beginning until the first occurance of the character c.
+              Returns the whole string if that character isn't found.
             </summary>
         </member>
         <member name="T:Engine.Utility.DictionaryExtensions">

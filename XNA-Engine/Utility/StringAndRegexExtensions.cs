@@ -173,7 +173,7 @@ namespace Engine.Utility
 
         public static void WriteToFile(this string msg, string filename)
         {
-            using (var file = File.OpenWrite(filename))
+            using (var file = File.Open(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
             {
                 file.Write(_uni.GetBytes(msg), 0, _uni.GetByteCount(msg));
             }
@@ -182,6 +182,13 @@ namespace Engine.Utility
         public static void WriteLineToFile(this string msg, string filename)
         {
             WriteToFile(msg + "\r\n", filename);
+        }
+
+        public static IEnumerable<string> ReadLines(this StreamReader reader)
+        {
+            string line = null;
+            while ((line = reader.ReadLine()) != null)
+                yield return line;
         }
     }
 }
