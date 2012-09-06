@@ -101,7 +101,6 @@ namespace Engine.DataStructures
         /// <summary>
         ///   Remove the item and its corresponding value from the dictionary
         /// </summary>
-        /// <param name="k"> </param>
         public void Remove(T1 t1)
         {
             if(Contains(t1) && Contains(this[t1]))
@@ -111,7 +110,6 @@ namespace Engine.DataStructures
         /// <summary>
         ///   Remove the item and its corresponding value from the dictionary
         /// </summary>
-        /// <param name="k"> </param>
         public void Remove(T2 t2)
         {
             if (Contains(t2) && Contains(this[t2]))
