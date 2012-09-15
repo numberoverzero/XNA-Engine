@@ -128,7 +128,7 @@ namespace Engine.Networking
         {
             var success = true;
             var parameters = new Dictionary<string, string>();
-            parameters["Server:Connect:Data:IP"] = client.IpString;
+            parameters["Server:Connect:Data:IP"] = client.GetIP;
             if (!IsRunning) return;
             if (e == null)
             {
@@ -144,7 +144,7 @@ namespace Engine.Networking
                 e.Success = success;
                 e.Client = client;
             }
-            Log.Info("Server:Connect:Data:IP:<{0}>".format(client.IpString));
+            Log.Info("Server:Connect:Data:IP:<{0}>".format(client.GetIP));
             if (OnConnect != null)
                 OnConnect(this, e);
         }
@@ -158,7 +158,7 @@ namespace Engine.Networking
         {
             if (!IsRunning)
             {
-                Log.Debug("Server:InvalidFunctionCall:Disconnect:Data:IP:<{0}>".format(client.IpString));
+                Log.Debug("Server:InvalidFunctionCall:Disconnect:Data:IP:<{0}>".format(client.GetIP));
                 return;
             }
             var success = true;
@@ -192,7 +192,7 @@ namespace Engine.Networking
                 e.Success = success;
                 e.Client = client;
             }
-            Log.Info("Server:Disconnect:Data:IP:<{0}>".format(client.IpString));
+            Log.Info("Server:Disconnect:Data:IP:<{0}>".format(client.GetIP));
             if (OnDisconnect != null)
                 OnDisconnect(this, e);
         }
@@ -206,7 +206,7 @@ namespace Engine.Networking
         {
             if (!IsRunning)
             {
-                Log.Debug("Server:InvalidFunctionCall:Authenticate:Data:IP:<{0}>".format(client.IpString));
+                Log.Debug("Server:InvalidFunctionCall:Authenticate:Data:IP:<{0}>".format(client.GetIP));
                 return;
             }
             var parameters = new Dictionary<string, string>();
@@ -224,8 +224,8 @@ namespace Engine.Networking
             }
             AuthTable[client] = e.Success;
             Log.Info(e.Success
-                         ? "Server:AuthSucceed:Data:IP:<{0}>".format(client.IpString)
-                         : "Server:AuthFail:Data:IP:<{0}>".format(client.IpString));
+                         ? "Server:AuthSucceed:Data:IP:<{0}>".format(client.GetIP)
+                         : "Server:AuthFail:Data:IP:<{0}>".format(client.GetIP));
             if (OnAuthenticate != null)
                 OnAuthenticate(this, e);
         }
@@ -417,7 +417,7 @@ namespace Engine.Networking
             {
                 Log.Debug(
                     "Server:InvalidFunctionCall:OnClientReadException:UnknownClient:Data:IP:<{0}>".format(
-                        client.IpString));
+                        client.GetIP));
                 return;
             }
 
@@ -444,7 +444,7 @@ namespace Engine.Networking
             {
                 Log.Debug(
                     "Server:InvalidFunctionCall:OnSendPacketException:UnknownClient:Data:IP:<{0}>".format(
-                        client.IpString));
+                        client.GetIP));
                 return;
             }
             const bool success = false;

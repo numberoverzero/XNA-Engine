@@ -61,7 +61,7 @@ namespace Engine.Networking
         /// <summary>
         ///   Returns the underlying TcpClient's IPAddress as a string
         /// </summary>
-        public string IpString
+        public string GetIP
         {
             get { return TcpClient.GetIP(); }
         }
@@ -126,6 +126,9 @@ namespace Engine.Networking
         {
             TcpClient.GetStream().Close();
             TcpClient.Close();
+            if(_writeThread.IsAlive) _writeThread.Kill();
+            if (_readThread.IsAlive) _readThread.Kill();
+            IsAlive = false;
         }
 
         private void ReadLoop()

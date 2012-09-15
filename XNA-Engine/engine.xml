@@ -1880,7 +1880,7 @@
               and handling reads/writes
             </summary>
         </member>
-        <member name="P:Engine.Networking.Client.IpString">
+        <member name="P:Engine.Networking.Client.GetIP">
             <summary>
               Returns the underlying TcpClient's IPAddress as a string
             </summary>
