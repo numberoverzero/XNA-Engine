@@ -107,6 +107,7 @@ namespace Engine.Logging
 
         private void LogWrite(string msg)
         {
+            if (String.IsNullOrEmpty(Filename)) return;
             msg.AppendLineToFile(Filename);
         }
     }
