@@ -40,7 +40,10 @@ namespace Engine.Networking
         /// </summary>
         protected Log Log;
 
-        protected Func<byte[], Packet> PacketBuildFunc;
+        /// <summary>
+        /// This function should handle null byte arrays
+        /// </summary>
+        public Func<byte[], Packet> PacketBuildFunc;
         private TcpListener _listener;
         private Thread _clientPollThread;
 
@@ -349,7 +352,7 @@ namespace Engine.Networking
             while (true)
             {
                 var client = _listener.AcceptTcpClient();
-                new Thread(() => Connect(new Client(client, PacketBuildFunc))).Start();
+                new Thread(() => Connect(new Client(client))).Start();
             }
         }
 
@@ -383,7 +386,14 @@ namespace Engine.Networking
                 try
                 {
                     if (!client.HasQueuedReadMessages) continue;
-                    ReceivePacket(client.ReadPacket(), client);
+                    
+                    var bytes = client.Read();
+                    if (bytes == null) continue; // We read an empty byte steam
+                    
+                    var packet = PacketBuildFunc(bytes);
+                    if (packet == null || packet.Equals(Packet.EmptyPacket)) continue; // Unknown or poorly formed packet
+
+                    ReceivePacket(packet, client);
                 }
                 catch
                 {

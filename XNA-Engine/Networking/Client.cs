@@ -14,7 +14,6 @@ namespace Engine.Networking
     /// </summary>
     public class Client
     {
-        private readonly Func<byte[], Packet> _buildPacket;
         private readonly ConcurrentQueue<byte[]> _readQueue;
         private readonly Thread _readThread;
         private readonly ConcurrentQueue<byte[]> _writeQueue;
@@ -26,7 +25,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="baseClient"> </param>
         /// <param name="start"> </param>
-        public Client(TcpClient baseClient, Func<byte[], Packet> packetBuildFunc, bool start = true)
+        public Client(TcpClient baseClient, bool start = true)
         {
             TcpClient = baseClient;
             IsAlive = false;
@@ -35,7 +34,6 @@ namespace Engine.Networking
             _writeQueue = new ConcurrentQueue<byte[]>();
             _readThread = new Thread(ReadLoop);
             _writeThread = new Thread(WriteLoop);
-            _buildPacket = packetBuildFunc;
             if (start) Start();
         }
 
@@ -109,18 +107,6 @@ namespace Engine.Networking
         {
             byte[] buffer;
             return _readQueue.TryDequeue(out buffer) ? buffer : null;
-        }
-
-        /// <summary>
-        ///   Tries to read a message from the client.
-        ///   Returns an empty packet if there is no pending message from the client.
-        ///   Messages to be read are enqueued by a worker thread and added in the order they are received
-        /// </summary>
-        /// <returns> </returns>
-        public Packet ReadPacket()
-        {
-            var bytes = Read();
-            return bytes != null ? _buildPacket(bytes) : Packet.EmptyPacket;
         }
 
         /// <summary>
