@@ -14,12 +14,12 @@ namespace Engine.Networking
     /// </summary>
     public class Client
     {
+        private readonly Func<byte[], Packet> _buildPacket;
         private readonly ConcurrentQueue<byte[]> _readQueue;
         private readonly Thread _readThread;
         private readonly ConcurrentQueue<byte[]> _writeQueue;
         private readonly Thread _writeThread;
-        private readonly Func<byte[], Packet> _buildPacket;
- 
+
         /// <summary>
         ///   Construct a client that manages concurrent reads/writes to a TcpClient
         ///   Default behavior starts the client immediately
@@ -70,10 +70,24 @@ namespace Engine.Networking
         ///   Writes a message to the client.
         ///   Messages are queued and a thread proccesses them in the order they were enqueued
         /// </summary>
-        /// <param name="buffer"> </param>
-        public void Write(byte[] buffer)
+        /// <param name="bytes"> </param>
+        /// <param name="sourceIndex"> </param>
+        /// <param name="length"> </param>
+        public void Write(byte[] bytes, int sourceIndex, int length)
         {
-            _writeQueue.Enqueue(buffer.Copy());
+            var buffer = new byte[length];
+            Array.Copy(bytes, sourceIndex, buffer, 0, length);
+            _writeQueue.Enqueue(buffer);
+        }
+
+        /// <summary>
+        ///   Writes a message to the client.
+        ///   Messages are queued and a thread proccesses them in the order they were enqueued
+        /// </summary>
+        /// <param name="bytes"> </param>
+        public void Write(byte[] bytes)
+        {
+            Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>
@@ -83,7 +97,7 @@ namespace Engine.Networking
         /// <param name="packet"> </param>
         public void WritePacket(Packet packet)
         {
-            Write(packet.ByteStream);
+            Write(packet.AsByteArray());
         }
 
         /// <summary>
@@ -105,8 +119,8 @@ namespace Engine.Networking
         /// <returns> </returns>
         public Packet ReadPacket()
         {
-            var buffer = Read();
-            return buffer != null ? _buildPacket(buffer) : Packet.EmptyPacket;
+            var bytes = Read();
+            return bytes != null ? _buildPacket(bytes) : Packet.EmptyPacket;
         }
 
         /// <summary>
@@ -126,7 +140,7 @@ namespace Engine.Networking
         {
             TcpClient.GetStream().Close();
             TcpClient.Close();
-            if(_writeThread.IsAlive) _writeThread.Kill();
+            if (_writeThread.IsAlive) _writeThread.Kill();
             if (_readThread.IsAlive) _readThread.Kill();
             IsAlive = false;
         }
@@ -139,9 +153,9 @@ namespace Engine.Networking
                 try
                 {
                     Thread.Sleep(1);
-                    var buffer = stream.ReadWithHeader();
-                    if (buffer == null) continue;
-                    _readQueue.Enqueue(buffer);
+                    var bytes = stream.ReadWithHeader();
+                    if (bytes == null) continue;
+                    _readQueue.Enqueue(bytes);
                 }
                 catch
                 {
@@ -159,9 +173,9 @@ namespace Engine.Networking
                 try
                 {
                     Thread.Sleep(1);
-                    byte[] buffer;
-                    var needsWrite = _writeQueue.TryDequeue(out buffer);
-                    if (needsWrite) stream.WriteWithHeader(buffer, 0, buffer.Length);
+                    byte[] bytes;
+                    var needsWrite = _writeQueue.TryDequeue(out bytes);
+                    if (needsWrite) stream.WriteWithHeader(bytes);
                 }
                 catch
                 {
