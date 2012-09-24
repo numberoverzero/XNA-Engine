@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using Engine.Utility;
+﻿using System.Collections.Generic;
 
 namespace Engine.DataStructures
 {
@@ -12,16 +10,16 @@ namespace Engine.DataStructures
     /// <typeparam name="T2"> </typeparam>
     public class BidirectionalDict<T1, T2>
     {
-        private readonly ConcurrentDictionary<T1, T2> t1_t2;
-        private readonly ConcurrentDictionary<T2, T1> t2_t1;
+        private readonly Dictionary<T1, T2> t1_t2;
+        private readonly Dictionary<T2, T1> t2_t1;
 
         /// <summary>
         ///   Empty Bidirectional Dictionary
         /// </summary>
         public BidirectionalDict()
         {
-            t1_t2 = new ConcurrentDictionary<T1, T2>();
-            t2_t1 = new ConcurrentDictionary<T2, T1>();
+            t1_t2 = new Dictionary<T1, T2>();
+            t2_t1 = new Dictionary<T2, T1>();
         }
 
         /// <summary>
@@ -30,8 +28,8 @@ namespace Engine.DataStructures
         /// <param name="dictionary"> </param>
         public BidirectionalDict(IDictionary<T1, T2> dictionary)
         {
-            t1_t2 = new ConcurrentDictionary<T1, T2>(dictionary);
-            t2_t1 = new ConcurrentDictionary<T2, T1>();
+            t1_t2 = new Dictionary<T1, T2>(dictionary);
+            t2_t1 = new Dictionary<T2, T1>();
             foreach (T1 t1 in dictionary.Keys)
                 t2_t1[dictionary[t1]] = t1;
         }
@@ -42,8 +40,8 @@ namespace Engine.DataStructures
         /// <param name="dictionary"> </param>
         public BidirectionalDict(IDictionary<T2, T1> dictionary)
         {
-            t2_t1 = new ConcurrentDictionary<T2, T1>(dictionary);
-            t1_t2 = new ConcurrentDictionary<T1, T2>();
+            t2_t1 = new Dictionary<T2, T1>(dictionary);
+            t1_t2 = new Dictionary<T1, T2>();
             foreach (T2 t2 in dictionary.Keys)
                 t1_t2[dictionary[t2]] = t2;
         }
@@ -103,7 +101,7 @@ namespace Engine.DataStructures
         /// </summary>
         public void Remove(T1 t1)
         {
-            if(Contains(t1) && Contains(this[t1]))
+            if (Contains(t1) && Contains(this[t1]))
                 Remove(t1, this[t1]);
         }
 
