@@ -45,23 +45,13 @@ namespace Engine.Networking
         private Thread _clientPollThread;
 
         /// <summary>
-        ///   Construct a basic server such that it is ready to be started.
-        /// </summary>
-        /// <param name="localaddr"> </param>
-        /// <param name="port"> </param>
-        public BasicServer(IPAddress localaddr, int port, Func<byte[], Packet> packetBuildFunc)
-            : this(localaddr, port, packetBuildFunc, null)
-        {
-        }
-
-        /// <summary>
         ///   Construct a basic server such that it is ready to be started, and possibly using the default connect
         ///   behavior.
         /// </summary>
         /// <param name="localaddr"> </param>
         /// <param name="port"> </param>
         /// <param name="logFileName"> </param>
-        public BasicServer(IPAddress localaddr, int port, Func<byte[], Packet> packetBuildFunc, string logFileName)
+        public BasicServer(IPAddress localaddr, int port, Func<byte[], Packet> packetBuildFunc, string logFileName = null)
         {
             IsRunning = false;
             ClientTable = new BidirectionalDict<string, Client>();
@@ -374,7 +364,7 @@ namespace Engine.Networking
         {
             var client = args.Client;
             ClientTable[client] = new Guid().ToString();
-            var thread = new Thread(DefaultClientThreadFunction);
+            var thread = new Thread(ClientThreadFunction);
             ClientThreads[client] = thread;
             thread.Start(client);
         }
@@ -383,7 +373,7 @@ namespace Engine.Networking
         ///   Constantly checks a client for incoming messages
         /// </summary>
         /// <param name="oClient"> </param>
-        protected void DefaultClientThreadFunction(object oClient)
+        protected void ClientThreadFunction(object oClient)
         {
             var client = oClient as Client;
             if (client == null) return;
@@ -392,10 +382,8 @@ namespace Engine.Networking
                 Thread.Sleep(1);
                 try
                 {
-                    // We don't read messages from a client until they've authenticated
-                    if (!IsAuthenticated(client) || !client.HasQueuedReadMessages) continue;
-                    var line = client.ReadPacket() as ChatPacket;
-                    ReceivePacket(line, client);
+                    if (!client.HasQueuedReadMessages) continue;
+                    ReceivePacket(client.ReadPacket(), client);
                 }
                 catch
                 {
