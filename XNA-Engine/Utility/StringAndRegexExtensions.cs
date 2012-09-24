@@ -140,27 +140,6 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        ///   Get the bytes of a string in a given encoding
-        /// </summary>
-        /// <param name="str"> </param>
-        /// <param name="encoding"> </param>
-        /// <returns> </returns>
-        public static byte[] GetBytes(this string str, Encoding encoding)
-        {
-            return encoding.GetBytes(str);
-        }
-
-        /// <summary>
-        ///   bytes of a UTF8-encoded string
-        /// </summary>
-        /// <param name="str"> </param>
-        /// <returns> </returns>
-        public static byte[] GetBytesUTF8(this string str)
-        {
-            return str.GetBytes(Encoding.UTF8);
-        }
-
-        /// <summary>
         ///   Returns the substring from the beginning until the first occurance of the character c.
         ///   Returns the whole string if that character isn't found.
         /// </summary>
@@ -195,6 +174,11 @@ namespace Engine.Utility
         {
             msg = msg + "\r\n";
             stream.Write(_uni.GetBytes(msg), 0, _uni.GetByteCount(msg));
+        }
+
+        public static string WithTermChar(this string str, char terminatingChar = '\0')
+        {
+            return str + terminatingChar;
         }
     }
 }
