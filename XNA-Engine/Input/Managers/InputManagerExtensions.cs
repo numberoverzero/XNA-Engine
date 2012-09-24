@@ -96,6 +96,27 @@ namespace Engine.Input.Managers.AddBindings
     }
 }
 
+namespace Engine.Input.Managers.SinglePlayer
+{
+    public static class InputManagerSinglePlayerExtensions
+    {
+        public static bool IsActive(this InputManager inputManager, string bindingName, FrameState frameState)
+        {
+            return inputManager.IsActive(bindingName, PlayerIndex.One, frameState);
+        }
+
+        public static bool IsPressed(this InputManager inputManager, string bindingName)
+        {
+            return inputManager.IsPressed(bindingName, PlayerIndex.One);
+        }
+
+        public static bool IsReleased(this InputManager inputManager, string bindingName)
+        {
+            return inputManager.IsReleased(bindingName, PlayerIndex.One);
+        }
+    }
+}
+
 namespace Engine.Input
 {
     public static class InputManagerExtensions
