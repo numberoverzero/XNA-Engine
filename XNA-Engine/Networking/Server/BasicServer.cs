@@ -40,10 +40,6 @@ namespace Engine.Networking
         /// </summary>
         protected Log Log;
 
-        /// <summary>
-        /// This function should handle null byte arrays
-        /// </summary>
-        public Func<byte[], Packet> PacketBuildFunc;
         private TcpListener _listener;
         private Thread _clientPollThread;
 
@@ -54,7 +50,7 @@ namespace Engine.Networking
         /// <param name="localaddr"> </param>
         /// <param name="port"> </param>
         /// <param name="logFileName"> </param>
-        public BasicServer(IPAddress localaddr, int port, Func<byte[], Packet> packetBuildFunc, string logFileName = null)
+        public BasicServer(IPAddress localaddr, int port, string logFileName = null)
         {
             IsRunning = false;
             ClientTable = new BidirectionalDict<string, Client>();
@@ -62,7 +58,6 @@ namespace Engine.Networking
             ClientThreads = new ConcurrentDictionary<Client, Thread>();
             _localaddr = localaddr;
             _port = port;
-            PacketBuildFunc = packetBuildFunc;
             Log = new Log(logFileName, Frequency.Burst);
             Log.Info("Server initialized: <{0}>::{1}".format(localaddr, port));
         }
@@ -390,7 +385,7 @@ namespace Engine.Networking
                     var bytes = client.Read();
                     if (bytes == null) continue; // We read an empty byte steam
                     
-                    var packet = PacketBuildFunc(bytes);
+                    var packet = Packet.BuildPacketFunction(bytes);
                     if (packet == null || packet.Equals(Packet.EmptyPacket)) continue; // Unknown or poorly formed packet
 
                     ReceivePacket(packet, client);

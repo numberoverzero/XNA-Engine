@@ -15,6 +15,7 @@ namespace Engine.Networking.Packets
     {
         public static Func<string, int> GetTypeFunction;
         public static Func<int, string> GetNameFunction;
+        public static Func<byte[], Packet> BuildPacketFunction;
  
         public int Type
         {
