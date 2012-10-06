@@ -8,9 +8,8 @@ using Engine.Utility;
 namespace Engine.Networking
 {
     /// <summary>
-    ///   Attempts to abstract the network layer of the TcpClient,
-    ///   so that this is simply a read/write container.
-    ///   Manages concurrent read/writes using ConcurrentQueues
+    ///   <para> Attempts to abstract the network layer of the TcpClient, so that this is simply a read/write container. </para>
+    ///   <para> Manages concurrent read/writes using ConcurrentQueues </para>
     /// </summary>
     public class Client
     {
@@ -20,11 +19,9 @@ namespace Engine.Networking
         private readonly Thread _writeThread;
 
         /// <summary>
-        ///   Construct a client that manages concurrent reads/writes to a TcpClient
-        ///   Default behavior starts the client immediately
+        ///   <para> Construct a client that manages concurrent reads/writes to a TcpClient </para>
+        ///   <para> Default behavior starts the client immediately </para>
         /// </summary>
-        /// <param name="baseClient"> </param>
-        /// <param name="start"> </param>
         public Client(TcpClient baseClient, bool start = true)
         {
             TcpClient = baseClient;
@@ -51,8 +48,7 @@ namespace Engine.Networking
         }
 
         /// <summary>
-        ///   Whether the underlying TcpClient is still alive,
-        ///   and handling reads/writes
+        ///   Whether the underlying TcpClient is still alive and handling reads/writes
         /// </summary>
         public bool IsAlive { get; protected set; }
 
@@ -68,9 +64,6 @@ namespace Engine.Networking
         ///   Writes a message to the client.
         ///   Messages are queued and a thread proccesses them in the order they were enqueued
         /// </summary>
-        /// <param name="bytes"> </param>
-        /// <param name="sourceIndex"> </param>
-        /// <param name="length"> </param>
         public void Write(byte[] bytes, int sourceIndex, int length)
         {
             var buffer = new byte[length];
@@ -79,29 +72,29 @@ namespace Engine.Networking
         }
 
         /// <summary>
-        ///   Writes a message to the client.
-        ///   Messages are queued and a thread proccesses them in the order they were enqueued
+        ///   <para> Writes a message to the client. </para>
+        ///   para>
+        ///   <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
         /// </summary>
-        /// <param name="bytes"> </param>
         public void Write(byte[] bytes)
         {
             Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>
-        ///   Writes a packet to the client.
-        ///   Messages are queued and a thread proccesses them in the order they were enqueued
+        ///   <para> Writes a packet to the client. </para>
+        ///   para>
+        ///   <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
         /// </summary>
-        /// <param name="packet"> </param>
         public void WritePacket(Packet packet)
         {
             Write(packet.AsByteArray());
         }
 
         /// <summary>
-        ///   Tries to read a message from the client.
-        ///   Returns null if there is no pending message from the client.
-        ///   Messages to be read are enqueued by a worker thread and added in the order they are received
+        ///   <para> Tries to read a message from the client. </para>
+        ///   <para> Returns null if there is no pending message from the client. </para>
+        ///   <para> Messages to be read are enqueued by a worker thread and added in the order they are received </para>
         /// </summary>
         public byte[] Read()
         {

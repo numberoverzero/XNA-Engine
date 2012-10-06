@@ -36,7 +36,8 @@ namespace Engine.Utility
         }
 
         /// <summary>
-        ///   Reads a message from a stream where the first 4 bytes are the size of the rest of the message
+        ///   <para> Reads a message from a stream where the first 4 bytes are the size of the rest of the message </para>
+        ///   <para> The returned byte array does not include the size header. </para>
         /// </summary>
         public static byte[] ReadWithHeader(this Stream stream)
         {

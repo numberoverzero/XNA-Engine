@@ -40,16 +40,13 @@ namespace Engine.Networking
         /// </summary>
         protected Log Log;
 
-        private TcpListener _listener;
         private Thread _clientPollThread;
+        private TcpListener _listener;
 
         /// <summary>
         ///   Construct a basic server such that it is ready to be started, and possibly using the default connect
         ///   behavior.
         /// </summary>
-        /// <param name="localaddr"> </param>
-        /// <param name="port"> </param>
-        /// <param name="logFileName"> </param>
         public BasicServer(IPAddress localaddr, int port, string logFileName = null)
         {
             IsRunning = false;
@@ -84,9 +81,8 @@ namespace Engine.Networking
             _clientPollThread.Start();
 
             IsRunning = true;
-            Log.Info("Server started.");
-            if (OnStart != null)
-                OnStart(this, null);
+            Log.Info("Server started: <{0}>::<{1}>".format(_localaddr, _port));
+            if (OnStart != null) OnStart(this, null);
         }
 
         /// <summary>
@@ -103,25 +99,20 @@ namespace Engine.Networking
             IsRunning = false;
             Log.Info("Server stopped.");
             Log.Flush();
-            if (OnStop != null)
-                OnStop(this, null);
+            if (OnStop != null) OnStop(this, null);
         }
 
         /// <summary>
         ///   See <see cref="IServer.Connect" />
         /// </summary>
-        /// <param name="client"> </param>
-        /// <param name="e"> </param>
         public virtual void Connect(Client client, ServerEventArgs e = null)
         {
-            var success = true;
             var parameters = new Dictionary<string, string>();
             parameters["Server:Connect:Data:IP"] = client.GetIP;
             if (!IsRunning) return;
             if (e == null)
             {
-                success = false;
-                e = new ServerEventArgs(success, client, parameters);
+                e = new ServerEventArgs(false, client, parameters);
             }
             else
             {
@@ -129,7 +120,7 @@ namespace Engine.Networking
 
                 // Connect has the final say on these two,
                 // since it was the most recent frame from which the Event was fired
-                e.Success = success;
+                e.Success = true;
                 e.Client = client;
             }
             Log.Info("Server:Connect:Data:IP:<{0}>".format(client.GetIP));
@@ -140,8 +131,6 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.Disconnect" />
         /// </summary>
-        /// <param name="client"> </param>
-        /// <param name="e"> </param>
         public virtual void Disconnect(Client client, ServerEventArgs e = null)
         {
             if (!IsRunning)
@@ -188,8 +177,6 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.Authenticate" />
         /// </summary>
-        /// <param name="client"> </param>
-        /// <param name="e"> </param>
         public virtual void Authenticate(Client client, ServerEventArgs e = null)
         {
             if (!IsRunning)
@@ -221,8 +208,6 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.ReceivePacket" />
         /// </summary>
-        /// <param name="packet"> </param>
-        /// <param name="client"> </param>
         public virtual void ReceivePacket(Packet packet, Client client)
         {
             if (!IsRunning)
@@ -232,8 +217,6 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.SendPacket" />
         /// </summary>
-        /// <param name="packet"> </param>
-        /// <param name="clients"> </param>
         public virtual void SendPacket(Packet packet, params Client[] clients)
         {
             if (!IsRunning)
@@ -258,8 +241,6 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.IsAuthenticated" />
         /// </summary>
-        /// <param name="client"> </param>
-        /// <returns> </returns>
         public bool IsAuthenticated(Client client)
         {
             return AuthTable[client];
@@ -268,8 +249,6 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.GetClientString" />
         /// </summary>
-        /// <param name="client"> </param>
-        /// <returns> </returns>
         public string GetClientString(Client client)
         {
             if (!IsRunning) return null;
@@ -279,19 +258,14 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.GetClient" />
         /// </summary>
-        /// <param name="client"> </param>
-        /// <returns> </returns>
         public Client GetClient(string client)
         {
-            if (!IsRunning) return null;
-            return ClientTable[client];
+            return !IsRunning ? null : ClientTable[client];
         }
 
         /// <summary>
         ///   See <see cref="IServer.GetClientStrings" />
         /// </summary>
-        /// <param name="clients"> </param>
-        /// <returns> </returns>
         public IEnumerable<string> GetClientStrings(params Client[] clients)
         {
             return from client in clients select ClientTable[client];
@@ -300,8 +274,6 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.GetClients" />
         /// </summary>
-        /// <param name="clients"> </param>
-        /// <returns> </returns>
         public IEnumerable<Client> GetClients(params string[] clients)
         {
             return from client in clients select ClientTable[client];
@@ -356,8 +328,6 @@ namespace Engine.Networking
         ///   Registers the client in the clientTable, registers a new thread in the clientThread table,
         ///   and starts that thread.  The thread calls DefaultClientThreadFunction
         /// </summary>
-        /// <param name="sender"> </param>
-        /// <param name="args"> </param>
         protected virtual void DefaultHandle_OnConnect(object sender, ServerEventArgs args)
         {
             var client = args.Client;
@@ -370,7 +340,6 @@ namespace Engine.Networking
         /// <summary>
         ///   Constantly checks a client for incoming messages
         /// </summary>
-        /// <param name="oClient"> </param>
         protected void ClientThreadFunction(object oClient)
         {
             var client = oClient as Client;
@@ -381,12 +350,13 @@ namespace Engine.Networking
                 try
                 {
                     if (!client.HasQueuedReadMessages) continue;
-                    
+
                     var bytes = client.Read();
                     if (bytes == null) continue; // We read an empty byte steam
-                    
+
                     var packet = Packet.BuildPacketFunction(bytes);
-                    if (packet == null || packet.Equals(Packet.EmptyPacket)) continue; // Unknown or poorly formed packet
+                    if (packet == null || packet.Equals(Packet.EmptyPacket))
+                        continue; // Unknown or poorly formed packet
 
                     ReceivePacket(packet, client);
                 }
@@ -401,8 +371,6 @@ namespace Engine.Networking
         /// <summary>
         ///   Called when we try to read from a client stream and fail.
         /// </summary>
-        /// <param name="reason"> </param>
-        /// <param name="client"> </param>
         protected virtual void OnClientReadException(string reason, Client client)
         {
             // Nothing to do if we didn't track the client
@@ -427,9 +395,6 @@ namespace Engine.Networking
         /// <summary>
         ///   Called when we try to send a message to a client but that send fails.
         /// </summary>
-        /// <param name="packet"> </param>
-        /// <param name="reason"> </param>
-        /// <param name="client"> </param>
         protected virtual void OnSendPacketException(Packet packet, string reason, Client client)
         {
             // Nothing to do if we didn't track the client

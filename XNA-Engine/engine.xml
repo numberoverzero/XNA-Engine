@@ -6,50 +6,50 @@
     <members>
         <member name="T:Engine.Utility.FloatFn">
             <summary>
-            A function which is closed over floats
-            (they don't necessarily make guarantees about accuracy)
+              A function which is closed over floats
+              (they don't necessarily make guarantees about accuracy)
             </summary>
         </member>
         <member name="M:Engine.Utility.FloatFn.At(System.Single)">
             <summary>
-            Returns the value of the function at a given t value
+              Returns the value of the function at a given t value
             </summary>
-            <param name="t">The point at which the function is being evaluated</param>
-            <returns></returns>
+            <param name="t"> The point at which the function is being evaluated </param>
+            <returns> </returns>
         </member>
         <member name="T:Engine.Utility.OscillatingFn">
             <summary>
-            Returns values which oscillate on initial + [-mag, mag]
+              Returns values which oscillate on initial + [-mag, mag]
             </summary>
         </member>
         <member name="M:Engine.Utility.OscillatingFn.#ctor(System.Single,System.Single,System.Single)">
             <summary>
-            Returns values which oscillate on initial + [-mag, mag]
+              Returns values which oscillate on initial + [-mag, mag]
             </summary>
         </member>
         <member name="M:Engine.Utility.OscillatingFn.At(System.Single)">
             <summary>
-            Returns the value of the function at a given t value
+              Returns the value of the function at a given t value
             </summary>
-            <param name="t">The point at which the function is being evaluated</param>
-            <returns></returns>
+            <param name="t"> The point at which the function is being evaluated </param>
+            <returns> </returns>
         </member>
         <member name="T:Engine.Utility.DecayFn">
             <summary>
-            Returns values of the form initial + mag*e^(-d*t)
+              Returns values of the form initial + mag*e^(-d*t)
             </summary>
         </member>
         <member name="M:Engine.Utility.DecayFn.#ctor(System.Single,System.Single,System.Single)">
             <summary>
-            Returns values of the form initial + mag*e^(-d*t)
+              Returns values of the form initial + mag*e^(-d*t)
             </summary>
         </member>
         <member name="M:Engine.Utility.DecayFn.At(System.Single)">
             <summary>
-            Returns the value of the function at a given t value
+              Returns the value of the function at a given t value
             </summary>
-            <param name="t">The point at which the function is being evaluated</param>
-            <returns></returns>
+            <param name="t"> The point at which the function is being evaluated </param>
+            <returns> </returns>
         </member>
         <member name="T:Engine.Logging.Frequency">
             <summary>
@@ -347,36 +347,36 @@
         </member>
         <member name="T:Engine.Input.EventInput.IKeyboardSubscriber">
             <summary>
-            Receives event-driven input in the form of strings, characters, and Keys
+              Receives event-driven input in the form of strings, characters, and Keys
             </summary>
         </member>
         <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.Char)">
             <summary>
-            Handle a single character of input
+              Handle a single character of input
             </summary>
-            <param name="inputChar"></param>
+            <param name="inputChar"> </param>
         </member>
         <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveTextInput(System.String)">
             <summary>
-            Handle a string of input
+              Handle a string of input
             </summary>
-            <param name="text"></param>
+            <param name="text"> </param>
         </member>
         <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveCommandInput(System.Char)">
             <summary>
-            Handle a special command
+              Handle a special command
             </summary>
-            <param name="command"></param>
+            <param name="command"> </param>
         </member>
         <member name="M:Engine.Input.EventInput.IKeyboardSubscriber.ReceiveSpecialInput(Microsoft.Xna.Framework.Input.Keys)">
             <summary>
-            Handle a Key input
+              Handle a Key input
             </summary>
-            <param name="key"></param>
+            <param name="key"> </param>
         </member>
         <member name="P:Engine.Input.EventInput.IKeyboardSubscriber.Selected">
             <summary>
-            Does this Subscriber have the (possibly exclusive) focus
+              Does this Subscriber have the (possibly exclusive) focus
             </summary>
         </member>
         <member name="M:Engine.Input.Managers.FullInputManager.#ctor">
@@ -1063,21 +1063,6 @@
             <param name="encoding"> </param>
             <returns> </returns>
         </member>
-        <member name="M:Engine.Utility.StringAndRegexExtensions.GetBytes(System.String,System.Text.Encoding)">
-            <summary>
-              Get the bytes of a string in a given encoding
-            </summary>
-            <param name="str"> </param>
-            <param name="encoding"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Engine.Utility.StringAndRegexExtensions.GetBytesUTF8(System.String)">
-            <summary>
-              bytes of a UTF8-encoded string
-            </summary>
-            <param name="str"> </param>
-            <returns> </returns>
-        </member>
         <member name="M:Engine.Utility.StringAndRegexExtensions.Until(System.String,System.Char)">
             <summary>
               Returns the substring from the beginning until the first occurance of the character c.
@@ -1394,97 +1379,6 @@
               Fired when a client attempts to authenticate
             </summary>
         </member>
-        <member name="T:Engine.Networking.Packets.ChatPacket">
-            <summary>
-            A packet containing fields for a message and who the message is to and from
-            </summary>
-        </member>
-        <member name="T:Engine.Networking.Packets.Packet">
-            <summary>
-            Wrapper around the byte array that is sent to/read from a network stream
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.Packets.Packet.string_fmt">
-            <summary>
-            Formats a string to be null-terminated
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Packets.Packet.LoadFromBuffer(System.Byte[])">
-            <summary>
-            Load the data from a buffer according to the packet type's
-            specification.  Buffer includes the four bytes that specify the type
-            </summary>
-            <param name="buffer"></param>
-        </member>
-        <member name="M:Engine.Networking.Packets.Packet.Parse(System.Byte[])">
-            <summary>
-            Parses the packet type based on its first four bytes
-            and returns an instance of that packet type with its appropriate values loaded.
-            </summary>
-            <param name="buffer"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.Packets.Packet.fromInt(System.Int32)">
-            <summary>
-            Helper method for getting the byte array of an int
-            </summary>
-            <param name="i"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Engine.Networking.Packets.Packet.Equals(System.Object)">
-            <summary>
-            Determines whether the specified object is equal to this one
-            </summary>
-            <param name="obj"></param>
-            <returns></returns>
-        </member>
-        <member name="P:Engine.Networking.Packets.Packet.ByteStream">
-            <summary>
-            Constructs and returns the byte array that represents the packet
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.Packet.EmptyPacket">
-            <summary>
-            A packet with no body, and type code 0
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Packets.Packet.NullPacket.LoadFromBuffer(System.Byte[])">
-            <summary>
-            An empty packet does not load any data
-            </summary>
-            <param name="buffer"></param>
-        </member>
-        <member name="P:Engine.Networking.Packets.Packet.NullPacket.ByteStream">
-            <summary>
-            Empty except for type code of 0
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Packets.ChatPacket.LoadFromBuffer(System.Byte[])">
-            <summary>
-            See <see cref="M:Engine.Networking.Packets.Packet.LoadFromBuffer(System.Byte[])"/>
-            </summary>
-            <param name="buffer"></param>
-        </member>
-        <member name="P:Engine.Networking.Packets.ChatPacket.Message">
-            <summary>
-            The message being sent
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ChatPacket.From">
-            <summary>
-            Who the message is from
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ChatPacket.To">
-            <summary>
-            Who the message is to
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ChatPacket.ByteStream">
-            <summary>
-            See <see cref="P:Engine.Networking.Packets.Packet.ByteStream"/>
-            </summary>
-        </member>
         <member name="T:Engine.Entities.GameObject">
             <summary>
             An object that exists in the game.
@@ -1678,6 +1572,32 @@
             <param name="theta">The angle (in radians) to rotate by</param>
             <returns></returns>
         </member>
+        <member name="M:Engine.Screen.IScreenComponent.Select">
+            <summary>
+            Toggle the Selected state
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.IScreenComponent.Focus">
+            <summary>
+            Toggle the Focused state
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.MenuScreen.Select">
+            <summary>
+            Selects the currently focused (highlighted) item
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.UISystem.OpenMenu(System.String)">
+            <summary>
+              Open a specific menu.  If that menu isn't already loaded, loads an instance of the menu.
+              Otherwise, brings the loaded menu to the top of the stack
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.UISystem.ExitMenu">
+            <summary>
+            Exits the top-most menu
+            </summary>
+        </member>
         <member name="T:Engine.Rendering.RenderPass">
             <summary>
             Specify which stage of rendering is occuring
@@ -1810,49 +1730,195 @@
             Transitioning from tracking a GameObject to tracking a different GameObject
             </summary>
         </member>
+        <member name="T:Engine.Screen.MessageBoxScreen">
+            <summary>
+              A popup message box screen, used to display "are you sure?"
+              confirmation messages.
+            </summary>
+            <remarks>
+              This public class is somewhat similar to one of the same name in the 
+              GameStateManagement sample.
+            </remarks>
+        </member>
+        <member name="T:Engine.Screen.GameScreen">
+            <summary>
+              A screen is a single layer that has update and draw logic, and which
+              can be combined with other layers to build up a complex menu system.
+              For instance the main menu, the options menu, the "are you sure you
+              want to quit" message box, and the main game itself are all implemented
+              as screens.
+            </summary>
+            <remarks>
+              This public class is similar to one in the GameStateManagement sample.
+            </remarks>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.LoadContent">
+            <summary>
+              Load graphics content for the screen.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.UnloadContent">
+            <summary>
+              Unload content for the screen.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.Update(Microsoft.Xna.Framework.GameTime,System.Boolean,System.Boolean)">
+            <summary>
+              Allows the screen to run logic, such as updating the transition position.
+              Unlike HandleInput, this method is called regardless of whether the screen
+              is active, hidden, or in the middle of a transition.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.UpdateTransition(Microsoft.Xna.Framework.GameTime,System.TimeSpan,System.Int32)">
+            <summary>
+              Helper for updating the screen transition position.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.HandleInput(Engine.Input.Managers.InputManager)">
+            <summary>
+              Allows the screen to handle user input. Unlike Update, this method
+              is only called when the screen is active, and not when some other
+              screen has taken the focus.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.UpdatePresence">
+            <summary>
+              Screen-specific update to gamer rich presence.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.Draw(Microsoft.Xna.Framework.GameTime)">
+            <summary>
+              This is called when the screen should draw itself.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.GameScreen.ExitScreen">
+            <summary>
+              Tells the screen to go away. Unlike ScreenManager.RemoveScreen, which
+              instantly kills the screen, this method respects the transition timings
+              and will give the screen a chance to gradually transition off.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.IsPopup">
+            <summary>
+              Normally when one screen is brought up over the top of another,
+              the first screen will transition off to make room for the new
+              one. This property indicates whether the screen is only a small
+              popup, in which case screens underneath it do not need to bother
+              transitioning off.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.TransitionOnTime">
+            <summary>
+              Indicates how long the screen takes to
+              transition on when it is activated.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.TransitionOffTime">
+            <summary>
+              Indicates how long the screen takes to
+              transition off when it is deactivated.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.TransitionPosition">
+            <summary>
+              Gets the current position of the screen transition, ranging
+              from zero (fully active, no transition) to one (transitioned
+              fully off to nothing).
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.TransitionAlpha">
+            <summary>
+              Gets the current alpha of the screen transition, ranging
+              from 255 (fully active, no transition) to 0 (transitioned
+              fully off to nothing).
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.ScreenState">
+            <summary>
+              Gets the current screen transition state.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.IsExiting">
+            <summary>
+              There are two possible reasons why a screen might be transitioning
+              off. It could be temporarily going away to make room for another
+              screen that is on top of it, or it could be going away for good.
+              This property indicates whether the screen is exiting for real:
+              if set, the screen will automatically remove itself as soon as the
+              transition finishes.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.IsActive">
+            <summary>
+              Checks whether this screen is active and can respond to user input.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.GameScreen.ScreenManager">
+            <summary>
+              Gets the manager that this screen belongs to.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.MessageBoxScreen.#ctor(System.String,System.String,System.String,Engine.Screen.OptionLayout)">
+            <summary>
+              Constructor.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.MessageBoxScreen.LoadContent">
+            <summary>
+              Loads graphics content for this screen. This uses the shared ContentManager
+              provided by the ScreenManager, so the content will remain loaded forever.
+              Whenever a subsequent MessageBoxScreen tries to load this same content,
+              it will just get back another reference to the already loaded instance.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.MessageBoxScreen.HandleInput(Engine.Input.Managers.InputManager)">
+            <summary>
+              Responds to user input, accepting or cancelling the message box.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.MessageBoxScreen.Draw(Microsoft.Xna.Framework.GameTime)">
+            <summary>
+              Draws the message box.
+            </summary>
+        </member>
         <member name="T:Engine.Networking.Client">
             <summary>
-              Attempts to abstract the network layer of the TcpClient,
-              so that this is simply a read/write container.
-              Manages concurrent read/writes using ConcurrentQueues
+              <para> Attempts to abstract the network layer of the TcpClient, so that this is simply a read/write container. </para>
+              <para> Manages concurrent read/writes using ConcurrentQueues </para>
             </summary>
         </member>
-        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient,System.Func{System.Byte[],Engine.Networking.Packets.Packet},System.Boolean)">
+        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient,System.Boolean)">
             <summary>
-              Construct a client that manages concurrent reads/writes to a TcpClient
-              Default behavior starts the client immediately
+              <para> Construct a client that manages concurrent reads/writes to a TcpClient </para>
+              <para> Default behavior starts the client immediately </para>
             </summary>
-            <param name="baseClient"> </param>
-            <param name="start"> </param>
         </member>
-        <member name="M:Engine.Networking.Client.Write(System.Byte[])">
+        <member name="M:Engine.Networking.Client.Write(System.Byte[],System.Int32,System.Int32)">
             <summary>
               Writes a message to the client.
               Messages are queued and a thread proccesses them in the order they were enqueued
             </summary>
-            <param name="buffer"> </param>
+        </member>
+        <member name="M:Engine.Networking.Client.Write(System.Byte[])">
+            <summary>
+              <para> Writes a message to the client. </para>
+              para>
+              <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
+            </summary>
         </member>
         <member name="M:Engine.Networking.Client.WritePacket(Engine.Networking.Packets.Packet)">
             <summary>
-              Writes a packet to the client.
-              Messages are queued and a thread proccesses them in the order they were enqueued
+              <para> Writes a packet to the client. </para>
+              para>
+              <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
             </summary>
-            <param name="packet"> </param>
         </member>
         <member name="M:Engine.Networking.Client.Read">
             <summary>
-              Tries to read a message from the client.
-              Returns null if there is no pending message from the client.
-              Messages to be read are enqueued by a worker thread and added in the order they are received
+              <para> Tries to read a message from the client. </para>
+              <para> Returns null if there is no pending message from the client. </para>
+              <para> Messages to be read are enqueued by a worker thread and added in the order they are received </para>
             </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.ReadPacket">
-            <summary>
-              Tries to read a message from the client.
-              Returns an empty packet if there is no pending message from the client.
-              Messages to be read are enqueued by a worker thread and added in the order they are received
-            </summary>
-            <returns> </returns>
         </member>
         <member name="M:Engine.Networking.Client.Start">
             <summary>
@@ -1876,8 +1942,7 @@
         </member>
         <member name="P:Engine.Networking.Client.IsAlive">
             <summary>
-              Whether the underlying TcpClient is still alive,
-              and handling reads/writes
+              Whether the underlying TcpClient is still alive and handling reads/writes
             </summary>
         </member>
         <member name="P:Engine.Networking.Client.GetIP">
@@ -2195,6 +2260,24 @@
             </summary>
             <param name="settings"></param>
         </member>
+        <member name="M:Engine.Logging.FullFileBuffer.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the collection.
+            </summary>
+            <returns>
+            A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+            </returns>
+            <filterpriority>1</filterpriority>
+        </member>
+        <member name="M:Engine.Logging.FullFileBuffer.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
         <member name="T:Engine.DataStructures.DoubleBuffer`1">
             <summary>
             Provides Push, Flip, and full Front inspection.
@@ -2399,6 +2482,117 @@
             Provides an in-order [1-4] list of PlayerIndex for loops
             </summary>
         </member>
+        <member name="T:Engine.Screen.ScreenManager">
+            <summary>
+              The screen manager is a component which manages one or more GameScreen
+              instances. It maintains a stack of screens, calls their Update and Draw
+              methods at the appropriate times, and automatically routes input to the
+              topmost active screen.
+            </summary>
+            <remarks>
+              This public class is similar to one in the GameStateManagement sample.
+            </remarks>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.#ctor(Microsoft.Xna.Framework.Game)">
+            <summary>
+              Constructs a new screen manager component.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.LoadContent">
+            <summary>
+              Load your graphics content.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.UnloadContent">
+            <summary>
+              Unload your graphics content.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.Update(Microsoft.Xna.Framework.GameTime)">
+            <summary>
+              Allows each screen to run logic.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.TraceScreens">
+            <summary>
+              Prints a list of all the screens, for debugging.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.Draw(Microsoft.Xna.Framework.GameTime)">
+            <summary>
+              Tells each screen to draw itself.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.DrawRectangle(Microsoft.Xna.Framework.Rectangle,Microsoft.Xna.Framework.Color)">
+            <summary>
+              Draw an empty rectangle of the given size and color.
+            </summary>
+            <param name="rectangle"> The destination rectangle. </param>
+            <param name="color"> The color of the rectangle. </param>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.AddScreen(Engine.Screen.GameScreen)">
+            <summary>
+              Adds a new screen to the screen manager.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.RemoveScreen(Engine.Screen.GameScreen)">
+            <summary>
+              Removes a screen from the screen manager. You should normally
+              use GameScreen.ExitScreen instead of calling this directly, so
+              the screen can gradually transition off rather than just being
+              instantly removed.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.GetScreens">
+            <summary>
+              Expose an array holding all the screens. We return a copy rather
+              than the real master list, because screens should only ever be added
+              or removed using the AddScreen and RemoveScreen methods.
+            </summary>
+        </member>
+        <member name="M:Engine.Screen.ScreenManager.FadeBackBufferToBlack(System.Int32)">
+            <summary>
+              Helper draws a translucent black fullscreen sprite, used for fading
+              screens in and out, and for darkening the background behind popups.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.ScreenManager.Game">
+            <summary>
+              Expose access to our Game instance (this is protected in the
+              default GameComponent, but we want to make it public).
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.ScreenManager.GraphicsDevice">
+            <summary>
+              Expose access to our graphics device (this is protected in the
+              default DrawableGameComponent, but we want to make it public).
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.ScreenManager.Content">
+            <summary>
+              A content manager used to load data that is shared between multiple
+              screens. This is never unloaded, so if a screen requires a large amount
+              of temporary data, it should create a local content manager instead.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.ScreenManager.SpriteBatch">
+            <summary>
+              A default SpriteBatch shared by all the screens. This saves
+              each screen having to bother creating their own local instance.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.ScreenManager.TraceEnabled">
+            <summary>
+              If true, the manager prints out a list of all the screens
+              each time it is updated. This can be useful for making sure
+              everything is being added and removed at the right times.
+            </summary>
+        </member>
+        <member name="P:Engine.Screen.ScreenManager.TitleSafeArea">
+            <summary>
+              The title-safe area for the menus.
+            </summary>
+        </member>
         <member name="T:Engine.Rendering.Pipeline.PixelShaderPipeline">
             <summary>
             Basic pipeline for rendering effects using pixel shaders
@@ -2462,57 +2656,6 @@
             Changing this value will trigger at least one render target switch.
             </summary>
         </member>
-        <member name="T:Engine.Networking.Packets.ServerInfoPacket">
-            <summary>
-            Contains info about the server, such as IP address and server name
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Packets.ServerInfoPacket.LoadFromBuffer(System.Byte[])">
-            <summary>
-            See <see cref="M:Engine.Networking.Packets.Packet.LoadFromBuffer(System.Byte[])"/>
-            </summary>
-            <param name="buffer"></param>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.IP">
-            <summary>
-            Server IP
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.Name">
-            <summary>
-            Name of the server
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.Description">
-            <summary>
-            Description of the server's capabilities, rules, etc
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.Port">
-            <summary>
-            Port the server sends/receives on
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.CurrentPlayers">
-            <summary>
-            Current players connected (or taking up player slots, whatever that means for a server
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.MaxPlayers">
-            <summary>
-            Maximum player slots or connections
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.HasPassword">
-            <summary>
-            Whether the server requires a password
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Packets.ServerInfoPacket.ByteStream">
-            <summary>
-            See <see cref="P:Engine.Networking.Packets.Packet.ByteStream"/>
-            </summary>
-        </member>
         <member name="T:Engine.Entities.Behaviors.PrimitiveSteeringBehavior">
             <summary>
             Always updates the PhysicsComponent's rotation to align with the object's velocity
@@ -2520,40 +2663,36 @@
         </member>
         <member name="T:Engine.Utility.NetworkingExtensions">
             <summary>
-            Extensions for networking stuff
+              Extensions for networking stuff
             </summary>
         </member>
         <member name="M:Engine.Utility.NetworkingExtensions.GetIP(System.Net.Sockets.TcpClient)">
             <summary>
-            Gets the IPAddress of the client as a string
+              Gets the IPAddress of the client as a string
             </summary>
-            <param name="client"></param>
-            <returns></returns>
+            <param name="client"> </param>
+            <returns> </returns>
         </member>
         <member name="M:Engine.Utility.NetworkingExtensions.ReadExact(System.IO.Stream,System.Byte[],System.Int32,System.Int32)">
             <summary>
-            Attempts to read exactly count bytes into the buffer, starting at offset.
-            Throws EOS Exception when the requested number of bytes aren't read
+              Attempts to read exactly count bytes into the buffer, starting at offset.
+              Throws EOS Exception when the requested number of bytes aren't read
             </summary>
         </member>
         <member name="M:Engine.Utility.NetworkingExtensions.ReadWithHeader(System.IO.Stream)">
             <summary>
-            Reads a message from a stream where the first 4 bytes are the size of the rest of the message
-            </summary>
-        </member>
-        <member name="M:Engine.Utility.NetworkingExtensions.ReadStringWithHeader(System.IO.Stream)">
-            <summary>
-            Reads a message from a stream where the first 4 bytes are the size of the rest of the message
+              <para> Reads a message from a stream where the first 4 bytes are the size of the rest of the message </para>
+              <para> The returned byte array does not include the size header. </para>
             </summary>
         </member>
         <member name="M:Engine.Utility.NetworkingExtensions.WriteWithHeader(System.IO.Stream,System.Byte[],System.Int32,System.Int32)">
             <summary>
-            Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+              Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
             </summary>
         </member>
-        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithHeader(System.IO.Stream,System.String)">
+        <member name="M:Engine.Utility.NetworkingExtensions.WriteWithHeader(System.IO.Stream,System.Byte[])">
             <summary>
-            Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
+              Writes a message to the stream, prepending a fixed size header (4 bytes) which describes the size of the rest of the message
             </summary>
         </member>
         <member name="T:Engine.Rendering.Effects.BloomEffect">
@@ -2678,6 +2817,19 @@
             Evaluates a single point on the gaussian falloff curve.
             Used for setting up the blur filter weightings.
             </summary>
+        </member>
+        <member name="M:Engine.DataStructures.ByteArrayReader.ReadString(System.Char)">
+            <summary>
+              String must be UTF8-Encoded
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="M:Engine.DataStructures.ByteArrayReader.Read``1">
+            <summary>
+              Perform an unsafe read, where success is assumed
+            </summary>
+            <typeparam name="T"> </typeparam>
+            <returns> </returns>
         </member>
         <member name="T:Engine.Camera.Camera">
             <summary>
@@ -2917,33 +3069,33 @@
         </member>
         <member name="T:Engine.Utility.ColorTextureGenerator">
             <summary>
-            Creates single color textures (i.e. for drawing rectangles).
+              Creates single color textures (i.e. for drawing rectangles).
             </summary>
         </member>
         <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
             <summary>
-            Creates a 1x1 pixel black texture.
+              Creates a 1x1 pixel blank texture.
             </summary>
-            <param name="graphicsDevice">The graphics device to use.</param>
-            <returns>The newly created texture.</returns>
+            <param name="graphicsDevice"> The graphics device to use. </param>
+            <returns> The newly created texture. </returns>
         </member>
         <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,Microsoft.Xna.Framework.Color)">
             <summary>
-            Creates a 1x1 pixel texture of the specified color.
+              Creates a 1x1 pixel texture of the specified color.
             </summary>
-            <param name="graphicsDevice">The graphics device to use.</param>
-            <param name="color">The color to set the texture to.</param>
-            <returns>The newly created texture.</returns>
+            <param name="graphicsDevice"> The graphics device to use. </param>
+            <param name="color"> The color to set the texture to. </param>
+            <returns> The newly created texture. </returns>
         </member>
         <member name="M:Engine.Utility.ColorTextureGenerator.Create(Microsoft.Xna.Framework.Graphics.GraphicsDevice,System.Int32,System.Int32,Microsoft.Xna.Framework.Color)">
             <summary>
-            Creates a texture of the specified color.
+              Creates a texture of the specified color.
             </summary>
-            <param name="graphicsDevice">The graphics device to use.</param>
-            <param name="width">The width of the texture.</param>
-            <param name="height">The height of the texture.</param>
-            <param name="color">The color to set the texture to.</param>
-            <returns>The newly created texture.</returns>
+            <param name="graphicsDevice"> The graphics device to use. </param>
+            <param name="width"> The width of the texture. </param>
+            <param name="height"> The height of the texture. </param>
+            <param name="color"> The color to set the texture to. </param>
+            <returns> The newly created texture. </returns>
         </member>
         <member name="T:Engine.Rendering.Effects.RepeaterEffect">
             <summary>
@@ -3446,21 +3598,11 @@
               The server log
             </summary>
         </member>
-        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.Func{System.Byte[],Engine.Networking.Packets.Packet})">
-            <summary>
-              Construct a basic server such that it is ready to be started.
-            </summary>
-            <param name="localaddr"> </param>
-            <param name="port"> </param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.Func{System.Byte[],Engine.Networking.Packets.Packet},System.String)">
+        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
             <summary>
               Construct a basic server such that it is ready to be started, and possibly using the default connect
               behavior.
             </summary>
-            <param name="localaddr"> </param>
-            <param name="port"> </param>
-            <param name="logFileName"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.Start">
             <summary>
@@ -3476,71 +3618,51 @@
             <summary>
               See <see cref="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
             </summary>
-            <param name="client"> </param>
-            <param name="e"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
               See <see cref="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
             </summary>
-            <param name="client"> </param>
-            <param name="e"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
               See <see cref="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
             </summary>
-            <param name="client"> </param>
-            <param name="e"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.ReceivePacket(Engine.Networking.Packets.Packet,Engine.Networking.Client)">
             <summary>
               See <see cref="M:Engine.Networking.IServer.ReceivePacket(Engine.Networking.Packets.Packet,Engine.Networking.Client)"/>
             </summary>
-            <param name="packet"> </param>
-            <param name="client"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.SendPacket(Engine.Networking.Packets.Packet,Engine.Networking.Client[])">
             <summary>
               See <see cref="M:Engine.Networking.IServer.SendPacket(Engine.Networking.Packets.Packet,Engine.Networking.Client[])"/>
             </summary>
-            <param name="packet"> </param>
-            <param name="clients"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.IsAuthenticated(Engine.Networking.Client)">
             <summary>
               See <see cref="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)"/>
             </summary>
-            <param name="client"> </param>
-            <returns> </returns>
         </member>
         <member name="M:Engine.Networking.BasicServer.GetClientString(Engine.Networking.Client)">
             <summary>
               See <see cref="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)"/>
             </summary>
-            <param name="client"> </param>
-            <returns> </returns>
         </member>
         <member name="M:Engine.Networking.BasicServer.GetClient(System.String)">
             <summary>
               See <see cref="M:Engine.Networking.IServer.GetClient(System.String)"/>
             </summary>
-            <param name="client"> </param>
-            <returns> </returns>
         </member>
         <member name="M:Engine.Networking.BasicServer.GetClientStrings(Engine.Networking.Client[])">
             <summary>
               See <see cref="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])"/>
             </summary>
-            <param name="clients"> </param>
-            <returns> </returns>
         </member>
         <member name="M:Engine.Networking.BasicServer.GetClients(System.String[])">
             <summary>
               See <see cref="M:Engine.Networking.IServer.GetClients(System.String[])"/>
             </summary>
-            <param name="clients"> </param>
-            <returns> </returns>
         </member>
         <member name="M:Engine.Networking.BasicServer.PollForClients">
             <summary>
@@ -3553,29 +3675,21 @@
               Registers the client in the clientTable, registers a new thread in the clientThread table,
               and starts that thread.  The thread calls DefaultClientThreadFunction
             </summary>
-            <param name="sender"> </param>
-            <param name="args"> </param>
         </member>
-        <member name="M:Engine.Networking.BasicServer.DefaultClientThreadFunction(System.Object)">
+        <member name="M:Engine.Networking.BasicServer.ClientThreadFunction(System.Object)">
             <summary>
               Constantly checks a client for incoming messages
             </summary>
-            <param name="oClient"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,Engine.Networking.Client)">
             <summary>
               Called when we try to read from a client stream and fail.
             </summary>
-            <param name="reason"> </param>
-            <param name="client"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.OnSendPacketException(Engine.Networking.Packets.Packet,System.String,Engine.Networking.Client)">
             <summary>
               Called when we try to send a message to a client but that send fails.
             </summary>
-            <param name="packet"> </param>
-            <param name="reason"> </param>
-            <param name="client"> </param>
         </member>
         <member name="P:Engine.Networking.BasicServer.IsRunning">
             <summary>
@@ -3921,143 +4035,187 @@
             Keyed values that the client provided to the server during the interaction
             </summary>
         </member>
+        <member name="T:Engine.Networking.Packets.Packet">
+            <summary>
+            Wrapper around the byte array that is sent to/read from a network stream
+            </summary>
+        </member>
+        <member name="M:Engine.Serialization.IByteSerializeable.FromByteArray(System.Byte[],System.Int32)">
+            <summary>
+              <para> Returns the position of the last character of the object in the byte array. </para>
+              <para> Returns a number less than startIndex if the object does not start at the given index. </para>
+            </summary>
+            <param name="bytes"> </param>
+            <param name="startIndex"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Engine.Networking.Packets.Packet.Equals(System.Object)">
+            <summary>
+            Determines whether the specified object is equal to this one
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.Networking.Packets.Packet.EmptyPacket">
+            <summary>
+            A packet with no body, and type code 0
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Packets.Packet.NullPacket.LoadFromBuffer(System.Byte[])">
+            <summary>
+            An empty packet does not load any data
+            </summary>
+            <param name="buffer"></param>
+        </member>
+        <member name="M:Engine.Networking.Packets.Packet.NullPacket.FromByteArray(System.Byte[],System.Int32)">
+            <summary>
+            <para>
+            Returns the position of the last character of the object in the byte array.
+            </para>
+            <para>
+            Returns a number less than startIndex if the object does not start at the given index.
+            </para>
+            </summary>
+            <param name="bytes"/><param name="startIndex"/>
+            <returns/>
+        </member>
         <member name="T:Engine.Input.EventInput.KeyboardLayout">
             <summary>
-            Hooks up windows dlls for keyboard event capture
+              Hooks up windows dlls for keyboard event capture
             </summary>
         </member>
         <member name="M:Engine.Input.EventInput.KeyboardLayout.getName">
             <summary>
-            The name of the keyboard layout
+              The name of the keyboard layout
             </summary>
-            <returns></returns>
+            <returns> </returns>
         </member>
         <member name="T:Engine.Input.EventInput.CharacterEventArgs">
             <summary>
-            EventArgs of a character press
-            (includes info about modifers such as alt, as well as repeat count)
+              EventArgs of a character press
+              (includes info about modifers such as alt, as well as repeat count)
             </summary>
         </member>
         <member name="M:Engine.Input.EventInput.CharacterEventArgs.#ctor(System.Char,System.Int32)">
             <summary>
-            Construct a new character event arg for a key press
+              Construct a new character event arg for a key press
             </summary>
-            <param name="character"></param>
-            <param name="lParam"></param>
+            <param name="character"> </param>
+            <param name="lParam"> </param>
         </member>
         <member name="P:Engine.Input.EventInput.CharacterEventArgs.Character">
             <summary>
-            The character that was entered
+              The character that was entered
             </summary>
         </member>
         <member name="P:Engine.Input.EventInput.CharacterEventArgs.Param">
             <summary>
-            Extra info such as modifers that were pressed
+              Extra info such as modifers that were pressed
             </summary>
         </member>
         <member name="P:Engine.Input.EventInput.CharacterEventArgs.RepeatCount">
             <summary>
-            How many times the key was registered
+              How many times the key was registered
             </summary>
         </member>
         <member name="P:Engine.Input.EventInput.CharacterEventArgs.ExtendedKey">
             <summary>
-            True if this was an extended key
+              True if this was an extended key
             </summary>
         </member>
         <member name="P:Engine.Input.EventInput.CharacterEventArgs.AltPressed">
             <summary>
-            Was alt depressed when the key was entered
+              Was alt depressed when the key was entered
             </summary>
         </member>
         <member name="P:Engine.Input.EventInput.CharacterEventArgs.PreviousState">
             <summary>
-            The state the key was in before this event
+              The state the key was in before this event
             </summary>
         </member>
         <member name="P:Engine.Input.EventInput.CharacterEventArgs.TransitionState">
             <summary>
-            Is this a transition from a different previous state
+              Is this a transition from a different previous state
             </summary>
         </member>
         <member name="T:Engine.Input.EventInput.KeyEventArgs">
             <summary>
-            EventArgs of a Keys press
+              EventArgs of a Keys press
             </summary>
         </member>
         <member name="M:Engine.Input.EventInput.KeyEventArgs.#ctor(Microsoft.Xna.Framework.Input.Keys)">
             <summary>
-            Construct a new Key event arg for a key press
+              Construct a new Key event arg for a key press
             </summary>
-            <param name="keyCode"></param>
+            <param name="keyCode"> </param>
         </member>
         <member name="P:Engine.Input.EventInput.KeyEventArgs.KeyCode">
             <summary>
-            The key that was pressed
+              The key that was pressed
             </summary>
         </member>
         <member name="T:Engine.Input.EventInput.CharEnteredHandler">
             <summary>
-            EventHandler for char events
+              EventHandler for char events
             </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
+            <param name="sender"> </param>
+            <param name="e"> </param>
         </member>
         <member name="T:Engine.Input.EventInput.KeyEventHandler">
             <summary>
-            EventHandler for Key events
+              EventHandler for Key events
             </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
+            <param name="sender"> </param>
+            <param name="e"> </param>
         </member>
         <member name="T:Engine.Input.EventInput.EventInput">
             <summary>
-            Converts win dll hooked input events into nice CharacterEvents and KeyEvents
+              Converts win dll hooked input events into nice CharacterEvents and KeyEvents
             </summary>
         </member>
         <member name="M:Engine.Input.EventInput.EventInput.Initialize(Microsoft.Xna.Framework.GameWindow)">
             <summary>
-            Initialize the TextInput with the given GameWindow.
+              Initialize the TextInput with the given GameWindow.
             </summary>
-            <param name="window">The XNA window to which text input should be linked.</param>
+            <param name="window"> The XNA window to which text input should be linked. </param>
         </member>
         <member name="E:Engine.Input.EventInput.EventInput.CharEntered">
             <summary>
-            Event raised when a character has been entered.
+              Event raised when a character has been entered.
             </summary>
         </member>
         <member name="E:Engine.Input.EventInput.EventInput.KeyDown">
             <summary>
-            Event raised when a key has been pressed down. May fire multiple times due to keyboard repeat.
+              Event raised when a key has been pressed down. May fire multiple times due to keyboard repeat.
             </summary>
         </member>
         <member name="E:Engine.Input.EventInput.EventInput.KeyUp">
             <summary>
-            Event raised when a key has been released.
+              Event raised when a key has been released.
             </summary>
         </member>
         <member name="T:Engine.Input.EventInput.KeyboardDispatcher">
             <summary>
-            Sends out read calls when input is handled from EventInput
+              Sends out read calls when input is handled from EventInput
             </summary>
         </member>
         <member name="M:Engine.Input.EventInput.KeyboardDispatcher.Initialize(Microsoft.Xna.Framework.GameWindow)">
             <summary>
-            Initialize the KeyboardDispatcher by connecting it to a GameWindow
+              Initialize the KeyboardDispatcher by connecting it to a GameWindow
             </summary>
-            <param name="window"></param>
+            <param name="window"> </param>
         </member>
         <member name="M:Engine.Input.EventInput.KeyboardDispatcher.RegisterListener(Engine.Input.EventInput.IKeyboardSubscriber)">
             <summary>
-            Add a listener that receives messages when new keys are pressed
+              Add a listener that receives messages when new keys are pressed
             </summary>
-            <param name="subscriber"></param>
+            <param name="subscriber"> </param>
         </member>
         <member name="M:Engine.Input.EventInput.KeyboardDispatcher.UnregisterListener(Engine.Input.EventInput.IKeyboardSubscriber)">
             <summary>
-            Remove a listener
+              Remove a listener
             </summary>
-            <param name="subscriber"></param>
+            <param name="subscriber"> </param>
         </member>
         <member name="T:Engine.Utility.EnumUtil">
             <summary>
@@ -4370,6 +4528,11 @@
             <typeparam name="T"></typeparam>
             <param name="this"></param>
             <param name="action"></param>
+        </member>
+        <member name="T:Engine.Screen.ScreenState">
+            <summary>
+            Enum describes the screen transition state.
+            </summary>
         </member>
         <member name="T:Engine.Input.MouseButton">
             <summary>
