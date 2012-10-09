@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Engine.Serialization;
 using Engine.Utility;
@@ -34,7 +35,6 @@ namespace Engine.DataStructures
         /// <summary>
         ///   String must be UTF8-Encoded
         /// </summary>
-        /// <returns> </returns>
         public string ReadString(char terminatingChar = '\0')
         {
             var terminatingIndex = _bytes.IndexOf(Index, terminatingChar);
@@ -48,6 +48,12 @@ namespace Engine.DataStructures
             return str;
         }
 
+        /// <summary>
+        /// Tries to read an IByteSerializeable of the given type, using that type's FromByteArray
+        /// </summary>
+        /// <typeparam name="T">The type to try to read</typeparam>
+        /// <param name="t">Where the value is read to.  Should not be used if the method returns false</param>
+        /// <returns>True if the value was successfully read, false otherwise</returns>
         public bool TryRead<T>(out T t) where T : IByteSerializeable, new()
         {
             t = new T();
@@ -58,15 +64,45 @@ namespace Engine.DataStructures
         }
 
         /// <summary>
+        /// Tries to read a list of values.
+        /// </summary>
+        public bool TryReadList<T>(out List<T> list) where T : IByteSerializeable, new()
+        {
+            list = new List<T>();
+            // Number of elements
+            var n = ReadInt32();
+            for(;n>0;n--)
+            {
+                T t;
+                var success = TryRead(out t);
+                if (!success)
+                {
+                    list.Clear();
+                    return false;
+                }
+                list.Add(t);
+            }
+            return true;
+        }
+
+        /// <summary>
         ///   Perform an unsafe read, where success is assumed
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
-        /// <returns> </returns>
         public T Read<T>() where T : IByteSerializeable, new()
         {
             T t;
             TryRead(out t);
             return t;
+        }
+
+        /// <summary>
+        ///   Perform an unsafe read, where success is assumed
+        /// </summary>
+        public List<T> ReadList<T>() where T : IByteSerializeable, new()
+        {
+            List<T> list;
+            TryReadList(out list);
+            return list;
         }
 
         public void Reset()
