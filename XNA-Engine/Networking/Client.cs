@@ -60,6 +60,24 @@ namespace Engine.Networking
             get { return TcpClient.GetIP(); }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Client) obj);
+        }
+
+        protected bool Equals(Client other)
+        {
+            return Equals(TcpClient, other.TcpClient);
+        }
+
+        public override int GetHashCode()
+        {
+            return (TcpClient != null ? TcpClient.GetHashCode() : 0);
+        }
+
         /// <summary>
         ///   Writes a message to the client.
         ///   Messages are queued and a thread proccesses them in the order they were enqueued
