@@ -2822,14 +2822,29 @@
             <summary>
               String must be UTF8-Encoded
             </summary>
-            <returns> </returns>
+        </member>
+        <member name="M:Engine.DataStructures.ByteArrayReader.TryRead``1(``0@)">
+            <summary>
+            Tries to read an IByteSerializeable of the given type, using that type's FromByteArray
+            </summary>
+            <typeparam name="T">The type to try to read</typeparam>
+            <param name="t">Where the value is read to.  Should not be used if the method returns false</param>
+            <returns>True if the value was successfully read, false otherwise</returns>
+        </member>
+        <member name="M:Engine.DataStructures.ByteArrayReader.TryReadList``1(System.Collections.Generic.List{``0}@)">
+            <summary>
+            Tries to read a list of values.
+            </summary>
         </member>
         <member name="M:Engine.DataStructures.ByteArrayReader.Read``1">
             <summary>
               Perform an unsafe read, where success is assumed
             </summary>
-            <typeparam name="T"> </typeparam>
-            <returns> </returns>
+        </member>
+        <member name="M:Engine.DataStructures.ByteArrayReader.ReadList``1">
+            <summary>
+              Perform an unsafe read, where success is assumed
+            </summary>
         </member>
         <member name="T:Engine.Camera.Camera">
             <summary>
