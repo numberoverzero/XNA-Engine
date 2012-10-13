@@ -163,6 +163,7 @@
     <Compile Include="Screen\MessageBoxScreen.cs" />
     <Compile Include="Screen\ScreenManager.cs" />
     <Compile Include="Screen\UISystem.cs" />
+    <Compile Include="Serialization\ByteSerializeable.cs" />
     <Compile Include="Serialization\IByteSerializeable.cs" />
     <Compile Include="TileEngine\Chunk.cs" />
     <Compile Include="TileEngine\TileManager.cs" />

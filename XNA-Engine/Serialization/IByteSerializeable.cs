@@ -1,8 +1,12 @@
-﻿namespace Engine.Serialization
+﻿using Engine.DataStructures;
+
+namespace Engine.Serialization
 {
     public interface IByteSerializeable
     {
         byte[] AsByteArray();
+
+        void BuildAsByteArray(ByteArrayBuilder builder);
 
         /// <summary>
         ///   <para> Returns the position of the last character of the object in the byte array. </para>

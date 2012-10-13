@@ -4076,24 +4076,6 @@
             A packet with no body, and type code 0
             </summary>
         </member>
-        <member name="M:Engine.Networking.Packets.Packet.NullPacket.LoadFromBuffer(System.Byte[])">
-            <summary>
-            An empty packet does not load any data
-            </summary>
-            <param name="buffer"></param>
-        </member>
-        <member name="M:Engine.Networking.Packets.Packet.NullPacket.FromByteArray(System.Byte[],System.Int32)">
-            <summary>
-            <para>
-            Returns the position of the last character of the object in the byte array.
-            </para>
-            <para>
-            Returns a number less than startIndex if the object does not start at the given index.
-            </para>
-            </summary>
-            <param name="bytes"/><param name="startIndex"/>
-            <returns/>
-        </member>
         <member name="T:Engine.Input.EventInput.KeyboardLayout">
             <summary>
               Hooks up windows dlls for keyboard event capture
