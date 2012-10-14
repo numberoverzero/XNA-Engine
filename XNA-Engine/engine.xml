@@ -4052,7 +4052,7 @@
         </member>
         <member name="T:Engine.Networking.Packets.Packet">
             <summary>
-            Wrapper around the byte array that is sent to/read from a network stream
+              Wrapper around the byte array that is sent to/read from a network stream
             </summary>
         </member>
         <member name="M:Engine.Serialization.IByteSerializeable.FromByteArray(System.Byte[],System.Int32)">
@@ -4066,14 +4066,14 @@
         </member>
         <member name="M:Engine.Networking.Packets.Packet.Equals(System.Object)">
             <summary>
-            Determines whether the specified object is equal to this one
+              Determines whether the specified object is equal to this one
             </summary>
-            <param name="obj"></param>
-            <returns></returns>
+            <param name="obj"> </param>
+            <returns> </returns>
         </member>
         <member name="P:Engine.Networking.Packets.Packet.EmptyPacket">
             <summary>
-            A packet with no body, and type code 0
+              A packet with no body, and type code 0
             </summary>
         </member>
         <member name="T:Engine.Input.EventInput.KeyboardLayout">
