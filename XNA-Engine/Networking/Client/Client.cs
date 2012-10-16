@@ -60,6 +60,11 @@ namespace Engine.Networking
             get { return TcpClient.GetIP(); }
         }
 
+        /// <summary>
+        ///   Allows a push model so that others don't have to constantly ask the Client if it has packets to be read.
+        /// </summary>
+        public event EventHandler OnReadPacket;
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -121,6 +126,22 @@ namespace Engine.Networking
         }
 
         /// <summary>
+        ///   <para> Tries to read a message from the client as a Packet. </para>
+        ///   <para> Returns null if there is no pending message from the client. </para>
+        ///   <para> Messages to be read are enqueued by a worker thread and added in the order they are received </para>
+        /// </summary>
+        public Packet ReadPacket()
+        {
+            var bytes = Read();
+            if (bytes == null) return null; // We read an empty byte steam
+
+            var packet = Packet.BuildPacketFunction(bytes);
+            if (packet == null || packet.Equals(Packet.EmptyPacket))
+                return null; // Unknown or poorly formed packet
+            return packet;
+        }
+
+        /// <summary>
         ///   Start reading/writing
         /// </summary>
         public void Start()
@@ -152,7 +173,7 @@ namespace Engine.Networking
                     Thread.Sleep(1);
                     var bytes = stream.ReadWithHeader();
                     if (bytes == null) continue;
-                    _readQueue.Enqueue(bytes);
+                    ReadEnqueue(bytes);
                 }
                 catch
                 {
@@ -180,6 +201,13 @@ namespace Engine.Networking
                 }
             }
             IsAlive = false;
+        }
+
+        private void ReadEnqueue(byte[] bytes)
+        {
+            _readQueue.Enqueue(bytes);
+            if (OnReadPacket != null)
+                OnReadPacket(this, null);
         }
     }
 }

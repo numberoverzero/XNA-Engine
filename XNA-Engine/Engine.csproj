@@ -141,7 +141,7 @@
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Networking\Packets\Packet.cs" />
     <Compile Include="Networking\Server\BasicServer.cs" />
-    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Networking\Client\Client.cs" />
     <Compile Include="Networking\Server\ServerEventArgs.cs" />
     <Compile Include="Networking\Server\IServer.cs" />
     <Compile Include="Rendering\BasicShapeRenderer.cs" />
