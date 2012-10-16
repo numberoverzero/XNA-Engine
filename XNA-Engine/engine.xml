@@ -1881,75 +1881,6 @@
               Draws the message box.
             </summary>
         </member>
-        <member name="T:Engine.Networking.Client">
-            <summary>
-              <para> Attempts to abstract the network layer of the TcpClient, so that this is simply a read/write container. </para>
-              <para> Manages concurrent read/writes using ConcurrentQueues </para>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient,System.Boolean)">
-            <summary>
-              <para> Construct a client that manages concurrent reads/writes to a TcpClient </para>
-              <para> Default behavior starts the client immediately </para>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.Write(System.Byte[],System.Int32,System.Int32)">
-            <summary>
-              Writes a message to the client.
-              Messages are queued and a thread proccesses them in the order they were enqueued
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.Write(System.Byte[])">
-            <summary>
-              <para> Writes a message to the client. </para>
-              para>
-              <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.WritePacket(Engine.Networking.Packets.Packet)">
-            <summary>
-              <para> Writes a packet to the client. </para>
-              para>
-              <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.Read">
-            <summary>
-              <para> Tries to read a message from the client. </para>
-              <para> Returns null if there is no pending message from the client. </para>
-              <para> Messages to be read are enqueued by a worker thread and added in the order they are received </para>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.Start">
-            <summary>
-              Start reading/writing
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.Client.Close">
-            <summary>
-              Close the TcpClient and its underlying NetworkStream
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.TcpClient">
-            <summary>
-              Underlying TcpClient
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.HasQueuedReadMessages">
-            <summary>
-              Whether there are pending messages to be read.
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.IsAlive">
-            <summary>
-              Whether the underlying TcpClient is still alive and handling reads/writes
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.Client.GetIP">
-            <summary>
-              Returns the underlying TcpClient's IPAddress as a string
-            </summary>
-        </member>
         <member name="T:Engine.Logging.ILog">
             <summary>
             Logging interface
@@ -2825,15 +2756,15 @@
         </member>
         <member name="M:Engine.DataStructures.ByteArrayReader.TryRead``1(``0@)">
             <summary>
-            Tries to read an IByteSerializeable of the given type, using that type's FromByteArray
+              Tries to read an IByteSerializeable of the given type, using that type's FromByteArray
             </summary>
-            <typeparam name="T">The type to try to read</typeparam>
-            <param name="t">Where the value is read to.  Should not be used if the method returns false</param>
-            <returns>True if the value was successfully read, false otherwise</returns>
+            <typeparam name="T"> The type to try to read </typeparam>
+            <param name="t"> Where the value is read to. Should not be used if the method returns false </param>
+            <returns> True if the value was successfully read, false otherwise </returns>
         </member>
         <member name="M:Engine.DataStructures.ByteArrayReader.TryReadList``1(System.Collections.Generic.List{``0}@)">
             <summary>
-            Tries to read a list of values.
+              Tries to read a list of values.
             </summary>
         </member>
         <member name="M:Engine.DataStructures.ByteArrayReader.Read``1">
@@ -3603,11 +3534,6 @@
               Two-way mapping between a client's TcpClient and their GUID
             </summary>
         </member>
-        <member name="F:Engine.Networking.BasicServer.ClientThreads">
-            <summary>
-              Mapping from clients to their read threads
-            </summary>
-        </member>
         <member name="F:Engine.Networking.BasicServer.Log">
             <summary>
               The server log
@@ -3691,10 +3617,12 @@
               and starts that thread.  The thread calls DefaultClientThreadFunction
             </summary>
         </member>
-        <member name="M:Engine.Networking.BasicServer.ClientThreadFunction(System.Object)">
+        <member name="M:Engine.Networking.BasicServer.OnClientRead(System.Object,System.EventArgs)">
             <summary>
-              Constantly checks a client for incoming messages
+              Called when a client receives a new packet
             </summary>
+            <param name="sender"> </param>
+            <param name="args"> </param>
         </member>
         <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,Engine.Networking.Client)">
             <summary>
@@ -4003,51 +3931,51 @@
         </member>
         <member name="T:Engine.Networking.ServerEventArgs">
             <summary>
-            Events passed when an authentication attempt occurs.
+              Events passed when an authentication attempt occurs.
             </summary>
         </member>
         <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client)">
             <summary>
-            Initialize a set of parameterless server interaction args at the current time
+              Initialize a set of parameterless server interaction args at the current time
             </summary>
-            <param name="success"></param>
-            <param name="client"></param>
+            <param name="success"> </param>
+            <param name="client"> </param>
         </member>
         <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
-            Initialize a set of server interaction args at the current time with the given parameters
+              Initialize a set of server interaction args at the current time with the given parameters
             </summary>
-            <param name="success"></param>
-            <param name="client"></param>
-            <param name="parameters"></param>
+            <param name="success"> </param>
+            <param name="client"> </param>
+            <param name="parameters"> </param>
         </member>
         <member name="M:Engine.Networking.ServerEventArgs.#ctor(System.Boolean,Engine.Networking.Client,System.Collections.Generic.IDictionary{System.String,System.String},System.DateTime)">
             <summary>
-            Initialize a set of server interaction args at the given time with the given parameters
+              Initialize a set of server interaction args at the given time with the given parameters
             </summary>
-            <param name="success"></param>
-            <param name="client"></param>
-            <param name="parameters"></param>
-            <param name="time"></param>
+            <param name="success"> </param>
+            <param name="client"> </param>
+            <param name="parameters"> </param>
+            <param name="time"> </param>
         </member>
         <member name="P:Engine.Networking.ServerEventArgs.Success">
             <summary>
-            Was the interaction successful
+              Was the interaction successful
             </summary>
         </member>
         <member name="P:Engine.Networking.ServerEventArgs.Client">
             <summary>
-            The TcpClient that interacted
+              The TcpClient that interacted
             </summary>
         </member>
         <member name="P:Engine.Networking.ServerEventArgs.Time">
             <summary>
-            When the interaction occured
+              When the interaction occured
             </summary>
         </member>
         <member name="P:Engine.Networking.ServerEventArgs.Parameters">
             <summary>
-            Keyed values that the client provided to the server during the interaction
+              Keyed values that the client provided to the server during the interaction
             </summary>
         </member>
         <member name="T:Engine.Networking.Packets.Packet">
@@ -4661,6 +4589,87 @@
             In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
             In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
             </example>
+        </member>
+        <member name="T:Engine.Networking.Client">
+            <summary>
+              <para> Attempts to abstract the network layer of the TcpClient, so that this is simply a read/write container. </para>
+              <para> Manages concurrent read/writes using ConcurrentQueues </para>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.#ctor(System.Net.Sockets.TcpClient,System.Boolean)">
+            <summary>
+              <para> Construct a client that manages concurrent reads/writes to a TcpClient </para>
+              <para> Default behavior starts the client immediately </para>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+              Writes a message to the client.
+              Messages are queued and a thread proccesses them in the order they were enqueued
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Write(System.Byte[])">
+            <summary>
+              <para> Writes a message to the client. </para>
+              para>
+              <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.WritePacket(Engine.Networking.Packets.Packet)">
+            <summary>
+              <para> Writes a packet to the client. </para>
+              para>
+              <para> Messages are queued and a thread proccesses them in the order they were enqueued </para>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Read">
+            <summary>
+              <para> Tries to read a message from the client. </para>
+              <para> Returns null if there is no pending message from the client. </para>
+              <para> Messages to be read are enqueued by a worker thread and added in the order they are received </para>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.ReadPacket">
+            <summary>
+              <para> Tries to read a message from the client as a Packet. </para>
+              <para> Returns null if there is no pending message from the client. </para>
+              <para> Messages to be read are enqueued by a worker thread and added in the order they are received </para>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Start">
+            <summary>
+              Start reading/writing
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Client.Close">
+            <summary>
+              Close the TcpClient and its underlying NetworkStream
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.TcpClient">
+            <summary>
+              Underlying TcpClient
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.HasQueuedReadMessages">
+            <summary>
+              Whether there are pending messages to be read.
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.IsAlive">
+            <summary>
+              Whether the underlying TcpClient is still alive and handling reads/writes
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Client.GetIP">
+            <summary>
+              Returns the underlying TcpClient's IPAddress as a string
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.Client.OnReadPacket">
+            <summary>
+              Allows a push model so that others don't have to constantly ask the Client if it has packets to be read.
+            </summary>
         </member>
     </members>
 </doc>

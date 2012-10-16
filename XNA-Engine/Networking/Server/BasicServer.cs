@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -31,11 +30,6 @@ namespace Engine.Networking
         protected BidirectionalDict<string, Client> ClientTable;
 
         /// <summary>
-        ///   Mapping from clients to their read threads
-        /// </summary>
-        protected ConcurrentDictionary<Client, Thread> ClientThreads;
-
-        /// <summary>
         ///   The server log
         /// </summary>
         protected Log Log;
@@ -50,11 +44,12 @@ namespace Engine.Networking
         public BasicServer(IPAddress localaddr, int port, string logFileName = null)
         {
             IsRunning = false;
-            ClientTable = new BidirectionalDict<string, Client>();
-            AuthTable = new DefaultDict<Client, bool>();
-            ClientThreads = new ConcurrentDictionary<Client, Thread>();
             _localaddr = localaddr;
             _port = port;
+
+            ClientTable = new BidirectionalDict<string, Client>();
+            AuthTable = new DefaultDict<Client, bool>();
+
             Log = new Log(logFileName, Frequency.Burst);
             Log.Info("Server initialized: <{0}>::{1}".format(localaddr, port));
         }
@@ -141,18 +136,12 @@ namespace Engine.Networking
             var success = true;
             var parameters = new Dictionary<string, string>();
             parameters["Server:RemoveClientFromTable:Value"] = "false";
-            parameters["Server:KillClientThread:Value"] = "false";
-            parameters["Server:RemoveClientThreadFromTable:Value"] = "false";
             try
             {
                 ClientTable.Remove(client);
                 parameters["Server:RemoveClientFromTable:Value"] = "true";
                 AuthTable.Remove(client);
                 parameters["Server:RemoveClientFromAuthTable:Value"] = "true";
-                ClientThreads[client].Kill();
-                parameters["Server:KillClientThread:Value"] = "true";
-                ClientThreads.Remove(client);
-                parameters["Server:RemoveClientThreadFromTable:Value"] = "true";
             }
             catch
             {
@@ -184,17 +173,13 @@ namespace Engine.Networking
                 Log.Debug("Server:InvalidFunctionCall:Authenticate:Data:IP:<{0}>".format(client.GetIP));
                 return;
             }
-            var parameters = new Dictionary<string, string>();
+
             if (e == null)
             {
-                parameters = new Dictionary<string, string>();
-                // Always fail default auth attempt
-                e = new ServerEventArgs(false, client, parameters);
+                e = new ServerEventArgs(false, client);
             }
             else
             {
-                // It is assumed that anyone passing ServerEventArgs will have the authority to declare the client authenticated or not
-                e.Parameters.Merge(parameters);
                 e.Client = client;
             }
             AuthTable[client] = e.Success;
@@ -251,8 +236,7 @@ namespace Engine.Networking
         /// </summary>
         public string GetClientString(Client client)
         {
-            if (!IsRunning) return null;
-            return ClientTable[client];
+            return !IsRunning ? null : ClientTable[client];
         }
 
         /// <summary>
@@ -332,40 +316,24 @@ namespace Engine.Networking
         {
             var client = args.Client;
             ClientTable[client] = new Guid().ToString();
-            var thread = new Thread(ClientThreadFunction);
-            ClientThreads[client] = thread;
-            thread.Start(client);
+            client.OnReadPacket += OnClientRead;
         }
 
         /// <summary>
-        ///   Constantly checks a client for incoming messages
+        ///   Called when a client receives a new packet
         /// </summary>
-        protected void ClientThreadFunction(object oClient)
+        /// <param name="sender"> </param>
+        /// <param name="args"> </param>
+        protected void OnClientRead(object sender, EventArgs args)
         {
-            var client = oClient as Client;
+            var client = sender as Client;
             if (client == null) return;
-            while (client.IsAlive)
-            {
-                Thread.Sleep(1);
-                try
-                {
-                    if (!client.HasQueuedReadMessages) continue;
 
-                    var bytes = client.Read();
-                    if (bytes == null) continue; // We read an empty byte steam
-
-                    var packet = Packet.BuildPacketFunction(bytes);
-                    if (packet == null || packet.Equals(Packet.EmptyPacket))
-                        continue; // Unknown or poorly formed packet
-
-                    ReceivePacket(packet, client);
-                }
-                catch
-                {
-                    break;
-                }
-            }
-            OnClientReadException("Lost Connection", client);
+            if (!ClientTable.Contains(client))
+                // Don't waste our time reading from clients that aren't tracked in the client table
+                client.OnReadPacket -= OnClientRead;
+            else
+                ReceivePacket(client.ReadPacket(), client);
         }
 
         /// <summary>
