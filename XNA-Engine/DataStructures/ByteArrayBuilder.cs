@@ -19,6 +19,23 @@ namespace Engine.DataStructures
             _termChar = termChar;
         }
 
+        public byte[] GetByteArray()
+        {
+            var bufSize = _pieces.Sum(segment => segment.Length);
+            var bytes = new byte[bufSize];
+
+            var destinationIndex = 0;
+            foreach (var piece in _pieces)
+            {
+                var length = piece.Length;
+                Array.Copy(piece, 0, bytes, destinationIndex, length);
+                destinationIndex += length;
+            }
+            return bytes;
+        }
+
+        #region Add primitives
+
         public void Add(byte[] bytes)
         {
             _pieces.Add(bytes);
@@ -41,6 +58,35 @@ namespace Engine.DataStructures
             Add(s.AsByteArray(encoding));
         }
 
+        #endregion
+
+        #region Add primitives (List)
+
+        public void AddList(List<int> list)
+        {
+            Add(list.Count);
+            foreach (var i in list)
+                Add(i);
+        }
+
+        public void AddList(List<string> list, Encoding encoding = null)
+        {
+            Add(list.Count);
+            foreach (var i in list)
+                Add(i, encoding);
+        }
+
+        public void AddList(List<bool> list)
+        {
+            Add(list.Count);
+            foreach (var i in list)
+                Add(i);
+        }
+
+        #endregion
+
+        #region Add IByteSerializeable
+
         public void Add(IByteSerializeable byteSerializeable)
         {
             Add(byteSerializeable.AsByteArray());
@@ -48,23 +94,11 @@ namespace Engine.DataStructures
 
         public void Add<T>(List<T> list) where T : IByteSerializeable
         {
+            Add(list.Count);
             foreach (var t in list)
                 Add(t);
         }
 
-        public byte[] GetByteArray()
-        {
-            var bufSize = _pieces.Sum(segment => segment.Length);
-            var bytes = new byte[bufSize];
-
-            var destinationIndex = 0;
-            foreach (var piece in _pieces)
-            {
-                var length = piece.Length;
-                Array.Copy(piece, 0, bytes, destinationIndex, length);
-                destinationIndex += length;
-            }
-            return bytes;
-        }
+        #endregion
     }
 }

@@ -49,11 +49,11 @@ namespace Engine.DataStructures
         }
 
         /// <summary>
-        /// Tries to read an IByteSerializeable of the given type, using that type's FromByteArray
+        ///   Tries to read an IByteSerializeable of the given type, using that type's FromByteArray
         /// </summary>
-        /// <typeparam name="T">The type to try to read</typeparam>
-        /// <param name="t">Where the value is read to.  Should not be used if the method returns false</param>
-        /// <returns>True if the value was successfully read, false otherwise</returns>
+        /// <typeparam name="T"> The type to try to read </typeparam>
+        /// <param name="t"> Where the value is read to. Should not be used if the method returns false </param>
+        /// <returns> True if the value was successfully read, false otherwise </returns>
         public bool TryRead<T>(out T t) where T : IByteSerializeable, new()
         {
             t = new T();
@@ -64,14 +64,14 @@ namespace Engine.DataStructures
         }
 
         /// <summary>
-        /// Tries to read a list of values.
+        ///   Tries to read a list of values.
         /// </summary>
         public bool TryReadList<T>(out List<T> list) where T : IByteSerializeable, new()
         {
             list = new List<T>();
             // Number of elements
             var n = ReadInt32();
-            for(;n>0;n--)
+            for (; n > 0; n--)
             {
                 T t;
                 var success = TryRead(out t);
@@ -102,6 +102,16 @@ namespace Engine.DataStructures
         {
             List<T> list;
             TryReadList(out list);
+            return list;
+        }
+
+        public List<string> ReadStringList(char terminatingChar = '\0')
+        {
+            var list = new List<string>();
+            // Number of elements
+            var n = ReadInt32();
+            for (; n > 0; n--)
+                list.Add(ReadString(terminatingChar));
             return list;
         }
 
