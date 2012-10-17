@@ -63,7 +63,7 @@ namespace Engine.Networking
         /// <summary>
         ///   Allows a push model so that others don't have to constantly ask the Client if it has packets to be read.
         /// </summary>
-        public event EventHandler OnReadPacket;
+        public event EventHandler<PacketArgs> OnReadPacket;
 
         public override bool Equals(object obj)
         {
@@ -205,9 +205,14 @@ namespace Engine.Networking
 
         private void ReadEnqueue(byte[] bytes)
         {
-            _readQueue.Enqueue(bytes);
-            if (OnReadPacket != null)
-                OnReadPacket(this, null);
+            if(OnReadPacket == null)
+            {
+                _readQueue.Enqueue(bytes);
+                return;
+            }
+
+            var packet = Packet.BuildPacketFunction(bytes);
+            OnReadPacket(this, new PacketArgs(packet));
         }
     }
 }

@@ -102,22 +102,21 @@ namespace Engine.Networking
         /// </summary>
         public virtual void Connect(Client client, ServerEventArgs e = null)
         {
-            var parameters = new Dictionary<string, string>();
-            parameters["Server:Connect:Data:IP"] = client.GetIP;
             if (!IsRunning) return;
+
             if (e == null)
-            {
-                e = new ServerEventArgs(false, client, parameters);
-            }
+                e = new ServerEventArgs(true, client);
             else
             {
+                var parameters = new Dictionary<string, string>() {{"Server:Connect:Data:IP", client.GetIP}};
                 e.Parameters.Merge(parameters);
 
                 // Connect has the final say on these two,
                 // since it was the most recent frame from which the Event was fired
-                e.Success = true;
                 e.Client = client;
+                e.Success = true;
             }
+
             Log.Info("Server:Connect:Data:IP:<{0}>".format(client.GetIP));
             if (OnConnect != null)
                 OnConnect(this, e);
@@ -215,7 +214,7 @@ namespace Engine.Networking
             foreach (var client in clients)
                 try
                 {
-                    if (IsAuthenticated(client)) client.WritePacket(packet);
+                    client.WritePacket(packet);
                 }
                 catch
                 {
@@ -324,7 +323,7 @@ namespace Engine.Networking
         /// </summary>
         /// <param name="sender"> </param>
         /// <param name="args"> </param>
-        protected void OnClientRead(object sender, EventArgs args)
+        protected void OnClientRead(object sender, PacketArgs args)
         {
             var client = sender as Client;
             if (client == null) return;
@@ -333,7 +332,7 @@ namespace Engine.Networking
                 // Don't waste our time reading from clients that aren't tracked in the client table
                 client.OnReadPacket -= OnClientRead;
             else
-                ReceivePacket(client.ReadPacket(), client);
+                ReceivePacket(args.Packet, client);
         }
 
         /// <summary>
