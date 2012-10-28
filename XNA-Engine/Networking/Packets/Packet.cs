@@ -9,15 +9,15 @@ namespace Engine.Networking.Packets
     /// </summary>
     public abstract class Packet : ByteSerializeable
     {
-        public static Func<string, int> GetTypeFunction;
-        public static Func<int, string> GetNameFunction;
-        public static Func<byte[], Packet> BuildPacketFunction;
+        public static PacketBuilder Builder;
         private static Packet _nullPacket;
 
         public int Type
         {
-            get { return GetTypeFunction(GetType().Name); }
+            get { return Builder.TypeFromName(GetType().Name); }
         }
+
+        public abstract Packet Copy();
 
         /// <summary>
         ///   A packet with no body, and type code 0
@@ -59,6 +59,11 @@ namespace Engine.Networking.Packets
 
         private class NullPacket : Packet
         {
+            public override Packet Copy()
+            {
+                // Singleton
+                return this;
+            }
         }
 
         #endregion

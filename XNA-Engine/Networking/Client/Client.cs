@@ -135,7 +135,7 @@ namespace Engine.Networking
             var bytes = Read();
             if (bytes == null) return null; // We read an empty byte steam
 
-            var packet = Packet.BuildPacketFunction(bytes);
+            var packet = Packet.Builder.BuildFrom(bytes);
             if (packet == null || packet.Equals(Packet.EmptyPacket))
                 return null; // Unknown or poorly formed packet
             return packet;
@@ -211,7 +211,7 @@ namespace Engine.Networking
                 return;
             }
 
-            var packet = Packet.BuildPacketFunction(bytes);
+            var packet = Packet.Builder.BuildFrom(bytes);
             OnReadPacket(this, new PacketArgs(packet));
         }
     }
