@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Engine.Utility
@@ -39,6 +40,24 @@ namespace Engine.Utility
         {
             var combinations = elements.Combinations(k);
             return combinations.Select(result => result.ToList());
+        }
+
+        /// <summary>
+        /// Compact foreach extension
+        /// </summary>
+        public static void Each<T>(this IEnumerable<T> enumerable, Action<T> action)
+        {
+            foreach (T t in enumerable)
+                action(t);
+        }
+
+        /// <summary>
+        /// Compact foreach extension
+        /// </summary>
+        public static void Each<T>(this T[] enumerable, Action<T> action)
+        {
+            foreach (T t in enumerable)
+                action(t);
         }
     }
 }
