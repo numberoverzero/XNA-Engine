@@ -59,5 +59,13 @@ namespace Engine.Utility
             foreach (T t in enumerable)
                 action(t);
         }
+
+        /// <summary>
+        /// Does an action n times
+        /// </summary>
+        public static void TimesDo(this int repeat, Action action)
+        {
+            for (var i = 0; i < repeat; i++) action();
+        }
     }
 }
