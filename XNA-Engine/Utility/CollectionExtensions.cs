@@ -50,7 +50,7 @@ namespace Engine.Utility
         public static T PopRandomElement<T>(this ICollection<T> collection)
         {
             if (collection.Count == 0) return default(T);
-            int index = Guid.NewGuid().GetHashCode() % collection.Count;
+            int index = Math.Abs(Guid.NewGuid().GetHashCode()) % collection.Count;
             var iter = collection.GetEnumerator();
             int i = 0; while (i <= index) { iter.MoveNext(); i++; }
             var t = iter.Current;
