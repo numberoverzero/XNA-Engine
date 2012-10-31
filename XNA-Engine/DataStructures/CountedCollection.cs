@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Engine.DataStructures
 {
@@ -101,6 +102,17 @@ namespace Engine.DataStructures
         public int Count
         {
             get { return set.Count; }
+        }
+
+        /// <summary>
+        /// Returns the sum of repititions of all items in the set (for a set with one item repeated 7 times, returns 7)
+        /// </summary>
+        public int InstanceCount
+        {
+            get
+            {
+                return count.Values.Sum();
+            }
         }
 
         /// <summary>
