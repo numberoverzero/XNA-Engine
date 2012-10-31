@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 namespace Engine.Utility
 {
     /// <summary>
@@ -43,6 +45,15 @@ namespace Engine.Utility
             outvec.X = origin.X + (float)(Math.Cos(theta) * (vector.X - origin.X) - Math.Sin(theta) * (vector.Y - origin.Y));
             outvec.Y = origin.Y + (float)(Math.Sin(theta) * (vector.X - origin.X) + Math.Cos(theta) * (vector.Y - origin.Y));
             return outvec;
+        }
+
+
+        /// <summary>
+        /// Returns the width and height of the texture.  May not be useful for multi-image textures.
+        /// </summary>
+        public static Vector2 Dimensions(this Texture2D texture)
+        {
+            return new Vector2(texture.Width, texture.Height);
         }
     }
 }
