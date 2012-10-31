@@ -160,6 +160,7 @@
     <Compile Include="Input\Binding\BasicBindings.cs" />
     <Compile Include="Input\InputSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\ResolutionContext\ResolutionContext.cs" />
     <Compile Include="Screen\Enums.cs" />
     <Compile Include="Screen\GameScreen.cs" />
     <Compile Include="Screen\MessageBoxScreen.cs" />

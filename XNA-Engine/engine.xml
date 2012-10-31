@@ -879,6 +879,11 @@
               See ICollection.Count
             </summary>
         </member>
+        <member name="P:Engine.DataStructures.CountedCollection`1.InstanceCount">
+            <summary>
+            Returns the sum of repititions of all items in the set (for a set with one item repeated 7 times, returns 7)
+            </summary>
+        </member>
         <member name="P:Engine.DataStructures.CountedCollection`1.IsReadOnly">
             <summary>
               See ICollection.IsReadOnly
@@ -1572,6 +1577,11 @@
             <param name="theta">The angle (in radians) to rotate by</param>
             <returns></returns>
         </member>
+        <member name="M:Engine.Utility.Vector2Extensions.Dimensions(Microsoft.Xna.Framework.Graphics.Texture2D)">
+            <summary>
+            Returns the width and height of the texture.  May not be useful for multi-image textures.
+            </summary>
+        </member>
         <member name="M:Engine.Screen.IScreenComponent.Select">
             <summary>
             Toggle the Selected state
@@ -1596,6 +1606,37 @@
         <member name="M:Engine.Screen.UISystem.ExitMenu">
             <summary>
             Exits the top-most menu
+            </summary>
+        </member>
+        <member name="T:Engine.Rendering.ResolutionContext.ResolutionContext">
+            <summary>
+              <para> Allows you to render objects against an expected resolution, using scaling to adjust to an actual resolution. </para>
+              <para> Make sure you update ActualScreenSize whenever it changes. </para>
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.ResolutionContext.ResolutionContext.ActualScreenSize">
+            <summary>
+              The actual size of the screen you're rendering to
+            </summary>
+        </member>
+        <member name="F:Engine.Rendering.ResolutionContext.ResolutionContext.ReferenceScreenSize">
+            <summary>
+              The size of the screen you're expecting to render to
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.ResolutionContext.ResolutionContext.PosFromPct(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+              Returns the screen position (against the reference screen size) of the position of a given percent.
+              <example>
+                For a reference screen of 1024x768 and an argument of 0.5, 0.5, this function would return 512, 384
+              </example>
+            </summary>
+            <param name="relativePos"> </param>
+            <returns> </returns>
+        </member>
+        <member name="M:Engine.Rendering.ResolutionContext.ResolutionContext.Render(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Renders with the position in reference coordinates
             </summary>
         </member>
         <member name="T:Engine.Rendering.RenderPass">
@@ -2491,6 +2532,11 @@
         <member name="M:Engine.Utility.IterableExtensions.Each``1(``0[],System.Action{``0})">
             <summary>
             Compact foreach extension
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.IterableExtensions.TimesDo(System.Int32,System.Action)">
+            <summary>
+            Does an action n times
             </summary>
         </member>
         <member name="T:Engine.Globals">
@@ -4406,47 +4452,47 @@
         </member>
         <member name="T:Engine.Rendering.BasicShapeRenderer">
             <summary>
-            Useful for rendering very basic shapes with solid colors,
-            such as squares, rectangles, and outlines of said shapes
+              Useful for rendering very basic shapes with solid colors,
+              such as squares, rectangles, and outlines of said shapes
             </summary>
         </member>
         <member name="M:Engine.Rendering.BasicShapeRenderer.Initialize(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
             <summary>
-            The BasicShapeRenderer won't actually render until it's been initialized
+              The BasicShapeRenderer won't actually render until it's been initialized
             </summary>
-            <param name="graphicsDevice"></param>
+            <param name="graphicsDevice"> </param>
         </member>
         <member name="M:Engine.Rendering.BasicShapeRenderer.DrawSolidSquare(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,System.Single,System.Single)">
             <summary>
-            Draws a filled square whose center is position
+              Draws a filled square whose center is position
             </summary>
-            <param name="batch">SpriteBatch for drawing</param>
-            <param name="position">Center of the Square</param>
-            <param name="color">Color of the square</param>
-            <param name="width">Square side length</param>
-            <param name="rotation">Rotation in radians about the center</param>
+            <param name="batch"> SpriteBatch for drawing </param>
+            <param name="position"> Center of the Square </param>
+            <param name="color"> Color of the square </param>
+            <param name="width"> Square side length </param>
+            <param name="rotation"> Rotation in radians about the center </param>
         </member>
         <member name="M:Engine.Rendering.BasicShapeRenderer.DrawSquareOutline(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,System.Single,System.Single,System.Single)">
             <summary>
-            Draws a hollow square whose center is position, of width lineWidth (default 1px, does not exceed width)
+              Draws a hollow square whose center is position, of width lineWidth (default 1px, does not exceed width)
             </summary>
-            <param name="batch">SpriteBatch for drawing</param>
-            <param name="position">Center of the Square</param>
-            <param name="color">Color of the square</param>
-            <param name="width">Square side length</param>
-            <param name="rotation">Rotation in radians about the center</param>
-            <param name="lineWidth">Width in pixels of the line</param>
+            <param name="batch"> SpriteBatch for drawing </param>
+            <param name="position"> Center of the Square </param>
+            <param name="color"> Color of the square </param>
+            <param name="width"> Square side length </param>
+            <param name="rotation"> Rotation in radians about the center </param>
+            <param name="lineWidth"> Width in pixels of the line </param>
         </member>
         <member name="M:Engine.Rendering.BasicShapeRenderer.DrawRectangleOutline(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Vector2,System.Single,System.Single)">
             <summary>
-            Draws a hollow rectangle whose center is position, of width lineWidth (default 1px, does not exceed width)
+              Draws a hollow rectangle whose center is position, of width lineWidth (default 1px, does not exceed width)
             </summary>
-            <param name="batch">SpriteBatch for drawing</param>
-            <param name="position">Center of the rectangle</param>
-            <param name="color">Color of the rectangle</param>
-            <param name="dimensions">Dimensions of the rectangle</param>
-            <param name="rotation">Rotation in radians about the center</param>
-            <param name="lineWidth">Width in pixels of the line</param>
+            <param name="batch"> SpriteBatch for drawing </param>
+            <param name="position"> Center of the rectangle </param>
+            <param name="color"> Color of the rectangle </param>
+            <param name="dimensions"> Dimensions of the rectangle </param>
+            <param name="rotation"> Rotation in radians about the center </param>
+            <param name="lineWidth"> Width in pixels of the line </param>
         </member>
         <member name="T:Engine.Logging.Log">
             <summary>
