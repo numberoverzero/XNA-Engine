@@ -72,6 +72,18 @@ namespace Engine.DataStructures
         }
 
         /// <summary>
+        /// Add an item n times
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="n"></param>
+        public void Add(T item, int n)
+        {
+            if (count[item] <= 0)
+                set.Add(item);
+            count[item] += n;
+        }
+
+        /// <summary>
         ///   See ICollection.Clear
         /// </summary>
         public void Clear()
