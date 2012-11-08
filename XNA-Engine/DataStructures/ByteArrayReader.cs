@@ -59,7 +59,7 @@ namespace Engine.DataStructures
             t = new T();
             var endIndex = t.FromByteArray(_bytes, Index);
             if (endIndex < Index) return false;
-            Index = endIndex + 1;
+            Index = endIndex;
             return true;
         }
 
@@ -102,6 +102,16 @@ namespace Engine.DataStructures
         {
             List<T> list;
             TryReadList(out list);
+            return list;
+        }
+
+        public List<int> ReadIntList()
+        {
+            var list = new List<int>();
+            // Number of elements
+            var n = ReadInt32();
+            for(;n>0;n--)
+                list.Add(ReadInt32());
             return list;
         }
 
