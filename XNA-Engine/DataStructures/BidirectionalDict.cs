@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Engine.DataStructures
 {
@@ -152,20 +153,22 @@ namespace Engine.DataStructures
 
         /// <summary>
         ///   Returns the values of the first type specification in the table
+        ///   Returns a COPY, so that the underlying values can be safely removed
         /// </summary>
         /// <returns> </returns>
         public IEnumerable<T1> GetValuesType1()
         {
-            return t1_t2.Keys;
+            return t1_t2.Keys.ToArray();
         }
 
         /// <summary>
         ///   Returns the values of the second type specification in the table
+        ///   Returns a COPY, so that the underlying values can be safely removed
         /// </summary>
         /// <returns> </returns>
         public IEnumerable<T2> GetValuesType2()
         {
-            return t2_t1.Keys;
+            return t2_t1.Keys.ToArray();
         }
     }
 }
