@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Engine.Logging
+namespace Engine.FileHandlers
 {
     /// <summary>
     /// Logging interface

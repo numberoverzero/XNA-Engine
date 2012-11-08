@@ -1,7 +1,7 @@
 ﻿using System;
 using Engine.Utility;
 
-namespace Engine.Logging
+namespace Engine.FileHandlers
 {
     /// <summary>
     ///   See <see cref="ILog" />
@@ -105,10 +105,12 @@ namespace Engine.Logging
             }
         }
 
-        private void LogWrite(string msg)
+        protected virtual void LogWrite(string msg)
         {
-            if (String.IsNullOrEmpty(Filename)) return;
-            msg.AppendLineToFile(Filename);
+            if (String.IsNullOrEmpty(Filename))
+                Console.WriteLine(msg);
+            else
+                msg.AppendLineToFile(Filename);
         }
     }
 
