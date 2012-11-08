@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Engine.Utility;
 
-namespace Engine.Logging
+namespace Engine.FileHandlers
 {
     public class FullFileBuffer : IEnumerable<string>
     {
@@ -68,6 +68,11 @@ namespace Engine.Logging
         public void Append(string line)
         {
             WriteLine(line, _lines.Count);
+        }
+
+        public void Clear()
+        {
+            _lines.Clear();
         }
 
         /// <summary>
