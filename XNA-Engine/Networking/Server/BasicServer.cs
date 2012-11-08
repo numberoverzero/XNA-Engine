@@ -5,16 +5,16 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Engine.DataStructures;
-using Engine.Logging;
+using Engine.FileHandlers;
 using Engine.Networking.Packets;
 using Engine.Utility;
 
-namespace Engine.Networking
+namespace Engine.Networking.Server
 {
     /// <summary>
     ///   A basic implementation of the <see cref="IServer" /> interface
     /// </summary>
-    public class BasicServer : IServer
+    public abstract class BasicServer : IServer
     {
         private readonly IPAddress _localaddr;
         private readonly int _port;
@@ -64,7 +64,7 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.Start" />
         /// </summary>
-        public void Start()
+        public virtual void Start()
         {
             if (IsRunning) return;
             if (_listener != null) _listener.Stop();
@@ -100,26 +100,31 @@ namespace Engine.Networking
         /// <summary>
         ///   See <see cref="IServer.Connect" />
         /// </summary>
-        public virtual void Connect(Client client, ServerEventArgs e = null)
+        public virtual void Connect(Client client, ServerEventArgs serverArgs = null)
         {
             if (!IsRunning) return;
 
-            if (e == null)
-                e = new ServerEventArgs(true, client);
+            if (serverArgs == null)
+                serverArgs = new ServerEventArgs(true, client);
             else
             {
                 var parameters = new Dictionary<string, string>() {{"Server:Connect:Data:IP", client.GetIP}};
-                e.Parameters.Merge(parameters);
+                serverArgs.Parameters.Merge(parameters);
 
                 // Connect has the final say on these two,
                 // since it was the most recent frame from which the Event was fired
-                e.Client = client;
-                e.Success = true;
+                serverArgs.Client = client;
+                serverArgs.Success = true;
             }
 
+            ClientTable[client] = new Guid().ToString();
+            client.OnReadPacket += OnClientRead;
+            client.OnConnectionLost += (o, e) => Disconnect(client);
+
             Log.Info("Server:Connect:Data:IP:<{0}>".format(client.GetIP));
+            
             if (OnConnect != null)
-                OnConnect(this, e);
+                OnConnect(this, serverArgs);
         }
 
         /// <summary>
@@ -133,30 +138,22 @@ namespace Engine.Networking
                 return;
             }
             var success = true;
-            var parameters = new Dictionary<string, string>();
-            parameters["Server:RemoveClientFromTable:Value"] = "false";
             try
             {
-                ClientTable.Remove(client);
-                parameters["Server:RemoveClientFromTable:Value"] = "true";
+                ClientTable.Remove(client); // Shouldn't be a threading issue, since anyone iterating over clients will grab a copy of the list
                 AuthTable.Remove(client);
-                parameters["Server:RemoveClientFromAuthTable:Value"] = "true";
             }
             catch
             {
                 success = false;
             }
-            if (e == null)
-                e = new ServerEventArgs(success, client, parameters);
-            else
-            {
-                e.Parameters.Merge(parameters);
+            e = e ?? new ServerEventArgs(success, client);
 
-                // Disconnect has the final say on these two,
-                // since it was the most recent frame from which the Event was fired
-                e.Success = success;
-                e.Client = client;
-            }
+            // Disconnect has the final say on these two,
+            // since it was the most recent frame from which the Event was fired
+            e.Success = success;
+            e.Client = client;
+
             Log.Info("Server:Disconnect:Data:IP:<{0}>".format(client.GetIP));
             if (OnDisconnect != null)
                 OnDisconnect(this, e);
@@ -209,7 +206,7 @@ namespace Engine.Networking
                 return;
             }
             if (clients.Length == 0)
-                clients = ClientTable.GetValuesType2().ToArray();
+                clients = ClientTable.GetValuesType2().ToArray(); // Allows us to safely remove from the underlying structure
             Log.Debug("Server:SendPacket:Data:Packet:<{0}>".format(packet));
             foreach (var client in clients)
                 try
@@ -299,7 +296,7 @@ namespace Engine.Networking
         /// </summary>
         protected void PollForClients()
         {
-            while (true)
+            while (IsRunning)
             {
                 var client = _listener.AcceptTcpClient();
                 new Thread(() => Connect(new Client(client))).Start();
@@ -307,33 +304,11 @@ namespace Engine.Networking
         }
 
         /// <summary>
-        ///   Default handler for the OnConnect event.
-        ///   Registers the client in the clientTable, registers a new thread in the clientThread table,
-        ///   and starts that thread.  The thread calls DefaultClientThreadFunction
-        /// </summary>
-        protected virtual void DefaultHandle_OnConnect(object sender, ServerEventArgs args)
-        {
-            var client = args.Client;
-            ClientTable[client] = new Guid().ToString();
-            client.OnReadPacket += OnClientRead;
-        }
-
-        /// <summary>
         ///   Called when a client receives a new packet
         /// </summary>
         /// <param name="sender"> </param>
         /// <param name="args"> </param>
-        protected void OnClientRead(object sender, PacketArgs args)
-        {
-            var client = sender as Client;
-            if (client == null) return;
-
-            if (!ClientTable.Contains(client))
-                // Don't waste our time reading from clients that aren't tracked in the client table
-                client.OnReadPacket -= OnClientRead;
-            else
-                ReceivePacket(args.Packet, client);
-        }
+        protected abstract void OnClientRead(object sender, PacketArgs args);
 
         /// <summary>
         ///   Called when we try to read from a client stream and fail.
