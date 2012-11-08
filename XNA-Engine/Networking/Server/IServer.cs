@@ -33,8 +33,8 @@ namespace Engine.Networking
         ///   Fires OnConnect, even if client does not successfully connect
         /// </summary>
         /// <param name="client"> </param>
-        /// <param name="e"> </param>
-        void Connect(Client client, ServerEventArgs e = null);
+        /// <param name="serverArgs"> </param>
+        void Connect(Client client, ServerEventArgs serverArgs = null);
 
         /// <summary>
         ///   Tries to disconnect a client to the Server.
@@ -84,7 +84,7 @@ namespace Engine.Networking
 
 
         /// <summary>
-        ///   Receives a packet from a client
+        ///   Receives a packet from a client.  Depending on server design, may need to be thread-safe.
         /// </summary>
         void ReceivePacket(Packet packet, Client client);
 
