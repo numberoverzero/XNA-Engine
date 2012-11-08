@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Engine.DataStructures;
 using Engine.Utility;
 
@@ -21,7 +19,8 @@ namespace Engine.Networking.Packets
         {
             var name = packet.GetType().Name;
             _packetCache[name] = packet.Copy();
-            _mapping[name] = _nextType++;
+            _mapping[name] = _nextType;
+            _nextType++;
         }
 
         public void RegisterPackets(params Packet[] packets)
