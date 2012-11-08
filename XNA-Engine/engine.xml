@@ -51,58 +51,58 @@
             <param name="t"> The point at which the function is being evaluated </param>
             <returns> </returns>
         </member>
-        <member name="T:Engine.Logging.Frequency">
+        <member name="T:Engine.FileHandlers.Frequency">
             <summary>
             The expected rate of message writing.
             Can be used to determine how to batch writes
             </summary>
         </member>
-        <member name="F:Engine.Logging.Frequency.None">
+        <member name="F:Engine.FileHandlers.Frequency.None">
             <summary>
             Unknown or random frequency
             </summary>
         </member>
-        <member name="F:Engine.Logging.Frequency.Low">
+        <member name="F:Engine.FileHandlers.Frequency.Low">
             <summary>
             Rarely writing
             </summary>
         </member>
-        <member name="F:Engine.Logging.Frequency.Moderate">
+        <member name="F:Engine.FileHandlers.Frequency.Moderate">
             <summary>
             Writing constantly
             </summary>
         </member>
-        <member name="F:Engine.Logging.Frequency.High">
+        <member name="F:Engine.FileHandlers.Frequency.High">
             <summary>
             Multiple inputs writing constantly
             </summary>
         </member>
-        <member name="F:Engine.Logging.Frequency.Burst">
+        <member name="F:Engine.FileHandlers.Frequency.Burst">
             <summary>
             Infrequent, high-bandwidth writing
             </summary>
         </member>
-        <member name="T:Engine.Logging.Level">
+        <member name="T:Engine.FileHandlers.Level">
             <summary>
             A log message's severity level
             </summary>
         </member>
-        <member name="F:Engine.Logging.Level.Error">
+        <member name="F:Engine.FileHandlers.Level.Error">
             <summary>
             An error occured
             </summary>
         </member>
-        <member name="F:Engine.Logging.Level.Warning">
+        <member name="F:Engine.FileHandlers.Level.Warning">
             <summary>
             A warning
             </summary>
         </member>
-        <member name="F:Engine.Logging.Level.Info">
+        <member name="F:Engine.FileHandlers.Level.Info">
             <summary>
             An informational message
             </summary>
         </member>
-        <member name="F:Engine.Logging.Level.Debug">
+        <member name="F:Engine.FileHandlers.Level.Debug">
             <summary>
             Debug information
             </summary>
@@ -795,6 +795,29 @@
               GamePadState for the current frame
             </summary>
         </member>
+        <member name="T:Engine.FileHandlers.ConfigParser">
+            <summary>
+              Handles config file read/write for an extremely basic spec
+            </summary>
+        </member>
+        <member name="M:Engine.FileHandlers.ConfigParser.GetSection(System.String)">
+            <summary>
+            Returns the options in a specific section
+            </summary>
+            <param name="header"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Engine.FileHandlers.ConfigParser.Item(System.String)">
+            <summary>
+            Shortcut for setting/getting sectionless values
+            </summary>
+        </member>
+        <member name="P:Engine.FileHandlers.ConfigParser.Sections">
+            <summary>
+            Returns the sections defined in the config
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Engine.Events.EventWatchers.IEventWatcher">
             <summary>
             Watches events and reacts to them.
@@ -853,6 +876,13 @@
             <summary>
               See ICollection.Add
             </summary>
+        </member>
+        <member name="M:Engine.DataStructures.CountedCollection`1.Add(`0,System.Int32)">
+            <summary>
+            Add an item n times
+            </summary>
+            <param name="item"></param>
+            <param name="n"></param>
         </member>
         <member name="M:Engine.DataStructures.CountedCollection`1.Clear">
             <summary>
@@ -1291,7 +1321,7 @@
               Fires OnConnect, even if client does not successfully connect
             </summary>
             <param name="client"> </param>
-            <param name="e"> </param>
+            <param name="serverArgs"> </param>
         </member>
         <member name="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
             <summary>
@@ -1311,7 +1341,7 @@
         </member>
         <member name="M:Engine.Networking.IServer.ReceivePacket(Engine.Networking.Packets.Packet,Engine.Networking.Client)">
             <summary>
-              Receives a packet from a client
+              Receives a packet from a client.  Depending on server design, may need to be thread-safe.
             </summary>
         </member>
         <member name="M:Engine.Networking.IServer.SendPacket(Engine.Networking.Packets.Packet,Engine.Networking.Client[])">
@@ -1582,63 +1612,6 @@
             Returns the width and height of the texture.  May not be useful for multi-image textures.
             </summary>
         </member>
-        <member name="M:Engine.Screen.IScreenComponent.Select">
-            <summary>
-            Toggle the Selected state
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.IScreenComponent.Focus">
-            <summary>
-            Toggle the Focused state
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.MenuScreen.Select">
-            <summary>
-            Selects the currently focused (highlighted) item
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.UISystem.OpenMenu(System.String)">
-            <summary>
-              Open a specific menu.  If that menu isn't already loaded, loads an instance of the menu.
-              Otherwise, brings the loaded menu to the top of the stack
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.UISystem.ExitMenu">
-            <summary>
-            Exits the top-most menu
-            </summary>
-        </member>
-        <member name="T:Engine.Rendering.ResolutionContext.ResolutionContext">
-            <summary>
-              <para> Allows you to render objects against an expected resolution, using scaling to adjust to an actual resolution. </para>
-              <para> Make sure you update ActualScreenSize whenever it changes. </para>
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.ResolutionContext.ResolutionContext.ActualScreenSize">
-            <summary>
-              The actual size of the screen you're rendering to
-            </summary>
-        </member>
-        <member name="F:Engine.Rendering.ResolutionContext.ResolutionContext.ReferenceScreenSize">
-            <summary>
-              The size of the screen you're expecting to render to
-            </summary>
-        </member>
-        <member name="M:Engine.Rendering.ResolutionContext.ResolutionContext.PosFromPct(Microsoft.Xna.Framework.Vector2)">
-            <summary>
-              Returns the screen position (against the reference screen size) of the position of a given percent.
-              <example>
-                For a reference screen of 1024x768 and an argument of 0.5, 0.5, this function would return 512, 384
-              </example>
-            </summary>
-            <param name="relativePos"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Engine.Rendering.ResolutionContext.ResolutionContext.Render(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color)">
-            <summary>
-            Renders with the position in reference coordinates
-            </summary>
-        </member>
         <member name="T:Engine.Rendering.RenderPass">
             <summary>
             Specify which stage of rendering is occuring
@@ -1771,181 +1744,30 @@
             Transitioning from tracking a GameObject to tracking a different GameObject
             </summary>
         </member>
-        <member name="T:Engine.Screen.MessageBoxScreen">
-            <summary>
-              A popup message box screen, used to display "are you sure?"
-              confirmation messages.
-            </summary>
-            <remarks>
-              This public class is somewhat similar to one of the same name in the 
-              GameStateManagement sample.
-            </remarks>
-        </member>
-        <member name="T:Engine.Screen.GameScreen">
-            <summary>
-              A screen is a single layer that has update and draw logic, and which
-              can be combined with other layers to build up a complex menu system.
-              For instance the main menu, the options menu, the "are you sure you
-              want to quit" message box, and the main game itself are all implemented
-              as screens.
-            </summary>
-            <remarks>
-              This public class is similar to one in the GameStateManagement sample.
-            </remarks>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.LoadContent">
-            <summary>
-              Load graphics content for the screen.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.UnloadContent">
-            <summary>
-              Unload content for the screen.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.Update(Microsoft.Xna.Framework.GameTime,System.Boolean,System.Boolean)">
-            <summary>
-              Allows the screen to run logic, such as updating the transition position.
-              Unlike HandleInput, this method is called regardless of whether the screen
-              is active, hidden, or in the middle of a transition.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.UpdateTransition(Microsoft.Xna.Framework.GameTime,System.TimeSpan,System.Int32)">
-            <summary>
-              Helper for updating the screen transition position.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.HandleInput(Engine.Input.Managers.InputManager)">
-            <summary>
-              Allows the screen to handle user input. Unlike Update, this method
-              is only called when the screen is active, and not when some other
-              screen has taken the focus.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.UpdatePresence">
-            <summary>
-              Screen-specific update to gamer rich presence.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.Draw(Microsoft.Xna.Framework.GameTime)">
-            <summary>
-              This is called when the screen should draw itself.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.GameScreen.ExitScreen">
-            <summary>
-              Tells the screen to go away. Unlike ScreenManager.RemoveScreen, which
-              instantly kills the screen, this method respects the transition timings
-              and will give the screen a chance to gradually transition off.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.IsPopup">
-            <summary>
-              Normally when one screen is brought up over the top of another,
-              the first screen will transition off to make room for the new
-              one. This property indicates whether the screen is only a small
-              popup, in which case screens underneath it do not need to bother
-              transitioning off.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.TransitionOnTime">
-            <summary>
-              Indicates how long the screen takes to
-              transition on when it is activated.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.TransitionOffTime">
-            <summary>
-              Indicates how long the screen takes to
-              transition off when it is deactivated.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.TransitionPosition">
-            <summary>
-              Gets the current position of the screen transition, ranging
-              from zero (fully active, no transition) to one (transitioned
-              fully off to nothing).
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.TransitionAlpha">
-            <summary>
-              Gets the current alpha of the screen transition, ranging
-              from 255 (fully active, no transition) to 0 (transitioned
-              fully off to nothing).
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.ScreenState">
-            <summary>
-              Gets the current screen transition state.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.IsExiting">
-            <summary>
-              There are two possible reasons why a screen might be transitioning
-              off. It could be temporarily going away to make room for another
-              screen that is on top of it, or it could be going away for good.
-              This property indicates whether the screen is exiting for real:
-              if set, the screen will automatically remove itself as soon as the
-              transition finishes.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.IsActive">
-            <summary>
-              Checks whether this screen is active and can respond to user input.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.GameScreen.ScreenManager">
-            <summary>
-              Gets the manager that this screen belongs to.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.MessageBoxScreen.#ctor(System.String,System.String,System.String,Engine.Screen.OptionLayout)">
-            <summary>
-              Constructor.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.MessageBoxScreen.LoadContent">
-            <summary>
-              Loads graphics content for this screen. This uses the shared ContentManager
-              provided by the ScreenManager, so the content will remain loaded forever.
-              Whenever a subsequent MessageBoxScreen tries to load this same content,
-              it will just get back another reference to the already loaded instance.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.MessageBoxScreen.HandleInput(Engine.Input.Managers.InputManager)">
-            <summary>
-              Responds to user input, accepting or cancelling the message box.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.MessageBoxScreen.Draw(Microsoft.Xna.Framework.GameTime)">
-            <summary>
-              Draws the message box.
-            </summary>
-        </member>
-        <member name="T:Engine.Logging.ILog">
+        <member name="T:Engine.FileHandlers.ILog">
             <summary>
             Logging interface
             </summary>
         </member>
-        <member name="M:Engine.Logging.ILog.Debug(System.String)">
+        <member name="M:Engine.FileHandlers.ILog.Debug(System.String)">
             <summary>
             Log a debug message
             </summary>
             <param name="msg"></param>
         </member>
-        <member name="M:Engine.Logging.ILog.Error(System.String)">
+        <member name="M:Engine.FileHandlers.ILog.Error(System.String)">
             <summary>
             Log an error message
             </summary>
             <param name="msg"></param>
         </member>
-        <member name="M:Engine.Logging.ILog.Info(System.String)">
+        <member name="M:Engine.FileHandlers.ILog.Info(System.String)">
             <summary>
             Log an info message
             </summary>
             <param name="msg"></param>
         </member>
-        <member name="M:Engine.Logging.ILog.Warn(System.String)">
+        <member name="M:Engine.FileHandlers.ILog.Warn(System.String)">
             <summary>
             Log a warning message
             </summary>
@@ -2108,6 +1930,24 @@
             <summary>
             Table of preset bloom settings, used by the sample program.
             </summary>
+        </member>
+        <member name="M:Engine.FileHandlers.FullFileBuffer.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the collection.
+            </summary>
+            <returns>
+            A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+            </returns>
+            <filterpriority>1</filterpriority>
+        </member>
+        <member name="M:Engine.FileHandlers.FullFileBuffer.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+            </returns>
+            <filterpriority>2</filterpriority>
         </member>
         <member name="T:Engine.Events.GameEventManager">
             <summary>
@@ -2313,23 +2153,10 @@
               Allows a push model so that others don't have to constantly ask the Client if it has packets to be read.
             </summary>
         </member>
-        <member name="M:Engine.Logging.FullFileBuffer.GetEnumerator">
+        <member name="E:Engine.Networking.Client.OnConnectionLost">
             <summary>
-            Returns an enumerator that iterates through the collection.
+            Not everyone checks IsAlive periodically - this allows the client to push a message saying it just died
             </summary>
-            <returns>
-            A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-            </returns>
-            <filterpriority>1</filterpriority>
-        </member>
-        <member name="M:Engine.Logging.FullFileBuffer.System#Collections#IEnumerable#GetEnumerator">
-            <summary>
-            Returns an enumerator that iterates through a collection.
-            </summary>
-            <returns>
-            An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-            </returns>
-            <filterpriority>2</filterpriority>
         </member>
         <member name="T:Engine.DataStructures.DoubleBuffer`1">
             <summary>
@@ -2534,6 +2361,14 @@
             Compact foreach extension
             </summary>
         </member>
+        <member name="M:Engine.Utility.IterableExtensions.Last``1(System.Collections.Generic.List{``0})">
+            <summary>
+            Returns the last element of a list
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <returns></returns>
+        </member>
         <member name="M:Engine.Utility.IterableExtensions.TimesDo(System.Int32,System.Action)">
             <summary>
             Does an action n times
@@ -2548,117 +2383,6 @@
         <member name="F:Engine.Globals.Players">
             <summary>
             Provides an in-order [1-4] list of PlayerIndex for loops
-            </summary>
-        </member>
-        <member name="T:Engine.Screen.ScreenManager">
-            <summary>
-              The screen manager is a component which manages one or more GameScreen
-              instances. It maintains a stack of screens, calls their Update and Draw
-              methods at the appropriate times, and automatically routes input to the
-              topmost active screen.
-            </summary>
-            <remarks>
-              This public class is similar to one in the GameStateManagement sample.
-            </remarks>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.#ctor(Microsoft.Xna.Framework.Game)">
-            <summary>
-              Constructs a new screen manager component.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.LoadContent">
-            <summary>
-              Load your graphics content.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.UnloadContent">
-            <summary>
-              Unload your graphics content.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.Update(Microsoft.Xna.Framework.GameTime)">
-            <summary>
-              Allows each screen to run logic.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.TraceScreens">
-            <summary>
-              Prints a list of all the screens, for debugging.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.Draw(Microsoft.Xna.Framework.GameTime)">
-            <summary>
-              Tells each screen to draw itself.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.DrawRectangle(Microsoft.Xna.Framework.Rectangle,Microsoft.Xna.Framework.Color)">
-            <summary>
-              Draw an empty rectangle of the given size and color.
-            </summary>
-            <param name="rectangle"> The destination rectangle. </param>
-            <param name="color"> The color of the rectangle. </param>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.AddScreen(Engine.Screen.GameScreen)">
-            <summary>
-              Adds a new screen to the screen manager.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.RemoveScreen(Engine.Screen.GameScreen)">
-            <summary>
-              Removes a screen from the screen manager. You should normally
-              use GameScreen.ExitScreen instead of calling this directly, so
-              the screen can gradually transition off rather than just being
-              instantly removed.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.GetScreens">
-            <summary>
-              Expose an array holding all the screens. We return a copy rather
-              than the real master list, because screens should only ever be added
-              or removed using the AddScreen and RemoveScreen methods.
-            </summary>
-        </member>
-        <member name="M:Engine.Screen.ScreenManager.FadeBackBufferToBlack(System.Int32)">
-            <summary>
-              Helper draws a translucent black fullscreen sprite, used for fading
-              screens in and out, and for darkening the background behind popups.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.ScreenManager.Game">
-            <summary>
-              Expose access to our Game instance (this is protected in the
-              default GameComponent, but we want to make it public).
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.ScreenManager.GraphicsDevice">
-            <summary>
-              Expose access to our graphics device (this is protected in the
-              default DrawableGameComponent, but we want to make it public).
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.ScreenManager.Content">
-            <summary>
-              A content manager used to load data that is shared between multiple
-              screens. This is never unloaded, so if a screen requires a large amount
-              of temporary data, it should create a local content manager instead.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.ScreenManager.SpriteBatch">
-            <summary>
-              A default SpriteBatch shared by all the screens. This saves
-              each screen having to bother creating their own local instance.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.ScreenManager.TraceEnabled">
-            <summary>
-              If true, the manager prints out a list of all the screens
-              each time it is updated. This can be useful for making sure
-              everything is being added and removed at the right times.
-            </summary>
-        </member>
-        <member name="P:Engine.Screen.ScreenManager.TitleSafeArea">
-            <summary>
-              The title-safe area for the menus.
             </summary>
         </member>
         <member name="T:Engine.Rendering.Pipeline.PixelShaderPipeline">
@@ -2722,6 +2446,155 @@
             <summary>
             Which RenderPass the RenderPipeline is currently processing.
             Changing this value will trigger at least one render target switch.
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.Server.BasicServer">
+            <summary>
+              A basic implementation of the <see cref="T:Engine.Networking.IServer"/> interface
+            </summary>
+        </member>
+        <member name="F:Engine.Networking.Server.BasicServer.AuthTable">
+            <summary>
+              True if a client has authenticated with the server
+            </summary>
+        </member>
+        <member name="F:Engine.Networking.Server.BasicServer.ClientTable">
+            <summary>
+              Two-way mapping between a client's TcpClient and their GUID
+            </summary>
+        </member>
+        <member name="F:Engine.Networking.Server.BasicServer.Log">
+            <summary>
+              The server log
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
+            <summary>
+              Construct a basic server such that it is ready to be started, and possibly using the default connect
+              behavior.
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.Start">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.Start"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.Stop">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.Stop"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.ReceivePacket(Engine.Networking.Packets.Packet,Engine.Networking.Client)">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.ReceivePacket(Engine.Networking.Packets.Packet,Engine.Networking.Client)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.SendPacket(Engine.Networking.Packets.Packet,Engine.Networking.Client[])">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.SendPacket(Engine.Networking.Packets.Packet,Engine.Networking.Client[])"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.IsAuthenticated(Engine.Networking.Client)">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.GetClientString(Engine.Networking.Client)">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.GetClient(System.String)">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.GetClient(System.String)"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.GetClientStrings(Engine.Networking.Client[])">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.GetClients(System.String[])">
+            <summary>
+              See <see cref="M:Engine.Networking.IServer.GetClients(System.String[])"/>
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.PollForClients">
+            <summary>
+              Checks listener forever and adds new clients as they try to connect
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.OnClientRead(System.Object,Engine.Networking.PacketArgs)">
+            <summary>
+              Called when a client receives a new packet
+            </summary>
+            <param name="sender"> </param>
+            <param name="args"> </param>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.OnClientReadException(System.String,Engine.Networking.Client)">
+            <summary>
+              Called when we try to read from a client stream and fail.
+            </summary>
+        </member>
+        <member name="M:Engine.Networking.Server.BasicServer.OnSendPacketException(Engine.Networking.Packets.Packet,System.String,Engine.Networking.Client)">
+            <summary>
+              Called when we try to send a message to a client but that send fails.
+            </summary>
+        </member>
+        <member name="P:Engine.Networking.Server.BasicServer.IsRunning">
+            <summary>
+              See <see cref="P:Engine.Networking.IServer.IsRunning"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.Server.BasicServer.OnStart">
+            <summary>
+              See <see cref="E:Engine.Networking.IServer.OnStart"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.Server.BasicServer.OnStop">
+            <summary>
+              See <see cref="E:Engine.Networking.IServer.OnStop"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.Server.BasicServer.OnShutdown">
+            <summary>
+              See <see cref="E:Engine.Networking.IServer.OnShutdown"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.Server.BasicServer.OnConnect">
+            <summary>
+              See <see cref="E:Engine.Networking.IServer.OnConnect"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.Server.BasicServer.OnDisconnect">
+            <summary>
+              See <see cref="E:Engine.Networking.IServer.OnDisconnect"/>
+            </summary>
+        </member>
+        <member name="E:Engine.Networking.Server.BasicServer.OnAuthenticate">
+            <summary>
+              See <see cref="E:Engine.Networking.IServer.OnAuthenticate"/>
+            </summary>
+        </member>
+        <member name="T:Engine.Networking.Server.SingleThreadServer">
+            <summary>
+              <para> Has a single thread that queues messages from clients, and a single thread that processes those messages. </para>
+              <para> Although this will incur a performance hit, it means that we don't have to worry about the synchronization of operations </para>
             </summary>
         </member>
         <member name="T:Engine.Entities.Behaviors.PrimitiveSteeringBehavior">
@@ -3409,12 +3282,14 @@
         <member name="M:Engine.DataStructures.BidirectionalDict`2.GetValuesType1">
             <summary>
               Returns the values of the first type specification in the table
+              Returns a COPY, so that the underlying values can be safely removed
             </summary>
             <returns> </returns>
         </member>
         <member name="M:Engine.DataStructures.BidirectionalDict`2.GetValuesType2">
             <summary>
               Returns the values of the second type specification in the table
+              Returns a COPY, so that the underlying values can be safely removed
             </summary>
             <returns> </returns>
         </member>
@@ -3654,156 +3529,6 @@
         <member name="P:Engine.Input.TriggerBinding.Trigger">
             <summary>
               The left or right trigger
-            </summary>
-        </member>
-        <member name="T:Engine.Networking.BasicServer">
-            <summary>
-              A basic implementation of the <see cref="T:Engine.Networking.IServer"/> interface
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.BasicServer.AuthTable">
-            <summary>
-              True if a client has authenticated with the server
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.BasicServer.ClientTable">
-            <summary>
-              Two-way mapping between a client's TcpClient and their GUID
-            </summary>
-        </member>
-        <member name="F:Engine.Networking.BasicServer.Log">
-            <summary>
-              The server log
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
-            <summary>
-              Construct a basic server such that it is ready to be started, and possibly using the default connect
-              behavior.
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Start">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.Start"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Stop">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.Stop"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.Connect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.Disconnect(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.Authenticate(Engine.Networking.Client,Engine.Networking.ServerEventArgs)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.ReceivePacket(Engine.Networking.Packets.Packet,Engine.Networking.Client)">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.ReceivePacket(Engine.Networking.Packets.Packet,Engine.Networking.Client)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.SendPacket(Engine.Networking.Packets.Packet,Engine.Networking.Client[])">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.SendPacket(Engine.Networking.Packets.Packet,Engine.Networking.Client[])"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.IsAuthenticated(Engine.Networking.Client)">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.IsAuthenticated(Engine.Networking.Client)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClientString(Engine.Networking.Client)">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.GetClientString(Engine.Networking.Client)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClient(System.String)">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.GetClient(System.String)"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClientStrings(Engine.Networking.Client[])">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.GetClientStrings(Engine.Networking.Client[])"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.GetClients(System.String[])">
-            <summary>
-              See <see cref="M:Engine.Networking.IServer.GetClients(System.String[])"/>
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.PollForClients">
-            <summary>
-              Checks listener forever and adds new clients as they try to connect
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.DefaultHandle_OnConnect(System.Object,Engine.Networking.ServerEventArgs)">
-            <summary>
-              Default handler for the OnConnect event.
-              Registers the client in the clientTable, registers a new thread in the clientThread table,
-              and starts that thread.  The thread calls DefaultClientThreadFunction
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.OnClientRead(System.Object,Engine.Networking.PacketArgs)">
-            <summary>
-              Called when a client receives a new packet
-            </summary>
-            <param name="sender"> </param>
-            <param name="args"> </param>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.OnClientReadException(System.String,Engine.Networking.Client)">
-            <summary>
-              Called when we try to read from a client stream and fail.
-            </summary>
-        </member>
-        <member name="M:Engine.Networking.BasicServer.OnSendPacketException(Engine.Networking.Packets.Packet,System.String,Engine.Networking.Client)">
-            <summary>
-              Called when we try to send a message to a client but that send fails.
-            </summary>
-        </member>
-        <member name="P:Engine.Networking.BasicServer.IsRunning">
-            <summary>
-              See <see cref="P:Engine.Networking.IServer.IsRunning"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnStart">
-            <summary>
-              See <see cref="E:Engine.Networking.IServer.OnStart"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnStop">
-            <summary>
-              See <see cref="E:Engine.Networking.IServer.OnStop"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnShutdown">
-            <summary>
-              See <see cref="E:Engine.Networking.IServer.OnShutdown"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnConnect">
-            <summary>
-              See <see cref="E:Engine.Networking.IServer.OnConnect"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnDisconnect">
-            <summary>
-              See <see cref="E:Engine.Networking.IServer.OnDisconnect"/>
-            </summary>
-        </member>
-        <member name="E:Engine.Networking.BasicServer.OnAuthenticate">
-            <summary>
-              See <see cref="E:Engine.Networking.IServer.OnAuthenticate"/>
             </summary>
         </member>
         <member name="T:Engine.Input.InputSnapshot">
@@ -4472,6 +4197,16 @@
             <param name="width"> Square side length </param>
             <param name="rotation"> Rotation in radians about the center </param>
         </member>
+        <member name="M:Engine.Rendering.BasicShapeRenderer.DrawSolidRectangle(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Vector2,System.Single)">
+            <summary>
+              Draws a filled square whose center is position
+            </summary>
+            <param name="batch"> SpriteBatch for drawing </param>
+            <param name="position"> Center of the Rectangle </param>
+            <param name="color"> Color of the Rectangle </param>
+            <param name="dimensions"> Rectangle length, width </param>
+            <param name="rotation"> Rotation in radians about the center </param>
+        </member>
         <member name="M:Engine.Rendering.BasicShapeRenderer.DrawSquareOutline(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,System.Single,System.Single,System.Single)">
             <summary>
               Draws a hollow square whose center is position, of width lineWidth (default 1px, does not exceed width)
@@ -4494,17 +4229,17 @@
             <param name="rotation"> Rotation in radians about the center </param>
             <param name="lineWidth"> Width in pixels of the line </param>
         </member>
-        <member name="T:Engine.Logging.Log">
+        <member name="T:Engine.FileHandlers.Log">
             <summary>
-              See <see cref="T:Engine.Logging.ILog"/>
+              See <see cref="T:Engine.FileHandlers.ILog"/>
             </summary>
         </member>
-        <member name="F:Engine.Logging.Log.Filename">
+        <member name="F:Engine.FileHandlers.Log.Filename">
             <summary>
               The file to log to.
             </summary>
         </member>
-        <member name="M:Engine.Logging.Log.#ctor(System.String,Engine.Logging.Frequency)">
+        <member name="M:Engine.FileHandlers.Log.#ctor(System.String,Engine.FileHandlers.Frequency)">
             <summary>
               Create a log file at the given location,
               with a given expected frequency of logging
@@ -4512,65 +4247,65 @@
             <param name="filename"> </param>
             <param name="frequency"> </param>
         </member>
-        <member name="M:Engine.Logging.Log.Error(System.String)">
+        <member name="M:Engine.FileHandlers.Log.Error(System.String)">
             <summary>
-              See <see cref="M:Engine.Logging.ILog.Error(System.String)"/>
+              See <see cref="M:Engine.FileHandlers.ILog.Error(System.String)"/>
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.Log.Warn(System.String)">
+        <member name="M:Engine.FileHandlers.Log.Warn(System.String)">
             <summary>
-              See <see cref="M:Engine.Logging.ILog.Warn(System.String)"/>
+              See <see cref="M:Engine.FileHandlers.ILog.Warn(System.String)"/>
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.Log.Info(System.String)">
+        <member name="M:Engine.FileHandlers.Log.Info(System.String)">
             <summary>
-              See <see cref="M:Engine.Logging.ILog.Info(System.String)"/>
+              See <see cref="M:Engine.FileHandlers.ILog.Info(System.String)"/>
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.Log.Debug(System.String)">
+        <member name="M:Engine.FileHandlers.Log.Debug(System.String)">
             <summary>
-              See <see cref="M:Engine.Logging.ILog.Debug(System.String)"/>
+              See <see cref="M:Engine.FileHandlers.ILog.Debug(System.String)"/>
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.Log.Flush">
+        <member name="M:Engine.FileHandlers.Log.Flush">
             <summary>
               Write any pending messages to disk
             </summary>
         </member>
-        <member name="T:Engine.Logging.LogLine">
+        <member name="T:Engine.FileHandlers.LogLine">
             <summary>
               Used for injecting text into another log message
             </summary>
         </member>
-        <member name="M:Engine.Logging.LogLine.Error(System.String)">
+        <member name="M:Engine.FileHandlers.LogLine.Error(System.String)">
             <summary>
               Log an error message
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.LogLine.Warn(System.String)">
+        <member name="M:Engine.FileHandlers.LogLine.Warn(System.String)">
             <summary>
               Log a warning message
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.LogLine.Info(System.String)">
+        <member name="M:Engine.FileHandlers.LogLine.Info(System.String)">
             <summary>
               Log an info message
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.LogLine.Debug(System.String)">
+        <member name="M:Engine.FileHandlers.LogLine.Debug(System.String)">
             <summary>
               Log a debug message
             </summary>
             <param name="msg"> </param>
         </member>
-        <member name="M:Engine.Logging.LogLine.InjectMsg(System.Action{System.String},System.String)">
+        <member name="M:Engine.FileHandlers.LogLine.InjectMsg(System.Action{System.String},System.String)">
             <summary>
               Called by Error/Warn/Info/Debug, used for injecting into the message
             </summary>
@@ -4590,11 +4325,6 @@
             <typeparam name="T"></typeparam>
             <param name="this"></param>
             <param name="action"></param>
-        </member>
-        <member name="T:Engine.Screen.ScreenState">
-            <summary>
-            Enum describes the screen transition state.
-            </summary>
         </member>
         <member name="T:Engine.Input.MouseButton">
             <summary>
@@ -4726,6 +4456,11 @@
             In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
             In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
             </example>
+        </member>
+        <member name="T:Engine.UI.TransitionState">
+            <summary>
+            Enum describes the screen transition state.
+            </summary>
         </member>
     </members>
 </doc>
