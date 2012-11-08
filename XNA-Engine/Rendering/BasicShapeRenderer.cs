@@ -47,6 +47,22 @@ namespace Engine.Rendering
         }
 
         /// <summary>
+        ///   Draws a filled square whose center is position
+        /// </summary>
+        /// <param name="batch"> SpriteBatch for drawing </param>
+        /// <param name="position"> Center of the Rectangle </param>
+        /// <param name="color"> Color of the Rectangle </param>
+        /// <param name="dimensions"> Rectangle length, width </param>
+        /// <param name="rotation"> Rotation in radians about the center </param>
+        public static void DrawSolidRectangle(SpriteBatch batch, Vector2 position, Color color, Vector2 dimensions, float rotation)
+        {
+            if (!CanDraw) return;
+            var drawPosition = position - dimensions/2;
+            drawPosition = drawPosition.RotateAbout(position, rotation);
+            batch.Draw(pixel1x1, drawPosition, null, color, rotation, Vector2.Zero, dimensions, SpriteEffects.None, 0);
+        }
+
+        /// <summary>
         ///   Draws a hollow square whose center is position, of width lineWidth (default 1px, does not exceed width)
         /// </summary>
         /// <param name="batch"> SpriteBatch for drawing </param>
