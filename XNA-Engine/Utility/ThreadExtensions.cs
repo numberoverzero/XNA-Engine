@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Engine.Utility
 {
@@ -14,8 +15,15 @@ namespace Engine.Utility
         /// <param name="millisecondsTimeout"> </param>
         public static void Kill(this Thread thread, int millisecondsTimeout = 0)
         {
-            thread.Interrupt();
-            if (thread.Join(millisecondsTimeout)) return;
+            try
+            {
+                thread.Interrupt();
+                if (thread.Join(millisecondsTimeout)) return;
+            }
+            catch (ThreadInterruptedException)
+            {
+            }
+            
             try
             {
                 thread.Abort();
