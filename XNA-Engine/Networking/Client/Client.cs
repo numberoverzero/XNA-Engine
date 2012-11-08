@@ -65,6 +65,11 @@ namespace Engine.Networking
         /// </summary>
         public event EventHandler<PacketArgs> OnReadPacket;
 
+        /// <summary>
+        /// Not everyone checks IsAlive periodically - this allows the client to push a message saying it just died
+        /// </summary>
+        public event EventHandler OnConnectionLost;
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -156,8 +161,11 @@ namespace Engine.Networking
         /// </summary>
         public void Close()
         {
-            TcpClient.GetStream().Close();
-            TcpClient.Close();
+            if (TcpClient.Connected)
+            {
+                TcpClient.GetStream().Close();
+                TcpClient.Close();
+            }
             if (_writeThread.IsAlive) _writeThread.Kill();
             if (_readThread.IsAlive) _readThread.Kill();
             IsAlive = false;
@@ -180,7 +188,7 @@ namespace Engine.Networking
                     break;
                 }
             }
-            IsAlive = false;
+            KillClient();
         }
 
         private void WriteLoop()
@@ -200,6 +208,12 @@ namespace Engine.Networking
                     break;
                 }
             }
+            KillClient();
+        }
+
+        private void KillClient()
+        {
+            if(OnConnectionLost != null) OnConnectionLost(this, null);
             IsAlive = false;
         }
 
@@ -212,7 +226,7 @@ namespace Engine.Networking
             }
 
             var packet = Packet.Builder.BuildFrom(bytes);
-            OnReadPacket(this, new PacketArgs(packet));
+            OnReadPacket(this, new PacketArgs(packet, this));
         }
     }
 }
