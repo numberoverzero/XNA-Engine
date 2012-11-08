@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Engine.Utility
 {
@@ -61,11 +62,43 @@ namespace Engine.Utility
         }
 
         /// <summary>
+        /// Returns the last element of a list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static T Last<T>(this List<T> list )
+        {
+            return list[list.Count-1];
+        }
+
+        /// <summary>
         /// Does an action n times
         /// </summary>
         public static void TimesDo(this int repeat, Action action)
         {
             for (var i = 0; i < repeat; i++) action();
+        }
+
+        public static IEnumerable<T> Mutate<T>(this IEnumerable<T> enumerable, Func<T, T> mutator)
+        {
+            return enumerable.Select(mutator);
+        }
+
+        public static string PrettyPrint<T>(this IEnumerable<T> enumerable, char delim = ',')
+        {
+            var enumCopy = enumerable.ToList();
+            var n = enumCopy.Count();
+            var sb = new StringBuilder();
+            sb.Append('[');
+            foreach (var t in enumCopy.Take(n - 1))
+            {
+                sb.Append(t.ToString());
+                sb.Append(delim);
+            }
+            sb.Append(enumCopy.Last());
+            sb.Append(']');
+            return sb.ToString();
         }
     }
 }

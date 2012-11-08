@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -179,6 +180,26 @@ namespace Engine.Utility
         public static string WithTermChar(this string str, char terminatingChar = '\0')
         {
             return str + terminatingChar;
+        }
+
+        public static string[] Split(this string str, char c, int count)
+        {
+            return str.Split(new[] {c});
+        }
+
+        public static string[] Trim(this string[] array)
+        {
+            return array.ToList().Mutate(str => str.Trim()).ToArray();
+        }
+
+        public static int ToInt(this string str)
+        {
+            return Int32.Parse(str);
+        }
+
+        public static bool ToBool(this string str)
+        {
+            return Boolean.Parse(str);
         }
     }
 }
