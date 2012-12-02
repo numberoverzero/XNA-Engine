@@ -151,6 +151,17 @@ namespace Engine.Utility
             return index < 0 ? str : str.Substring(0, index);
         }
 
+        /// <summary>
+        ///   Returns the substring from the beginning until the first occurance of the character c.
+        ///   Returns the whole string if that character isn't found.
+        /// </summary>
+        public static string Until(this string str, string end)
+        {
+            if (String.IsNullOrEmpty(str)) return str;
+            var index = str.IndexOf(end, System.StringComparison.Ordinal);
+            return index < 0 ? str : str.Substring(0, index);
+        }
+
         public static void AppendToFile(this string msg, string filename)
         {
             using (var file = File.Open(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
