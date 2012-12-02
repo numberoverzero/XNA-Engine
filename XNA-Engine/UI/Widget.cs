@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Engine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -76,14 +77,14 @@ namespace Engine.UI
         protected Alignment Alignment;
 
         protected bool Expandable;
-        private Theme _theme;
+        private SpriteSheet _spriteSheet;
 
-        protected Theme Theme
+        protected SpriteSheet SpriteSheet
         {
-            get { return _theme; }
+            get { return _spriteSheet; }
             set
             {
-                _theme = value;
+                _spriteSheet = value;
                 _dirty = true;
             }
         }
@@ -99,7 +100,7 @@ namespace Engine.UI
 
             PrefSize = Vector2.Zero;
             Parent = null;
-            Theme = null;
+            SpriteSheet = null;
             _dirty = false;
             Visible = true;
 
