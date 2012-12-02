@@ -1104,6 +1104,12 @@
               Returns the whole string if that character isn't found.
             </summary>
         </member>
+        <member name="M:Engine.Utility.StringAndRegexExtensions.Until(System.String,System.String)">
+            <summary>
+              Returns the substring from the beginning until the first occurance of the character c.
+              Returns the whole string if that character isn't found.
+            </summary>
+        </member>
         <member name="T:Engine.Utility.DictionaryExtensions">
             <summary>
             Extensions for manipulating dictionaries, such as merging
@@ -2385,6 +2391,19 @@
             Provides an in-order [1-4] list of PlayerIndex for loops
             </summary>
         </member>
+        <member name="T:Engine.UI.Rectangle">
+            <summary>
+              Rectangle with float position/dimension
+            </summary>
+        </member>
+        <member name="M:Engine.Rendering.SpriteSheet.LoadContent(Microsoft.Xna.Framework.Content.ContentManager,System.String)">
+            <summary>
+            <para>Loads the texture from a given file.  Will use parameters if passed, and class values if not.</para>
+            <para>If both content and this.Content are null, doesn't do anything</para>
+            <para>mappingFile should be an XML file generated with TexturePacker</para>
+            <para>Assumes non-rotated images, chops .png from image names when accessing</para>
+            </summary>
+        </member>
         <member name="T:Engine.Rendering.Pipeline.PixelShaderPipeline">
             <summary>
             Basic pipeline for rendering effects using pixel shaders
@@ -2600,6 +2619,21 @@
         <member name="T:Engine.Entities.Behaviors.PrimitiveSteeringBehavior">
             <summary>
             Always updates the PhysicsComponent's rotation to align with the object's velocity
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.SpriteBatchExtensions.Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch,Engine.Rendering.Sprite,Microsoft.Xna.Framework.Vector2)">
+            <summary>
+                Draw with tint color white, origin 0, rotation 0, scale 1, no effects, depth 0
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.SpriteBatchExtensions.Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch,Engine.Rendering.Sprite,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color)">
+            <summary>
+                Draw with origin 0, rotation 0, scale 1, no effects, depth 0
+            </summary>
+        </member>
+        <member name="M:Engine.Utility.SpriteBatchExtensions.Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch,Engine.Rendering.Sprite,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,System.Single,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2)">
+            <summary>
+                Draw with no effects, depth 0
             </summary>
         </member>
         <member name="T:Engine.Utility.NetworkingExtensions">
@@ -4039,6 +4073,11 @@
             <param name="collection"></param>
             <returns></returns>
         </member>
+        <member name="T:Engine.UI.TransitionState">
+            <summary>
+            Enum describes the screen transition state.
+            </summary>
+        </member>
         <member name="T:Engine.Input.Managers.OptimizedKeyboardManager">
             <summary>
               Only supports keyboard input, only supports one binding per name.
@@ -4456,11 +4495,6 @@
             In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
             In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
             </example>
-        </member>
-        <member name="T:Engine.UI.TransitionState">
-            <summary>
-            Enum describes the screen transition state.
-            </summary>
         </member>
     </members>
 </doc>
