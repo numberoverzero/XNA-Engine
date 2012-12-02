@@ -1,4 +1,5 @@
-﻿using Engine.Utility;
+﻿using System.Linq;
+using Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -91,7 +92,7 @@ namespace Engine.Rendering
                                                 float rotation, float lineWidth = 1)
         {
             if (!CanDraw) return;
-            Vector2 dim2 = dimensions/2;
+            var dim2 = dimensions/2;
             var corners = new[]
                               {
                                   position + new Vector2(-dim2.X + lineWidth, -dim2.Y + lineWidth),
@@ -101,20 +102,26 @@ namespace Engine.Rendering
                                   position + new Vector2(-dim2.X + lineWidth, -dim2.Y + lineWidth)
                               };
 
-            for (int i = 0; i < 5; i++)
-            {
-                corners[i] = corners[i].RotateAbout(position, rotation);
-            }
+            corners = corners.Mutate(v => v.RotateAbout(position, rotation)).ToArray();
 
             var scale = new Vector2(0, lineWidth);
-            Vector2 segment;
             for (int i = 0; i < 4; i++)
             {
-                segment = (corners[i + 1] - corners[i]);
+                var segment = (corners[i + 1] - corners[i]);
                 scale.X = segment.Length() + lineWidth;
                 batch.Draw(pixel1x1, corners[i], null, color, (float) segment.AsAngle(), Vector2.Zero, scale,
                            SpriteEffects.None, 0);
             }
+        }
+
+        public static void DrawHorizontalLine(SpriteBatch batch, float pos, float width, Color color)
+        {
+            DrawSolidRectangle(batch, new Vector2(width/2, pos), color, new Vector2(width, 1), 0);
+        }
+
+        public static void DrawVerticalLine(SpriteBatch batch, float pos, float height, Color color)
+        {
+            DrawSolidRectangle(batch, new Vector2(pos, height/2), color, new Vector2(1, height), 0);
         }
     }
 }
