@@ -1,96 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Engine.Input;
 using Engine.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Engine.UI
 {
     public abstract class Widget
     {
-        private float _x;
-        protected float X
-        {
-            get { return _x; }
-            set { 
-                _x = value;
-                FindRoot().UpdateLayout();
-            }
-        }
-
-        private float _y;
-        protected float Y
-        {
-            get { return _y; }
-            set
-            {
-                _y = value;
-                FindRoot().UpdateLayout();
-            }
-        }
-
-        private float _w;
-        protected float W
-        {
-            get { return _w; }
-            set
-            {
-                _w = value;
-                FindRoot().UpdateLayout();
-            }
-        }
-
-        private float _h;
-        protected float H
-        {
-            get { return _h; }
-            set
-            {
-                _h = value;
-                FindRoot().UpdateLayout();
-            }
-        }
-
-        private string _name;
-        protected string Name
-        {
-            get { return _name; }
-            set 
-            { 
-                var oldName = _name;
-                _name = value;
-                UpdateNames(oldName);
-            }
-        }
-
-        protected float GX, GY;
-
-        protected Vector2 PrefSize;
-
-        protected Widget Parent;
-
-        private bool _dirty;
-
-        protected bool Visible;
         protected Alignment Alignment;
 
         protected bool Expandable;
+        protected float GX, GY;
+        public Widget Parent;
+        public Vector2 PreferredSize;
+        private bool _dirty;
+        private float _h;
+        private string _name;
         private SpriteSheet _spriteSheet;
+        private float _w;
+        private float _x;
 
-        protected SpriteSheet SpriteSheet
-        {
-            get { return _spriteSheet; }
-            set
-            {
-                _spriteSheet = value;
-                _dirty = true;
-            }
-        }
+        private float _y;
 
-        public Widget(string name, float x=0, float y=0, float w=0, float h=0, bool expandable=true,
-            Alignment? align = null)
+        public Widget(string name, float x = 0, float y = 0, float w = 0, float h = 0, bool expandable = true,
+                      Alignment? align = null)
         {
             _name = name;
             _x = x;
@@ -98,7 +34,7 @@ namespace Engine.UI
             _w = w;
             _h = h;
 
-            PrefSize = Vector2.Zero;
+            PreferredSize = Vector2.Zero;
             Parent = null;
             SpriteSheet = null;
             _dirty = false;
@@ -109,6 +45,86 @@ namespace Engine.UI
             Expandable = expandable;
         }
 
+        protected float X
+        {
+            get { return _x; }
+            set
+            {
+                _x = value;
+                FindRoot().UpdateLayout();
+            }
+        }
+
+        protected float Y
+        {
+            get { return _y; }
+            set
+            {
+                _y = value;
+                FindRoot().UpdateLayout();
+            }
+        }
+
+        protected float W
+        {
+            get { return _w; }
+            set
+            {
+                _w = value;
+                FindRoot().UpdateLayout();
+            }
+        }
+
+        protected float H
+        {
+            get { return _h; }
+            set
+            {
+                _h = value;
+                FindRoot().UpdateLayout();
+            }
+        }
+
+        protected string Name
+        {
+            get { return _name; }
+            set
+            {
+                var oldName = _name;
+                _name = value;
+                UpdateNames(oldName);
+            }
+        }
+
+        public virtual bool Visible { get; set; }
+
+        public virtual bool IsFocus
+        {
+            get
+            {
+                var f = FindRoot() as Frame;
+                if (this == f) return true;
+                if (f == null) return false;
+                
+                return this == f.Focus;
+            }
+        }
+
+        public virtual SpriteSheet SpriteSheet
+        {
+            get { return _spriteSheet; }
+            set
+            {
+                _spriteSheet = value;
+                _dirty = true;
+            }
+        }
+
+        public virtual Rectangle Bounds
+        {
+            get { return new Rectangle(GX, GY, W, H); }
+        }
+
         protected Widget FindRoot()
         {
             var root = this;
@@ -117,22 +133,22 @@ namespace Engine.UI
             return root;
         }
 
-        protected void UpdateLayout()
+        public virtual void UpdateLayout()
         {
             _dirty = true;
         }
 
-        protected void UpdateNames(string oldName = null)
+        public virtual void UpdateNames(string oldName = null)
         {
             var frame = FindRoot() as Frame;
-            if(frame == null) return;
+            if (frame == null) return;
             if (!String.IsNullOrEmpty(oldName))
                 frame.Names.Remove(oldName);
             if (!String.IsNullOrEmpty(Name))
                 frame.Names[Name] = this;
         }
 
-        protected virtual void RemoveNames()
+        public virtual void RemoveNames()
         {
             var frame = FindRoot() as Frame;
             if (frame == null) return;
@@ -140,7 +156,7 @@ namespace Engine.UI
                 frame.Names.Remove(Name);
         }
 
-        protected virtual void UpdateGlobalCoords()
+        public virtual void UpdateGlobalCoords()
         {
             GX = X;
             GY = Y;
@@ -151,28 +167,57 @@ namespace Engine.UI
             }
         }
 
-        protected abstract void DetermineSize();
+        public abstract void DetermineSize();
 
-        protected virtual void ResetSize(Vector2 size)
+        public virtual void ResetSize(Vector2 size)
         {
             _w = size.X;
             _h = size.Y;
             _dirty = true;
         }
 
-        protected virtual bool HitTest(Vector2 pos)
+        public virtual bool HitTest(Vector2 pos)
         {
             return Bounds.Contains(pos);
         }
-
-        protected virtual Rectangle Bounds
+        public virtual bool HitTest(float x, float y)
         {
-            get
-            {
-                return new Rectangle(GX, GY, W, H);
-            }
+            return Bounds.Contains(x, y);
         }
 
         public abstract void Draw(SpriteBatch batch);
+
+        public virtual void OnMousePress(float x, float y, MouseButton button, List<ModifierKey> modifiers)
+        {
+        }
+
+        public virtual void OnMouseDrag(float x, float y, float dx, float dy, MouseButton button,
+                                        List<ModifierKey> modifiers)
+        {
+        }
+
+        public virtual void OnMouseRelease(float x, float y, MouseButton button, List<ModifierKey> modifiers)
+        {
+        }
+
+        public virtual void OnMouseScroll(float x, float y, float scroll_x, float scroll_y)
+        {
+        }
+
+        public virtual void OnKeyPress(Keys key, List<ModifierKey> modifiers)
+        {
+        }
+
+        public virtual void OnKeyRelease(Keys key, List<ModifierKey> modifiers)
+        {
+        }
+
+        public virtual void OnText(string text)
+        {
+        }
+
+        public virtual void OnTextMotion(int motion, bool select = false)
+        {
+        }
     }
 }

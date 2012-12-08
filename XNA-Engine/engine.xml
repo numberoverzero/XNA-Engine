@@ -1691,6 +1691,90 @@
             Any rendering done on top of the base
             </summary>
         </member>
+        <member name="T:Engine.FileHandlers.FileLog">
+            <summary>
+              See <see cref="T:Engine.FileHandlers.ILog"/>
+            </summary>
+        </member>
+        <member name="T:Engine.FileHandlers.ILog">
+            <summary>
+            Logging interface
+            </summary>
+        </member>
+        <member name="M:Engine.FileHandlers.ILog.Debug(System.String)">
+            <summary>
+            Log a debug message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.FileHandlers.ILog.Error(System.String)">
+            <summary>
+            Log an error message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.FileHandlers.ILog.Info(System.String)">
+            <summary>
+            Log an info message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.FileHandlers.ILog.Warn(System.String)">
+            <summary>
+            Log a warning message
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="M:Engine.FileHandlers.ILog.AddMirror(Engine.FileHandlers.ILog)">
+            <summary>
+            <para>Add an ILog as a mirror of this one.</para>
+            <para>Any message which this log receives, the other will as well.</para>
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Engine.FileHandlers.ILog.RemoveMirror(Engine.FileHandlers.ILog)">
+            <summary>
+            <para>Remove a mirror.</para>
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Engine.FileHandlers.Log.Error(System.String)">
+            <summary>
+              See <see cref="M:Engine.FileHandlers.ILog.Error(System.String)"/>
+            </summary>
+            <param name="msg"> </param>
+        </member>
+        <member name="M:Engine.FileHandlers.Log.Warn(System.String)">
+            <summary>
+              See <see cref="M:Engine.FileHandlers.ILog.Warn(System.String)"/>
+            </summary>
+            <param name="msg"> </param>
+        </member>
+        <member name="M:Engine.FileHandlers.Log.Info(System.String)">
+            <summary>
+              See <see cref="M:Engine.FileHandlers.ILog.Info(System.String)"/>
+            </summary>
+            <param name="msg"> </param>
+        </member>
+        <member name="M:Engine.FileHandlers.Log.Debug(System.String)">
+            <summary>
+              See <see cref="M:Engine.FileHandlers.ILog.Debug(System.String)"/>
+            </summary>
+            <param name="msg"> </param>
+        </member>
+        <member name="F:Engine.FileHandlers.FileLog.Filename">
+            <summary>
+              The file to log to.
+            </summary>
+        </member>
+        <member name="M:Engine.FileHandlers.FileLog.#ctor(System.String,Engine.FileHandlers.Frequency)">
+            <summary>
+              Create a log file at the given location,
+              with a given expected frequency of logging
+            </summary>
+            <param name="filename"> </param>
+            <param name="frequency"> </param>
+        </member>
         <member name="T:Engine.Events.GameObjectEvents.GameObjectCreatedEvent">
             <summary>
             Event when a GameObject is created
@@ -1749,35 +1833,6 @@
             <summary>
             Transitioning from tracking a GameObject to tracking a different GameObject
             </summary>
-        </member>
-        <member name="T:Engine.FileHandlers.ILog">
-            <summary>
-            Logging interface
-            </summary>
-        </member>
-        <member name="M:Engine.FileHandlers.ILog.Debug(System.String)">
-            <summary>
-            Log a debug message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.FileHandlers.ILog.Error(System.String)">
-            <summary>
-            Log an error message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.FileHandlers.ILog.Info(System.String)">
-            <summary>
-            Log an info message
-            </summary>
-            <param name="msg"></param>
-        </member>
-        <member name="M:Engine.FileHandlers.ILog.Warn(System.String)">
-            <summary>
-            Log a warning message
-            </summary>
-            <param name="msg"></param>
         </member>
         <member name="T:Engine.Input.Managers.AddBindings.InputManagerAddBindingExtensions">
             <summary>
@@ -2393,7 +2448,7 @@
         </member>
         <member name="T:Engine.UI.Rectangle">
             <summary>
-              Rectangle with float position/dimension
+                Rectangle with float position/dimension
             </summary>
         </member>
         <member name="M:Engine.Rendering.SpriteSheet.LoadContent(Microsoft.Xna.Framework.Content.ContentManager,System.String)">
@@ -2487,7 +2542,7 @@
               The server log
             </summary>
         </member>
-        <member name="M:Engine.Networking.Server.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String)">
+        <member name="M:Engine.Networking.Server.BasicServer.#ctor(System.Net.IPAddress,System.Int32,System.String,System.Boolean)">
             <summary>
               Construct a basic server such that it is ready to be started, and possibly using the default connect
               behavior.
@@ -4267,89 +4322,6 @@
             <param name="dimensions"> Dimensions of the rectangle </param>
             <param name="rotation"> Rotation in radians about the center </param>
             <param name="lineWidth"> Width in pixels of the line </param>
-        </member>
-        <member name="T:Engine.FileHandlers.Log">
-            <summary>
-              See <see cref="T:Engine.FileHandlers.ILog"/>
-            </summary>
-        </member>
-        <member name="F:Engine.FileHandlers.Log.Filename">
-            <summary>
-              The file to log to.
-            </summary>
-        </member>
-        <member name="M:Engine.FileHandlers.Log.#ctor(System.String,Engine.FileHandlers.Frequency)">
-            <summary>
-              Create a log file at the given location,
-              with a given expected frequency of logging
-            </summary>
-            <param name="filename"> </param>
-            <param name="frequency"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.Log.Error(System.String)">
-            <summary>
-              See <see cref="M:Engine.FileHandlers.ILog.Error(System.String)"/>
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.Log.Warn(System.String)">
-            <summary>
-              See <see cref="M:Engine.FileHandlers.ILog.Warn(System.String)"/>
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.Log.Info(System.String)">
-            <summary>
-              See <see cref="M:Engine.FileHandlers.ILog.Info(System.String)"/>
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.Log.Debug(System.String)">
-            <summary>
-              See <see cref="M:Engine.FileHandlers.ILog.Debug(System.String)"/>
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.Log.Flush">
-            <summary>
-              Write any pending messages to disk
-            </summary>
-        </member>
-        <member name="T:Engine.FileHandlers.LogLine">
-            <summary>
-              Used for injecting text into another log message
-            </summary>
-        </member>
-        <member name="M:Engine.FileHandlers.LogLine.Error(System.String)">
-            <summary>
-              Log an error message
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.LogLine.Warn(System.String)">
-            <summary>
-              Log a warning message
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.LogLine.Info(System.String)">
-            <summary>
-              Log an info message
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.LogLine.Debug(System.String)">
-            <summary>
-              Log a debug message
-            </summary>
-            <param name="msg"> </param>
-        </member>
-        <member name="M:Engine.FileHandlers.LogLine.InjectMsg(System.Action{System.String},System.String)">
-            <summary>
-              Called by Error/Warn/Info/Debug, used for injecting into the message
-            </summary>
-            <param name="func"> </param>
-            <param name="msg"> </param>
         </member>
         <member name="T:Engine.Utility.InvokeExtensions">
             <summary>

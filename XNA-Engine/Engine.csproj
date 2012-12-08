@@ -137,9 +137,11 @@
     <Compile Include="Input\Managers\InputManager.cs" />
     <Compile Include="Input\Managers\OptimizedKeyboardManager.cs" />
     <Compile Include="Input\Managers\TypedInputManager.cs" />
+    <Compile Include="Logging\ConsoleLog.cs" />
     <Compile Include="Logging\Enums.cs" />
     <Compile Include="FileHandlers\FullFileBuffer.cs" />
     <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\FileLog.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Networking\Client\PacketArgs.cs" />
     <Compile Include="Networking\Packets\Packet.cs" />
@@ -175,6 +177,7 @@
     <Compile Include="TileEngine\TileManager.cs" />
     <Compile Include="UI\FloatGeometry.cs" />
     <Compile Include="UI\Frame.cs" />
+    <Compile Include="UI\SingleContainer.cs" />
     <Compile Include="UI\Widget.cs" />
     <Compile Include="Utility\ByteArrayExtensions.cs" />
     <Compile Include="Utility\CollectionExtensions.cs" />
