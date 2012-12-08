@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Engine.UI
 {
     /// <summary>
-    ///   Rectangle with float position/dimension
+    ///     Rectangle with float position/dimension
     /// </summary>
     public struct Rectangle
     {
@@ -71,7 +72,12 @@ namespace Engine.UI
 
         public bool Contains(Vector2 pos)
         {
-            return (pos.X >= X && pos.X <= X + W && pos.Y >= Y && pos.Y <= Y + H);
+            return Contains(pos.X, pos.Y);
+        }
+
+        public bool Contains(float x, float y)
+        {
+            return (x >= X && x <= X + W && y >= Y && y <= Y + H);
         }
 
         public bool Intersects(Rectangle rect)
@@ -80,6 +86,17 @@ namespace Engine.UI
                      rect.X + rect.W < X ||
                      rect.Y > Y + H ||
                      rect.Y + rect.H < Y);
+        }
+
+        public Rectangle Intersect(Rectangle other)
+        {
+            var left = Math.Max(X, other.X);
+            var right = Math.Min(X + W, other.X + other.W);
+            var top = Math.Max(Y, other.Y);
+            var bottom = Math.Min(Y + H, other.Y + other.H);
+            return left < right && top < bottom
+                       ? new Rectangle(left, top, right - left, bottom - top)
+                       : Empty;
         }
     }
 }
