@@ -1,36 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Engine.Utility;
 
 namespace Engine.FileHandlers
 {
-    /// <summary>
-    ///   See <see cref="ILog" />
-    /// </summary>
-    public class Log : ILog
+    public abstract class Log : ILog
     {
         private const string Fmt = "{0:s} {1}::{2}";
-
-        /// <summary>
-        ///   The file to log to.
-        /// </summary>
-        public string Filename;
-
-        private Frequency frequency;
-
-        /// <summary>
-        ///   Create a log file at the given location,
-        ///   with a given expected frequency of logging
-        /// </summary>
-        /// <param name="filename"> </param>
-        /// <param name="frequency"> </param>
-        public Log(string filename, Frequency frequency)
+        protected List<ILog> Mirrors;
+ 
+        public Log()
         {
-            Filename = filename;
-            this.frequency = frequency;
-            Debug("Log:Initialized");
+            Mirrors = new List<ILog>();
         }
-
-        #region ILog Members
 
         /// <summary>
         ///   See <see cref="ILog.Error" />
@@ -38,7 +22,7 @@ namespace Engine.FileHandlers
         /// <param name="msg"> </param>
         public virtual void Error(string msg)
         {
-            WriteMsg(msg, Level.Error);
+            WriteMsgWithLevel(msg, Level.Error);
         }
 
         /// <summary>
@@ -47,7 +31,7 @@ namespace Engine.FileHandlers
         /// <param name="msg"> </param>
         public virtual void Warn(string msg)
         {
-            WriteMsg(msg, Level.Warning);
+            WriteMsgWithLevel(msg, Level.Warning);
         }
 
         /// <summary>
@@ -56,7 +40,7 @@ namespace Engine.FileHandlers
         /// <param name="msg"> </param>
         public virtual void Info(string msg)
         {
-            WriteMsg(msg, Level.Info);
+            WriteMsgWithLevel(msg, Level.Info);
         }
 
         /// <summary>
@@ -65,19 +49,10 @@ namespace Engine.FileHandlers
         /// <param name="msg"> </param>
         public virtual void Debug(string msg)
         {
-            WriteMsg(msg, Level.Debug);
+            WriteMsgWithLevel(msg, Level.Debug);
         }
 
-        #endregion
-
-        /// <summary>
-        ///   Write any pending messages to disk
-        /// </summary>
-        public virtual void Flush()
-        {
-        }
-
-        private void WriteMsg(string msg, Level level)
+        private void WriteMsgWithLevel(string msg, Level level)
         {
             if (String.IsNullOrEmpty(msg)) return;
             var prefix = "";
@@ -96,81 +71,26 @@ namespace Engine.FileHandlers
                     prefix = "DEBG";
                     break;
             }
-            try
-            {
-                LogWrite(Fmt.format(DateTime.Now, prefix, msg));
-            }
-            catch
-            {
-            }
+            WriteLine(Fmt.format(DateTime.Now, prefix, msg));
         }
 
-        protected virtual void LogWrite(string msg)
+        public void WriteLine(string msg)
         {
-            if (String.IsNullOrEmpty(Filename))
-                Console.WriteLine(msg);
-            else
-                msg.AppendLineToFile(Filename);
+            WriteMsg(msg);
+            foreach (var mirror in Mirrors)
+                mirror.WriteLine(msg);
         }
-    }
 
-    /// <summary>
-    ///   Used for injecting text into another log message
-    /// </summary>
-    public abstract class LogLine : ILog
-    {
-        private readonly ILog log;
+        protected abstract void WriteMsg(string msg);
 
-        internal LogLine(ILog log)
+        public void AddMirror(ILog other)
         {
-            this.log = log;
+            Mirrors.Add(other);
         }
 
-        #region ILog Members
-
-        /// <summary>
-        ///   Log an error message
-        /// </summary>
-        /// <param name="msg"> </param>
-        public virtual void Error(string msg)
+        public void RemoveMirror(ILog other)
         {
-            InjectMsg(log.Error, msg);
+            Mirrors.Remove(other);
         }
-
-        /// <summary>
-        ///   Log a warning message
-        /// </summary>
-        /// <param name="msg"> </param>
-        public virtual void Warn(string msg)
-        {
-            InjectMsg(log.Warn, msg);
-        }
-
-        /// <summary>
-        ///   Log an info message
-        /// </summary>
-        /// <param name="msg"> </param>
-        public virtual void Info(string msg)
-        {
-            InjectMsg(log.Info, msg);
-        }
-
-        /// <summary>
-        ///   Log a debug message
-        /// </summary>
-        /// <param name="msg"> </param>
-        public virtual void Debug(string msg)
-        {
-            InjectMsg(log.Debug, msg);
-        }
-
-        #endregion
-
-        /// <summary>
-        ///   Called by Error/Warn/Info/Debug, used for injecting into the message
-        /// </summary>
-        /// <param name="func"> </param>
-        /// <param name="msg"> </param>
-        protected abstract void InjectMsg(Action<string> func, string msg);
     }
 }

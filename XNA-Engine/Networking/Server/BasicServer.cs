@@ -32,7 +32,7 @@ namespace Engine.Networking.Server
         /// <summary>
         ///   The server log
         /// </summary>
-        protected Log Log;
+        protected FileLog Log;
 
         private Thread _clientPollThread;
         private TcpListener _listener;
@@ -41,7 +41,7 @@ namespace Engine.Networking.Server
         ///   Construct a basic server such that it is ready to be started, and possibly using the default connect
         ///   behavior.
         /// </summary>
-        public BasicServer(IPAddress localaddr, int port, string logFileName = null)
+        public BasicServer(IPAddress localaddr, int port, string logFileName = null, bool tailLog = true)
         {
             IsRunning = false;
             _localaddr = localaddr;
@@ -50,7 +50,9 @@ namespace Engine.Networking.Server
             ClientTable = new BidirectionalDict<string, Client>();
             AuthTable = new DefaultDict<Client, bool>();
 
-            Log = new Log(logFileName, Frequency.Burst);
+            Log = new FileLog(logFileName, Frequency.Burst);
+            if (tailLog)
+                Log.AddMirror(new ConsoleLog());
             Log.Info("Server initialized: <{0}>::{1}".format(localaddr, port));
         }
 
@@ -93,7 +95,6 @@ namespace Engine.Networking.Server
 
             IsRunning = false;
             Log.Info("Server stopped.");
-            Log.Flush();
             if (OnStop != null) OnStop(this, null);
         }
 

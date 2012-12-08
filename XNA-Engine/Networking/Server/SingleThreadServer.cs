@@ -14,8 +14,8 @@ namespace Engine.Networking.Server
         private Thread _readThread;
         private readonly ConcurrentQueue<PacketArgs> _readQueue;
   
-        public SingleThreadServer(IPAddress localaddr, int port, string logFileName = null)
-            : base(localaddr, port, logFileName)
+        public SingleThreadServer(IPAddress localaddr, int port, string logFileName = null, bool tailLog = true)
+            : base(localaddr, port, logFileName, tailLog)
         {
             _readQueue = new ConcurrentQueue<PacketArgs>();
         }

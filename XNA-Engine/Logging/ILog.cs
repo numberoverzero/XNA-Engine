@@ -26,5 +26,20 @@ namespace Engine.FileHandlers
         /// </summary>
         /// <param name="msg"></param>
         void Warn(string msg);
+
+        void WriteLine(string msg);
+
+        /// <summary>
+        /// <para>Add an ILog as a mirror of this one.</para>
+        /// <para>Any message which this log receives, the other will as well.</para>
+        /// </summary>
+        /// <param name="other"></param>
+        void AddMirror(ILog other);
+
+        /// <summary>
+        /// <para>Remove a mirror.</para>
+        /// </summary>
+        /// <param name="other"></param>
+        void RemoveMirror(ILog other);
     }
 }
