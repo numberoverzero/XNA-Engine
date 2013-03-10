@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.Utility
+namespace Engine.Mathematics
 {
     /// <summary>
     ///   A function which is closed over floats
@@ -84,23 +84,5 @@ namespace Engine.Utility
         }
 
         #endregion
-    }
-
-    public static class MathExtensions
-    {
-        public static int Mod(this int a, float b)
-        {
-            return (int) (a - b*Math.Floor(a/b));
-        }
-
-        public static float Mod(this float a, float b)
-        {
-            return (float) (a - b*Math.Floor(a/b));
-        }
-
-        public static int WrappedIndex(int index, int size)
-        {
-            return index.Mod(size);
-        }
     }
 }
