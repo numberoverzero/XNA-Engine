@@ -143,6 +143,8 @@
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="Logging\FileLog.cs" />
     <Compile Include="Logging\Log.cs" />
+    <Compile Include="Mathematics\Basics.cs" />
+    <Compile Include="Mathematics\Factors.cs" />
     <Compile Include="Networking\Client\PacketArgs.cs" />
     <Compile Include="Networking\Packets\Packet.cs" />
     <Compile Include="Networking\Packets\PacketBuilder.cs" />
@@ -189,7 +191,8 @@
     <Compile Include="Utility\GraphicsDeviceExtensions.cs" />
     <Compile Include="Utility\InvokeExtensions.cs" />
     <Compile Include="Utility\IterableExtensions.cs" />
-    <Compile Include="Utility\MathFunctions.cs" />
+    <Compile Include="Mathematics\MathFunctions.cs" />
+    <Compile Include="Utility\ListExtensions.cs" />
     <Compile Include="Utility\NetworkingExtensions.cs" />
     <Compile Include="Utility\SpriteBatchExtensions.cs" />
     <Compile Include="Utility\StringAndRegexExtensions.cs" />

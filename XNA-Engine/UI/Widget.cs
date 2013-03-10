@@ -16,7 +16,6 @@ namespace Engine.UI
         protected float GX, GY;
         public Widget Parent;
         public Vector2 PreferredSize;
-        private bool _dirty;
         private float _h;
         private string _name;
         private SpriteSheet _spriteSheet;
@@ -37,7 +36,6 @@ namespace Engine.UI
             PreferredSize = Vector2.Zero;
             Parent = null;
             SpriteSheet = null;
-            _dirty = false;
             Visible = true;
 
             Alignment = align ?? Alignment.Centered;
@@ -116,7 +114,6 @@ namespace Engine.UI
             set
             {
                 _spriteSheet = value;
-                _dirty = true;
             }
         }
 
@@ -135,7 +132,6 @@ namespace Engine.UI
 
         public virtual void UpdateLayout()
         {
-            _dirty = true;
         }
 
         public virtual void UpdateNames(string oldName = null)
@@ -173,7 +169,6 @@ namespace Engine.UI
         {
             _w = size.X;
             _h = size.Y;
-            _dirty = true;
         }
 
         public virtual bool HitTest(Vector2 pos)

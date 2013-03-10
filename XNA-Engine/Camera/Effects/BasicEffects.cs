@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Engine.Mathematics;
 using Microsoft.Xna.Framework;
-using Engine.Utility;
 
 namespace Engine.Camera.Effects
 {
