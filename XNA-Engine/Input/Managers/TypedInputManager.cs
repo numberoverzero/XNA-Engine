@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Engine.DataStructures;
 using Engine.Input.Devices;
+using Engine.Mathematics;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Input.Managers
 {
     /// <summary>
-    ///   Manages bindings of keys
+    ///     Manages bindings of keys
     /// </summary>
     public class TypedInputManager : InputManager
     {
         /// <summary>
-        ///   Constructor
+        ///     Constructor
         /// </summary>
         public TypedInputManager(InputDevice inputDevice)
         {
@@ -25,7 +26,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Copy Constructor
+        ///     Copy Constructor
         /// </summary>
         /// <param name="inputManager"> </param>
         public TypedInputManager(TypedInputManager inputManager)
@@ -38,37 +39,46 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   The device that this manager relies on
+        ///     The device that this manager relies on
         /// </summary>
         public InputDevice Device { get; protected set; }
 
         /// <summary>
-        ///   The Bindings being tracked by the Manager
+        ///     The Bindings being tracked by the Manager
         /// </summary>
         protected MultiKeyObjDict<String, PlayerIndex, List<InputBinding>> Bindings { get; set; }
 
         /// <summary>
-        ///   The InputSettings for this InputManager (trigger thresholds, etc)
+        ///     The InputSettings for this InputManager (trigger thresholds, etc)
         /// </summary>
         public InputSettings Settings { get; set; }
 
         /// <summary>
-        ///   A unique set of modifiers of the bindings this manager tracks.
-        ///   Keeps track of how many bindings use this modifier; 
-        ///   stops checking for modifiers once no bindings use that modifier
+        ///     A unique set of modifiers of the bindings this manager tracks.
+        ///     Keeps track of how many bindings use this modifier;
+        ///     stops checking for modifiers once no bindings use that modifier
         /// </summary>
         public CountedCollection<InputBinding> Modifiers { get; protected set; }
 
         /// <summary>
-        ///   Enable/Disable grabbing device state when updating the manager.
-        ///   Disable for performance when you know the user can't use the device, or no bindings will need the state of the device.
+        ///     Enable/Disable grabbing device state when updating the manager.
+        ///     Disable for performance when you know the user can't use the device, or no bindings will need the state of the device.
         /// </summary>
         public bool IsPolling { get; set; }
 
         #region InputManager Members
 
+        private int _continuousCheckFrame;
+        private int _framesPerContinuousCheck;
+
+        protected int ContinuousCheckFrame
+        {
+            get { return _continuousCheckFrame; }
+            set { _continuousCheckFrame = Basics.Mod(value, FramesPerContinuousCheck); }
+        }
+
         /// <summary>
-        ///   All the modifiers currently being tracked.
+        ///     All the modifiers currently being tracked.
         /// </summary>
         public IEnumerable<InputBinding> GetModifiers
         {
@@ -76,7 +86,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Add a binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
         /// <param name="binding"> The binding to associate with the bindingName </param>
@@ -94,8 +104,8 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Remove a binding from the InputManager.  Removes the exact binding from the relation.
-        ///   This can be used when you don't know the binding's index in its list of bindings.
+        ///     Remove a binding from the InputManager.  Removes the exact binding from the relation.
+        ///     This can be used when you don't know the binding's index in its list of bindings.
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
         /// <param name="binding"> The binding to remove from the association with the bindingName </param>
@@ -110,7 +120,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Check if the manager has a binding associated with a bindingName for a player
+        ///     Check if the manager has a binding associated with a bindingName for a player
         /// </summary>
         /// <param name="bindingName"> The name of the binding to check for </param>
         /// <param name="player"> The player to check the binding for </param>
@@ -126,7 +136,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Clears all bindings associated with the given bindingName for a particular player
+        ///     Clears all bindings associated with the given bindingName for a particular player
         /// </summary>
         /// <param name="bindingName"> The name of the binding to clear </param>
         /// <param name="player"> The player to clear the binding for </param>
@@ -140,7 +150,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Clears all bindings for all players
+        ///     Clears all bindings for all players
         /// </summary>
         public virtual void ClearAllBindings()
         {
@@ -148,8 +158,25 @@ namespace Engine.Input.Managers
             Modifiers.Clear();
         }
 
+        public int FramesPerContinuousCheck
+        {
+            get { return _framesPerContinuousCheck; }
+            set
+            {
+                _framesPerContinuousCheck = value;
+                ContinuousCheckFrame = 0;
+            }
+        }
+
+        public bool IsContinuousActive(string bindingName, PlayerIndex player, FrameState state)
+        {
+            var offset = state == FrameState.Current ? 0 : -1;
+            var actualCheck = Basics.Mod(ContinuousCheckFrame + offset, FramesPerContinuousCheck);
+            return actualCheck == 0 && IsActive(bindingName, player, state);
+        }
+
         /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
+        ///     Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
         /// <param name="player"> The player to check the binding's activity for </param>
@@ -168,7 +195,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Gets the list of bindings associated with a particular bindingName for a given player
+        ///     Gets the list of bindings associated with a particular bindingName for a given player
         /// </summary>
         /// <param name="bindingName"> The bindingName associated with the list of Bindings </param>
         /// <param name="player"> The player to get the list of bindings for </param>
@@ -179,9 +206,9 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Used to get a list of strings that map to the given binding for a given player.
-        ///   This is useful when you want to unbind a key from current bindings and remap to a new binding:
-        ///   You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
+        ///     Used to get a list of strings that map to the given binding for a given player.
+        ///     This is useful when you want to unbind a key from current bindings and remap to a new binding:
+        ///     You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
         /// </summary>
         /// <param name="binding"> The binding to search for in the InputManager </param>
         /// <param name="player"> The player to search for bindings on </param>
@@ -195,23 +222,24 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
+        ///     Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
         /// </summary>
         /// <remarks>
-        ///   This should be called at the end of your update loop, so that game logic
-        ///   uses latest values.
-        ///   Calling update at the beginning of the update loop will clear current buffers (if any) which
-        ///   means you will not be able to read the most recent input.
+        ///     This should be called at the end of your update loop, so that game logic
+        ///     uses latest values.
+        ///     Calling update at the beginning of the update loop will clear current buffers (if any) which
+        ///     means you will not be able to read the most recent input.
         /// </remarks>
         public void Update()
         {
             if (IsPolling) Device.Update();
+            ContinuousCheckFrame++;
         }
 
         #endregion
 
         /// <summary>
-        ///   Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
+        ///     Checks if sufficient modifiers are active, as defined by the ModifierCheckType in Settings
         /// </summary>
         protected virtual bool IsModifiersActive(InputBinding inputBinding, PlayerIndex player,
                                                  InputSnapshot inputSnapshot)
@@ -234,7 +262,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
+        ///     Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
         protected virtual bool IsStrictModifiersActive(InputBinding inputBinding, PlayerIndex player,
                                                        InputSnapshot inputSnapshot)
@@ -247,7 +275,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
+        ///     Checks if all (and only all) of the modifiers associated with a binding for a given player were active in the current FrameState (and not in the previous).
         /// </summary>
         protected virtual bool IsSmartModifiersActive(InputBinding inputBinding, PlayerIndex player,
                                                       InputSnapshot inputSnapshot)

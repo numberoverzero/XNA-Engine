@@ -8,17 +8,24 @@ using Microsoft.Xna.Framework;
 namespace Engine.Input.Managers
 {
     /// <summary>
-    ///   Allows input querying and offers hooks for event-driven keyboard input
+    ///     Allows input querying and offers hooks for event-driven keyboard input
     /// </summary>
     public interface InputManager
     {
         /// <summary>
-        ///   All the modifiers currently being tracked.
+        ///     How many frames elapse between each check for a "continuous" action.
+        ///     The inverse of this would be repeat rate - the number of times
+        ///     the button triggers when held down.
+        /// </summary>
+        int FramesPerContinuousCheck { get; set; }
+
+        /// <summary>
+        ///     All the modifiers currently being tracked.
         /// </summary>
         IEnumerable<InputBinding> GetModifiers { get; }
 
         /// <summary>
-        ///   Add a binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
         /// <param name="binding"> The binding to associate with the bindingName </param>
@@ -27,8 +34,8 @@ namespace Engine.Input.Managers
         bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player);
 
         /// <summary>
-        ///   Remove a binding from the InputManager.  Removes the exact binding from the relation.
-        ///   This can be used when you don't know the binding's index in its list of bindings.
+        ///     Remove a binding from the InputManager.  Removes the exact binding from the relation.
+        ///     This can be used when you don't know the binding's index in its list of bindings.
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
         /// <param name="binding"> The binding to remove from the association with the bindingName </param>
@@ -36,7 +43,7 @@ namespace Engine.Input.Managers
         void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player);
 
         /// <summary>
-        ///   Check if the manager has a binding associated with a bindingName for a player
+        ///     Check if the manager has a binding associated with a bindingName for a player
         /// </summary>
         /// <param name="bindingName"> The name of the binding to check for </param>
         /// <param name="player"> The player to check the binding for </param>
@@ -44,7 +51,7 @@ namespace Engine.Input.Managers
         bool ContainsBinding(string bindingName, PlayerIndex player);
 
         /// <summary>
-        ///   Check if the manager has a specific binding
+        ///     Check if the manager has a specific binding
         /// </summary>
         /// <param name="binding"> The binding to check for </param>
         /// <param name="player"> The player to check the binding for </param>
@@ -52,19 +59,19 @@ namespace Engine.Input.Managers
         bool ContainsBinding(InputBinding binding, PlayerIndex player);
 
         /// <summary>
-        ///   Clears all bindings associated with the given bindingName for a particular player
+        ///     Clears all bindings associated with the given bindingName for a particular player
         /// </summary>
         /// <param name="bindingName"> The name of the binding to clear </param>
         /// <param name="player"> The player to clear the binding for </param>
         void ClearBinding(string bindingName, PlayerIndex player);
 
         /// <summary>
-        ///   Clears all bindings for all players
+        ///     Clears all bindings for all players
         /// </summary>
         void ClearAllBindings();
 
         /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
+        ///     Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
         /// <param name="player"> The player to check the binding's activity for </param>
@@ -73,7 +80,17 @@ namespace Engine.Input.Managers
         bool IsActive(string bindingName, PlayerIndex player, FrameState state);
 
         /// <summary>
-        ///   Gets the list of bindings associated with a particular bindingName for a given player
+        ///     Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active,
+        ///     as determined by the "FramesPerContinuousCheck" variable.
+        /// </summary>
+        /// <param name="bindingName"> The name of the binding to query for active state </param>
+        /// <param name="player"> The player to check the binding's activity for </param>
+        /// <param name="state"> The FrameState in which to check for activity </param>
+        /// <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
+        bool IsContinuousActive(string bindingName, PlayerIndex player, FrameState state);
+
+        /// <summary>
+        ///     Gets the list of bindings associated with a particular bindingName for a given player
         /// </summary>
         /// <param name="bindingName"> The bindingName associated with the list of Bindings </param>
         /// <param name="player"> The player to get the list of bindings for </param>
@@ -81,9 +98,9 @@ namespace Engine.Input.Managers
         List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player);
 
         /// <summary>
-        ///   Used to get a list of strings that map to the given binding for a given player.
-        ///   This is useful when you want to unbind a key from current bindings and remap to a new binding:
-        ///   You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
+        ///     Used to get a list of strings that map to the given binding for a given player.
+        ///     This is useful when you want to unbind a key from current bindings and remap to a new binding:
+        ///     You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
         /// </summary>
         /// <param name="binding"> The binding to search for in the InputManager </param>
         /// <param name="player"> The player to search for bindings on </param>
@@ -91,13 +108,13 @@ namespace Engine.Input.Managers
         List<string> BindingsUsing(InputBinding binding, PlayerIndex player);
 
         /// <summary>
-        ///   Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
+        ///     Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
         /// </summary>
         /// <remarks>
-        ///   This should be called at the end of your update loop, so that game logic
-        ///   uses latest values.
-        ///   Calling update at the beginning of the update loop will clear current buffers (if any) which
-        ///   means you will not be able to read the most recent input.
+        ///     This should be called at the end of your update loop, so that game logic
+        ///     uses latest values.
+        ///     Calling update at the beginning of the update loop will clear current buffers (if any) which
+        ///     means you will not be able to read the most recent input.
         /// </remarks>
         void Update();
     }

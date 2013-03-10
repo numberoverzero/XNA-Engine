@@ -3,13 +3,14 @@ using System.Linq;
 using Engine.DataStructures;
 using Engine.Input.Devices;
 using Engine.Input.EventInput;
+using Engine.Mathematics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input.Managers
 {
     /// <summary>
-    ///   Manages all types of InputBindings - mouse, keyboard, gamepad.
+    ///     Manages all types of InputBindings - mouse, keyboard, gamepad.
     /// </summary>
     public class FullInputManager : InputManager, IKeyboardSubscriber
     {
@@ -24,7 +25,7 @@ namespace Engine.Input.Managers
         private ModifierCheckType _modifierCheckType;
 
         /// <summary>
-        ///   Constructor
+        ///     Constructor
         /// </summary>
         public FullInputManager()
         {
@@ -38,7 +39,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   How the manager checks modifiers
+        ///     How the manager checks modifiers
         /// </summary>
         public ModifierCheckType ModifierCheckType
         {
@@ -53,7 +54,7 @@ namespace Engine.Input.Managers
         #region IKeyboardSubscriber Members
 
         /// <summary>
-        ///   Handle a single character of input
+        ///     Handle a single character of input
         /// </summary>
         /// <param name="inputChar"> </param>
         public void ReceiveTextInput(char inputChar)
@@ -62,7 +63,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Handle a string of input
+        ///     Handle a string of input
         /// </summary>
         /// <param name="text"> </param>
         public void ReceiveTextInput(string text)
@@ -72,7 +73,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Handle a special command
+        ///     Handle a special command
         /// </summary>
         /// <param name="command"> </param>
         public void ReceiveCommandInput(char command)
@@ -81,7 +82,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Handle a Key input
+        ///     Handle a Key input
         /// </summary>
         /// <param name="key"> </param>
         public void ReceiveSpecialInput(Keys key)
@@ -89,7 +90,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Does this Subscriber have the (possibly exclusive) focus
+        ///     Does this Subscriber have the (possibly exclusive) focus
         /// </summary>
         public bool Selected { get; set; }
 
@@ -97,8 +98,27 @@ namespace Engine.Input.Managers
 
         #region InputManager Members
 
+        private int _continuousCheckFrame;
+        private int _framesPerContinuousCheck;
+
+        protected int ContinuousCheckFrame
+        {
+            get { return _continuousCheckFrame; }
+            set { _continuousCheckFrame = Basics.Mod(value, FramesPerContinuousCheck); }
+        }
+
+        public int FramesPerContinuousCheck
+        {
+            get { return _framesPerContinuousCheck; }
+            set
+            {
+                _framesPerContinuousCheck = value;
+                ContinuousCheckFrame = 0;
+            }
+        }
+
         /// <summary>
-        ///   All the modifiers currently being tracked.
+        ///     All the modifiers currently being tracked.
         /// </summary>
         public IEnumerable<InputBinding> GetModifiers
         {
@@ -152,6 +172,7 @@ namespace Engine.Input.Managers
             _injectableManager.ClearAllBindings();
         }
 
+
         public bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
             if (!ContainsBinding(bindingName, player))
@@ -159,6 +180,13 @@ namespace Engine.Input.Managers
 
             return _injectableManager.IsActive(bindingName, player, state) ||
                    _typedManagers.Any(t => t.IsActive(bindingName, player, state));
+        }
+
+        public bool IsContinuousActive(string bindingName, PlayerIndex player, FrameState state)
+        {
+            var offset = state == FrameState.Current ? 0 : -1;
+            var actualCheck = Basics.Mod(ContinuousCheckFrame + offset, FramesPerContinuousCheck);
+            return actualCheck == 0 && IsActive(bindingName, player, state);
         }
 
         public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
@@ -181,6 +209,7 @@ namespace Engine.Input.Managers
         {
             foreach (var t in _typedManagers) t.Update();
             _injectableManager.Update();
+            ContinuousCheckFrame++;
             BufferedText.Flip();
         }
 
@@ -192,8 +221,8 @@ namespace Engine.Input.Managers
         #endregion
 
         /// <summary>
-        ///   "Press" a key in a given frame.
-        ///   Cannot press a binding unless it has been added to the InputManager
+        ///     "Press" a key in a given frame.
+        ///     Cannot press a binding unless it has been added to the InputManager
         /// </summary>
         /// <param name="bindingName"> The binding to press </param>
         /// <param name="player"> The player to press the binding for </param>
@@ -204,8 +233,8 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   "Release" a key in a given frame.
-        ///   Cannot release a binding unless it has been added to the InputManager
+        ///     "Release" a key in a given frame.
+        ///     Cannot release a binding unless it has been added to the InputManager
         /// </summary>
         /// <param name="bindingName"> The binding to release </param>
         /// <param name="player"> The player to release the binding for </param>
@@ -216,7 +245,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Initialize InputManager dependencies (For event-driven input)
+        ///     Initialize InputManager dependencies (For event-driven input)
         /// </summary>
         /// <param name="window"> </param>
         public static void Initialize(GameWindow window)
@@ -229,8 +258,8 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   The buffered text input since the last frame.  This is cleared per frame,
-        ///   regardless of whether it has been read.
+        ///     The buffered text input since the last frame.  This is cleared per frame,
+        ///     regardless of whether it has been read.
         /// </summary>
         public List<char> GetBufferedText()
         {
@@ -238,7 +267,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Get the position of the mouse in the specified frame.
+        ///     Get the position of the mouse in the specified frame.
         /// </summary>
         /// <param name="state"> The frame to inspect for the position- the current frame or the previous frame </param>
         /// <returns> The position of the mouse in screen space </returns>

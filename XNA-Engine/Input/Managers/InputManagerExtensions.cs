@@ -5,12 +5,12 @@ using Microsoft.Xna.Framework.Input;
 namespace Engine.Input.Managers.AddBindings
 {
     /// <summary>
-    ///   Shortcut methods for adding various specific input bindings
+    ///     Shortcut methods for adding various specific input bindings
     /// </summary>
     public static class InputManagerAddBindingExtensions
     {
         /// <summary>
-        ///   Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a ThumbstickDirection binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         public static bool AddBinding(this InputManager inputManager, string bindingName,
                                       PlayerIndex player, ThumbstickDirection thumbstickDirection,
@@ -21,7 +21,7 @@ namespace Engine.Input.Managers.AddBindings
         }
 
         /// <summary>
-        ///   Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a MouseButton binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         public static bool AddBinding(this InputManager inputManager, string bindingName, PlayerIndex player,
                                       MouseButton mouseButton, params InputBinding[] modifiers)
@@ -31,7 +31,7 @@ namespace Engine.Input.Managers.AddBindings
         }
 
         /// <summary>
-        ///   Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a Thumbstick binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         public static bool AddBinding(this InputManager inputManager, string bindingName, PlayerIndex player,
                                       Thumbstick thumbstick, params InputBinding[] modifiers)
@@ -41,7 +41,7 @@ namespace Engine.Input.Managers.AddBindings
         }
 
         /// <summary>
-        ///   Add a Trigger binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a Trigger binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         public static bool AddBinding(this InputManager inputManager, string bindingName, PlayerIndex player,
                                       Trigger trigger, params InputBinding[] modifiers)
@@ -51,7 +51,7 @@ namespace Engine.Input.Managers.AddBindings
         }
 
         /// <summary>
-        ///   Add a Button binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a Button binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         public static bool AddBinding(this InputManager inputManager, string bindingName, PlayerIndex player,
                                       Buttons button, params InputBinding[] modifiers)
@@ -61,7 +61,7 @@ namespace Engine.Input.Managers.AddBindings
         }
 
         /// <summary>
-        ///   Add a key binding that can be checked for state (Pressed, Released, Active)
+        ///     Add a key binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         public static bool AddBinding(this InputManager inputManager, string bindingName, PlayerIndex player, Keys key,
                                       params InputBinding[] modifiers)
@@ -71,7 +71,7 @@ namespace Engine.Input.Managers.AddBindings
         }
 
         /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
+        ///     Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
         /// <param name="player"> The player to check the binding's activity for </param>
@@ -83,7 +83,7 @@ namespace Engine.Input.Managers.AddBindings
         }
 
         /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
+        ///     Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
         /// <param name="player"> The player to check the binding's activity for </param>
@@ -105,6 +105,11 @@ namespace Engine.Input.Managers.SinglePlayer
             return inputManager.IsActive(bindingName, PlayerIndex.One, frameState);
         }
 
+        public static bool IsContinuousActive(this InputManager inputManager, string bindingName, FrameState frameState)
+        {
+            return inputManager.IsContinuousActive(bindingName, PlayerIndex.One, frameState);
+        }
+
         public static bool IsPressed(this InputManager inputManager, string bindingName)
         {
             return inputManager.IsPressed(bindingName, PlayerIndex.One);
@@ -122,7 +127,7 @@ namespace Engine.Input
     public static class InputManagerExtensions
     {
         /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
+        ///     Checks if any of the bindings associated with the bindingName for a given player was pressed in the current FrameState (and not in the previous).
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
         /// <param name="player"> The player to check the binding's activity for </param>
@@ -134,7 +139,7 @@ namespace Engine.Input
         }
 
         /// <summary>
-        ///   Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
+        ///     Checks if any of the bindings associated with the bindingName for a given player was released in the current FrameState (and not in the previous).
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
         /// <param name="player"> The player to check the binding's activity for </param>

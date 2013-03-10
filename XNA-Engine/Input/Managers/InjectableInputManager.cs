@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using Engine.DataStructures;
+using Engine.Mathematics;
 using Microsoft.Xna.Framework;
 
 namespace Engine.Input.Managers
 {
     /// <summary>
-    ///   Can inject presses
+    ///     Can inject presses
     /// </summary>
     public class InjectableInputManager : InputManager
     {
         /// <summary>
-        ///   Programmatically injected binding presses
+        ///     Programmatically injected binding presses
         /// </summary>
         protected CycleBuffer<FrameState, PlayerIndex, string> InjectedPressedKeys;
 
         /// <summary>
-        ///   Keys that the manager "contains"
+        ///     Keys that the manager "contains"
         /// </summary>
         protected DefaultDict<PlayerIndex, List<string>> PressableKeys;
 
         /// <summary>
-        ///   Constructor
+        ///     Constructor
         /// </summary>
         public InjectableInputManager()
         {
@@ -31,7 +32,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   Copy Constructor
+        ///     Copy Constructor
         /// </summary>
         /// <param name="input"> </param>
         public InjectableInputManager(InjectableInputManager input)
@@ -41,8 +42,17 @@ namespace Engine.Input.Managers
 
         #region InputManager Members
 
+        private int _continuousCheckFrame;
+        private int _framesPerContinuousCheck;
+
+        protected int ContinuousCheckFrame
+        {
+            get { return _continuousCheckFrame; }
+            set { _continuousCheckFrame = Basics.Mod(value, FramesPerContinuousCheck); }
+        }
+
         /// <summary>
-        ///   See <see cref="InputManager.AddBinding" />
+        ///     See <see cref="InputManager.AddBinding" />
         /// </summary>
         public bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
@@ -51,7 +61,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.RemoveBinding(string, InputBinding, PlayerIndex)" />
+        ///     See <see cref="InputManager.RemoveBinding(string, InputBinding, PlayerIndex)" />
         /// </summary>
         public void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player)
         {
@@ -61,7 +71,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See InputManager.ContainsBinding
+        ///     See InputManager.ContainsBinding
         /// </summary>
         public bool ContainsBinding(string bindingName, PlayerIndex player)
         {
@@ -69,7 +79,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See InputManager.ContainsBinding
+        ///     See InputManager.ContainsBinding
         /// </summary>
         public bool ContainsBinding(InputBinding binding, PlayerIndex player)
         {
@@ -77,7 +87,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.ClearBinding" />
+        ///     See <see cref="InputManager.ClearBinding" />
         /// </summary>
         public void ClearBinding(string bindingName, PlayerIndex player)
         {
@@ -85,7 +95,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.ClearAllBindings" />
+        ///     See <see cref="InputManager.ClearAllBindings" />
         /// </summary>
         public void ClearAllBindings()
         {
@@ -93,7 +103,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.IsActive" />
+        ///     See <see cref="InputManager.IsActive" />
         /// </summary>
         public bool IsActive(string bindingName, PlayerIndex player, FrameState state)
         {
@@ -103,8 +113,15 @@ namespace Engine.Input.Managers
             return isInjected;
         }
 
+        public bool IsContinuousActive(string bindingName, PlayerIndex player, FrameState state)
+        {
+            var offset = state == FrameState.Current ? 0 : -1;
+            var actualCheck = Basics.Mod(ContinuousCheckFrame + offset, FramesPerContinuousCheck);
+            return actualCheck == 0 && IsActive(bindingName, player, state);
+        }
+
         /// <summary>
-        ///   See <see cref="InputManager.GetCurrentBindings" />
+        ///     See <see cref="InputManager.GetCurrentBindings" />
         /// </summary>
         public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
@@ -113,7 +130,7 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.BindingsUsing" />
+        ///     See <see cref="InputManager.BindingsUsing" />
         /// </summary>
         public List<string> BindingsUsing(InputBinding binding, PlayerIndex player)
         {
@@ -122,15 +139,26 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.Update" />
+        ///     See <see cref="InputManager.Update" />
         /// </summary>
         public void Update()
         {
             InjectedPressedKeys.Cycle();
+            ContinuousCheckFrame++;
+        }
+
+        public int FramesPerContinuousCheck
+        {
+            get { return _framesPerContinuousCheck; }
+            set
+            {
+                _framesPerContinuousCheck = value;
+                ContinuousCheckFrame = 0;
+            }
         }
 
         /// <summary>
-        ///   See <see cref="InputManager.GetModifiers" />
+        ///     See <see cref="InputManager.GetModifiers" />
         /// </summary>
         public IEnumerable<InputBinding> GetModifiers
         {
@@ -144,8 +172,8 @@ namespace Engine.Input.Managers
         #endregion
 
         /// <summary>
-        ///   "Press" a key in a given frame.
-        ///   Cannot press a binding unless it has been added to the InputManager
+        ///     "Press" a key in a given frame.
+        ///     Cannot press a binding unless it has been added to the InputManager
         /// </summary>
         /// <param name="bindingName"> The binding to press </param>
         /// <param name="player"> The player to press the binding for </param>
@@ -157,8 +185,8 @@ namespace Engine.Input.Managers
         }
 
         /// <summary>
-        ///   "Release" a key in a given frame.
-        ///   Cannot release a binding unless it has been added to the InputManager
+        ///     "Release" a key in a given frame.
+        ///     Cannot release a binding unless it has been added to the InputManager
         /// </summary>
         /// <param name="bindingName"> The binding to release </param>
         /// <param name="player"> The player to release the binding for </param>

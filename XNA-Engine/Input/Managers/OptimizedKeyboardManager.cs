@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Engine.DataStructures;
 using Engine.FileHandlers;
+using Engine.Mathematics;
 using Engine.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -12,8 +13,8 @@ using Microsoft.Xna.Framework.Input;
 namespace Engine.Input.Managers
 {
     /// <summary>
-    ///   Only supports keyboard input, only supports one binding per name.
-    ///   So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
+    ///     Only supports keyboard input, only supports one binding per name.
+    ///     So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
     /// </summary>
     public class OptimizedKeyboardManager : InputManager
     {
@@ -30,7 +31,7 @@ namespace Engine.Input.Managers
         private FullFileBuffer bindingsFile;
 
         /// <summary>
-        ///   Constructor
+        ///     Constructor
         /// </summary>
         public OptimizedKeyboardManager()
         {
@@ -46,6 +47,15 @@ namespace Engine.Input.Managers
         public ModifierCheckType ModifierCheckType { get; set; }
 
         #region InputManager Members
+
+        private int _continuousCheckFrame;
+        private int _framesPerContinuousCheck;
+
+        protected int ContinuousCheckFrame
+        {
+            get { return _continuousCheckFrame; }
+            set { _continuousCheckFrame = Basics.Mod(value, FramesPerContinuousCheck); }
+        }
 
         public IEnumerable<InputBinding> GetModifiers
         {
@@ -123,6 +133,23 @@ namespace Engine.Input.Managers
             return isActive != null && isActive(bindingName, snapshot);
         }
 
+        public int FramesPerContinuousCheck
+        {
+            get { return _framesPerContinuousCheck; }
+            set
+            {
+                _framesPerContinuousCheck = value;
+                ContinuousCheckFrame = 0;
+            }
+        }
+
+        public bool IsContinuousActive(string bindingName, PlayerIndex player, FrameState state)
+        {
+            var offset = state == FrameState.Current ? 0 : -1;
+            var actualCheck = Basics.Mod(ContinuousCheckFrame + offset, FramesPerContinuousCheck);
+            return actualCheck == 0 && IsActive(bindingName, player, state);
+        }
+
         public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
         {
             //Max 1 binding, if any
@@ -147,12 +174,14 @@ namespace Engine.Input.Managers
 
             // Update pressed modifiers
             _pressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
+
+            ContinuousCheckFrame++;
         }
 
         #endregion
 
         /// <summary>
-        ///   Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings
+        ///     Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings
         /// </summary>
         private static KeyBinding CoerceRawInputBinding(InputBinding binding, bool includeModifiers)
         {
