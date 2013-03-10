@@ -1477,20 +1477,6 @@
                 Add a key binding that can be checked for state (Pressed, Released, Active)
             </summary>
         </member>
-        <member name="M:Engine.Input.Managers.InputManagerExtensions.IsPressed(Engine.Input.Managers.InputManager,System.String)">
-            <summary>
-                Checks if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <returns> True if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous). </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManagerExtensions.IsReleased(Engine.Input.Managers.InputManager,System.String)">
-            <summary>
-                Checks if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <returns> True if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous). </returns>
-        </member>
         <member name="T:Engine.Rendering.Pipeline.IRenderEffect">
             <summary>
             Renders an effect on a preEffect texture, out to a postEffect texture.
@@ -3965,6 +3951,20 @@
             <param name="bindingName"> The name of the binding to query for active state </param>
             <param name="state"> The FrameState in which to check for activity </param>
             <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.IsPressed(System.String)">
+            <summary>
+                Checks if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <returns> True if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous). </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.IsReleased(System.String)">
+            <summary>
+                Checks if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <returns> True if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous). </returns>
         </member>
         <member name="M:Engine.Input.Managers.InputManager.GetCurrentBindings(System.String)">
             <summary>

@@ -7,7 +7,6 @@ using Engine.DataStructures;
 using Engine.FileHandlers;
 using Engine.Mathematics;
 using Engine.Utility;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Engine.Input.Managers
@@ -148,6 +147,18 @@ namespace Engine.Input.Managers
             var offset = state == FrameState.Current ? 0 : -1;
             var actualCheck = Basics.Mod(ContinuousCheckFrame + offset, FramesPerContinuousCheck);
             return actualCheck == 0 && IsActive(bindingName, state);
+        }
+
+        public bool IsPressed(string bindingName)
+        {
+            return IsActive(bindingName, FrameState.Current) &&
+                   !IsActive(bindingName, FrameState.Previous);
+        }
+
+        public bool IsReleased(string bindingName)
+        {
+            return IsActive(bindingName, FrameState.Previous) &&
+                   !IsActive(bindingName, FrameState.Current);
         }
 
         public List<InputBinding> GetCurrentBindings(string bindingName)

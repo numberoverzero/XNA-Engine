@@ -67,27 +67,5 @@ namespace Engine.Input.Managers
             DefaultBinding inputBinding = new KeyBinding(key, modifiers);
             return inputManager.AddBinding(bindingName, inputBinding);
         }
-
-        /// <summary>
-        ///     Checks if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous).
-        /// </summary>
-        /// <param name="bindingName"> The name of the binding to query for active state </param>
-        /// <returns> True if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous). </returns>
-        public static bool IsPressed(this InputManager inputManager, string bindingName)
-        {
-            return inputManager.IsActive(bindingName, FrameState.Current) &&
-                   !inputManager.IsActive(bindingName,FrameState.Previous);
-        }
-
-        /// <summary>
-        ///     Checks if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous).
-        /// </summary>
-        /// <param name="bindingName"> The name of the binding to query for active state </param>
-        /// <returns> True if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous). </returns>
-        public static bool IsReleased(this InputManager inputManager, string bindingName)
-        {
-            return inputManager.IsActive(bindingName, FrameState.Previous) &&
-                   !inputManager.IsActive(bindingName, FrameState.Current);
-        }
     }
 }

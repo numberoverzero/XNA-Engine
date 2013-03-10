@@ -1,9 +1,4 @@
-﻿#region Using Statements
-
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-
-#endregion
+﻿using System.Collections.Generic;
 
 namespace Engine.Input.Managers
 {
@@ -81,6 +76,20 @@ namespace Engine.Input.Managers
         /// <param name="state"> The FrameState in which to check for activity </param>
         /// <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
         bool IsContinuousActive(string bindingName, FrameState state);
+
+        /// <summary>
+        ///     Checks if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous).
+        /// </summary>
+        /// <param name="bindingName"> The name of the binding to query for active state </param>
+        /// <returns> True if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous). </returns>
+        bool IsPressed(string bindingName);
+
+        /// <summary>
+        ///     Checks if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous).
+        /// </summary>
+        /// <param name="bindingName"> The name of the binding to query for active state </param>
+        /// <returns> True if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous). </returns>
+        bool IsReleased(string bindingName);
 
         /// <summary>
         ///     Gets the list of bindings associated with a particular bindingName
