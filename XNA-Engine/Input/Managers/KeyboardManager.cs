@@ -16,7 +16,7 @@ namespace Engine.Input.Managers
     ///     Only supports keyboard input, only supports one binding per name.
     ///     So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
     /// </summary>
-    public class OptimizedKeyboardManager : InputManager
+    public class KeyboardManager : InputManager
     {
         private static readonly List<ModifierKey> modifiers =
             new List<ModifierKey> {ModifierKey.Alt, ModifierKey.Ctrl, ModifierKey.Shift};
@@ -33,7 +33,7 @@ namespace Engine.Input.Managers
         /// <summary>
         ///     Constructor
         /// </summary>
-        public OptimizedKeyboardManager()
+        public KeyboardManager()
         {
             _pressedModifiers = new List<ModifierKey>();
             ModifierCheckType = ModifierCheckType.Smart;
@@ -62,14 +62,14 @@ namespace Engine.Input.Managers
             get { return new List<InputBinding>(modifiers); }
         }
 
-        public bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player)
+        public bool AddBinding(string bindingName, InputBinding binding)
         {
             var rawBinding = CoerceRawInputBinding(binding, false);
             if (rawBinding == null) return false;
             var exactBinding = CoerceRawInputBinding(binding, true);
 
             //Make sure we don't have the binding lingering around in any of the modifiers
-            if (ContainsBinding(bindingName, player)) ClearBinding(bindingName, player);
+            if (ContainsBinding(bindingName)) ClearBinding(bindingName);
 
             //Strip modifiers off for storage in specific modifiers dict
 
@@ -84,23 +84,23 @@ namespace Engine.Input.Managers
             return true;
         }
 
-        public void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player)
+        public void RemoveBinding(string bindingName, InputBinding binding)
         {
-            ClearBinding(bindingName, player);
+            ClearBinding(bindingName);
         }
 
-        public bool ContainsBinding(string bindingName, PlayerIndex player)
+        public bool ContainsBinding(string bindingName)
         {
             return exactBindings.Contains(bindingName);
         }
 
-        public bool ContainsBinding(InputBinding binding, PlayerIndex player)
+        public bool ContainsBinding(InputBinding binding)
         {
             var cbinding = CoerceRawInputBinding(binding, true);
             return cbinding != null && exactBindings.Contains(cbinding);
         }
 
-        public void ClearBinding(string bindingName, PlayerIndex player)
+        public void ClearBinding(string bindingName)
         {
             //We can ignore the actual binding, since we have a 1:1 requirement, and just use the name.
             foreach (var mod in modifiers) bindings[mod].Remove(bindingName);
@@ -115,9 +115,9 @@ namespace Engine.Input.Managers
             noModifiers.Clear();
         }
 
-        public bool IsActive(string bindingName, PlayerIndex player, FrameState state)
+        public bool IsActive(string bindingName, FrameState state)
         {
-            if (!ContainsBinding(bindingName, player)) return false;
+            if (!ContainsBinding(bindingName)) return false;
 
             var snapshot = state == FrameState.Current ? _current : _previous;
             Func<string, InputSnapshot, bool> isActive = null;
@@ -143,22 +143,22 @@ namespace Engine.Input.Managers
             }
         }
 
-        public bool IsContinuousActive(string bindingName, PlayerIndex player, FrameState state)
+        public bool IsContinuousActive(string bindingName, FrameState state)
         {
             var offset = state == FrameState.Current ? 0 : -1;
             var actualCheck = Basics.Mod(ContinuousCheckFrame + offset, FramesPerContinuousCheck);
-            return actualCheck == 0 && IsActive(bindingName, player, state);
+            return actualCheck == 0 && IsActive(bindingName, state);
         }
 
-        public List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player)
+        public List<InputBinding> GetCurrentBindings(string bindingName)
         {
             //Max 1 binding, if any
-            return ContainsBinding(bindingName, player)
+            return ContainsBinding(bindingName)
                        ? new List<InputBinding> {exactBindings[bindingName]}
                        : new List<InputBinding>();
         }
 
-        public List<string> BindingsUsing(InputBinding binding, PlayerIndex player)
+        public List<string> BindingsUsing(InputBinding binding)
         {
             var bindingsUsing = new List<string>();
             var cbinding = exactBindings[CoerceRawInputBinding(binding, true)];
@@ -234,7 +234,7 @@ namespace Engine.Input.Managers
             {
                 string bindingName = null;
                 var key = DeserializeBinding(line, out bindingName);
-                if (key != null) AddBinding(bindingName, key, PlayerIndex.One);
+                if (key != null) AddBinding(bindingName, key);
             }
             bindingsFile = new FullFileBuffer(filename);
         }
@@ -263,7 +263,7 @@ namespace Engine.Input.Managers
 
         private string SerializeBiding(string bindingName)
         {
-            if (!ContainsBinding(bindingName, PlayerIndex.One)) return null;
+            if (!ContainsBinding(bindingName)) return null;
             var sb = new StringBuilder();
             sb.Append(bindingName);
             var binding = exactBindings[bindingName];

@@ -29,9 +29,8 @@ namespace Engine.Input.Managers
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
         /// <param name="binding"> The binding to associate with the bindingName </param>
-        /// <param name="player"> The player to add the binding for </param>
         /// <returns> true if the binding was added </returns>
-        bool AddBinding(string bindingName, InputBinding binding, PlayerIndex player);
+        bool AddBinding(string bindingName, InputBinding binding);
 
         /// <summary>
         ///     Remove a binding from the InputManager.  Removes the exact binding from the relation.
@@ -39,73 +38,65 @@ namespace Engine.Input.Managers
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
         /// <param name="binding"> The binding to remove from the association with the bindingName </param>
-        /// <param name="player"> The player the binding is being removed for </param>
-        void RemoveBinding(string bindingName, InputBinding binding, PlayerIndex player);
+        void RemoveBinding(string bindingName, InputBinding binding);
 
         /// <summary>
-        ///     Check if the manager has a binding associated with a bindingName for a player
+        ///     Check if the manager has a binding associated with a bindingName
         /// </summary>
         /// <param name="bindingName"> The name of the binding to check for </param>
-        /// <param name="player"> The player to check the binding for </param>
-        /// <returns> True if there are bindings associated with the bindingName for the given player </returns>
-        bool ContainsBinding(string bindingName, PlayerIndex player);
+        /// <returns> True if there are bindings associated with the bindingName</returns>
+        bool ContainsBinding(string bindingName);
 
         /// <summary>
         ///     Check if the manager has a specific binding
         /// </summary>
         /// <param name="binding"> The binding to check for </param>
-        /// <param name="player"> The player to check the binding for </param>
-        /// <returns> True if the binding exists for the given player </returns>
-        bool ContainsBinding(InputBinding binding, PlayerIndex player);
+        /// <returns> True if the binding exists </returns>
+        bool ContainsBinding(InputBinding binding);
 
         /// <summary>
-        ///     Clears all bindings associated with the given bindingName for a particular player
+        ///     Clears all bindings associated with the given bindingName
         /// </summary>
         /// <param name="bindingName"> The name of the binding to clear </param>
-        /// <param name="player"> The player to clear the binding for </param>
-        void ClearBinding(string bindingName, PlayerIndex player);
+        void ClearBinding(string bindingName);
 
         /// <summary>
-        ///     Clears all bindings for all players
+        ///     Clears all bindings
         /// </summary>
         void ClearAllBindings();
 
         /// <summary>
-        ///     Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active.
+        ///     Checks if any of the bindings associated with the bindingNamein a given FrameState is active.
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
-        /// <param name="player"> The player to check the binding's activity for </param>
         /// <param name="state"> The FrameState in which to check for activity </param>
-        /// <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
-        bool IsActive(string bindingName, PlayerIndex player, FrameState state);
+        /// <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
+        bool IsActive(string bindingName, FrameState state);
 
         /// <summary>
-        ///     Checks if any of the bindings associated with the bindingName for a given player in a given FrameState is active,
+        ///     Checks if any of the bindings associated with the bindingNamein a given FrameState is active,
         ///     as determined by the "FramesPerContinuousCheck" variable.
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
-        /// <param name="player"> The player to check the binding's activity for </param>
         /// <param name="state"> The FrameState in which to check for activity </param>
-        /// <returns> True if any of the bindings associated with the bindingName for a given player in a given FrameState is active. </returns>
-        bool IsContinuousActive(string bindingName, PlayerIndex player, FrameState state);
+        /// <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
+        bool IsContinuousActive(string bindingName, FrameState state);
 
         /// <summary>
-        ///     Gets the list of bindings associated with a particular bindingName for a given player
+        ///     Gets the list of bindings associated with a particular bindingName
         /// </summary>
         /// <param name="bindingName"> The bindingName associated with the list of Bindings </param>
-        /// <param name="player"> The player to get the list of bindings for </param>
-        /// <returns> Returns a copy of the Bindings associated with the bindingName for a givem player </returns>
-        List<InputBinding> GetCurrentBindings(string bindingName, PlayerIndex player);
+        /// <returns> Returns a copy of the Bindings associated with the bindingName </returns>
+        List<InputBinding> GetCurrentBindings(string bindingName);
 
         /// <summary>
-        ///     Used to get a list of strings that map to the given binding for a given player.
+        ///     Used to get a list of strings that map to the given binding.
         ///     This is useful when you want to unbind a key from current bindings and remap to a new binding:
         ///     You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
         /// </summary>
         /// <param name="binding"> The binding to search for in the InputManager </param>
-        /// <param name="player"> The player to search for bindings on </param>
-        /// <returns> A list of the bindingNames that, for a given player, track the given binding as a possible input </returns>
-        List<string> BindingsUsing(InputBinding binding, PlayerIndex player);
+        /// <returns> A list of the bindingNames that track the given binding as a possible input </returns>
+        List<string> BindingsUsing(InputBinding binding);
 
         /// <summary>
         ///     Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
