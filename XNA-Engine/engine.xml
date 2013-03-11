@@ -1494,16 +1494,6 @@
                 means you will not be able to read the most recent input.
             </remarks>
         </member>
-        <member name="P:Engine.Input.Managers.InputManager.GetModifiers">
-            <summary>
-                All the modifiers currently being tracked.
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.KeyboardManager.#ctor">
-            <summary>
-                Constructor
-            </summary>
-        </member>
         <member name="M:Engine.Input.Managers.KeyboardManager.AsKeyBinding(Engine.Input.InputBinding)">
             <summary>
                 Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings

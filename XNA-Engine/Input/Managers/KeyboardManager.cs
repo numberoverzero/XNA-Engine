@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Engine.DataStructures;
 using Engine.FileHandlers;
-using Engine.Mathematics;
 using Engine.Utility;
 using Microsoft.Xna.Framework.Input;
 
@@ -24,9 +23,6 @@ namespace Engine.Input.Managers
         private FullFileBuffer _bindingsFile;
         private int _frame;
 
-        /// <summary>
-        ///     Constructor
-        /// </summary>
         public KeyboardManager()
         {
             _frame = 0;
@@ -34,11 +30,6 @@ namespace Engine.Input.Managers
             _previous = InputSnapshot.With(Keyboard.GetState());
             _current = InputSnapshot.With(Keyboard.GetState());
             _repeatingBindingHistory = new Dictionary<string, int>();
-        }
-
-        public IEnumerable<InputBinding> GetModifiers
-        {
-            get { return new List<InputBinding>(ModifierKey.Values); }
         }
 
         public bool AddBinding(string bindingName, InputBinding binding)

@@ -8,11 +8,6 @@ namespace Engine.Input.Managers
     public interface InputManager
     {
         /// <summary>
-        ///     All the modifiers currently being tracked.
-        /// </summary>
-        IEnumerable<InputBinding> GetModifiers { get; }
-
-        /// <summary>
         ///     Add a binding that can be checked for state (Pressed, Released, Active)
         /// </summary>
         /// <param name="bindingName"> The string used to query the binding state </param>
