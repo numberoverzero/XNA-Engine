@@ -1028,6 +1028,15 @@
             <param name="n"></param>
             <returns></returns>
         </member>
+        <member name="M:Engine.Mathematics.Factorization.LargestProduct(System.Collections.Generic.List{System.Int64},System.Int64)">
+            <summary>
+            Returns the largest product of numbers that is less than or equal to the upper limit.
+            The current method is most likely impressively suboptimal.
+            </summary>
+            <param name="numbers">List of numbers to create a product from</param>
+            <param name="upperLimit">A number which the product must be smaller than.</param>
+            <returns>The largest value (less than or equal to upperLimit) which can be formed as a product of values from the given list of numbers</returns>
+        </member>
         <member name="T:Engine.Entities.GameObject">
             <summary>
             An object that exists in the game.

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Engine.Utility;
 
 namespace Engine.Mathematics
 {
@@ -28,12 +26,23 @@ namespace Engine.Mathematics
             }
         }
 
-
+        /// <summary>
+        /// Returns the largest product of numbers that is less than or equal to the upper limit.
+        /// The current method is most likely impressively suboptimal.
+        /// </summary>
+        /// <param name="numbers">List of numbers to create a product from</param>
+        /// <param name="upperLimit">A number which the product must be smaller than.</param>
+        /// <returns>The largest value (less than or equal to upperLimit) which can be formed as a product of values from the given list of numbers</returns>
         public static long LargestProduct(List<long> numbers, long upperLimit)
         {
-            var sortedNumbers = numbers.Sorted();
-            throw new NotImplementedException();
-            return 0;
+            var maxProduct = numbers.Aggregate((product, factor) => product * factor);
+            while (upperLimit > 1)
+            {
+                if (Basics.GCD(upperLimit, maxProduct) == upperLimit)
+                    return upperLimit;
+                upperLimit--;
+            }
+            return 1;
         }
     }
 }
