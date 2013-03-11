@@ -44,6 +44,22 @@ namespace Engine.Utility
         }
 
         /// <summary>
+        /// Returns all combinations (preserving order) of the list.
+        /// Not a true power set, since duplicates are not ignored.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static IEnumerable<IEnumerable<T>> GetPowerSet<T>(this List<T> list)
+        {
+            return from m in Enumerable.Range(0, 1 << list.Count)
+                   select
+                       from i in Enumerable.Range(0, list.Count)
+                       where (m & (1 << i)) != 0
+                       select list[i];
+        }
+
+        /// <summary>
         /// Compact foreach extension
         /// </summary>
         public static void Each<T>(this IEnumerable<T> enumerable, Action<T> action)

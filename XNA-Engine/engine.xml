@@ -1028,6 +1028,36 @@
             <param name="n"></param>
             <returns></returns>
         </member>
+        <member name="M:Engine.Mathematics.Factorization.ProductSet(System.Collections.Generic.List{System.Int64})">
+            <summary>
+            Returns the product of each set of the power set of a list of numbers.
+            
+            Example:
+            input [2,3,5]
+            powerset is:
+            [
+            	[2],
+            	[3],
+            	[2,3],
+            	[5],
+            	[2,5],
+            	[3,5],
+            	[2,3,5]
+            ]
+            productset is product of each list, or:
+            [
+                2,
+                3,
+                6,
+                5,
+                10,
+                15,
+                30
+            ]
+            </summary>
+            <param name="numbers"></param>
+            <returns></returns>
+        </member>
         <member name="M:Engine.Mathematics.Factorization.LargestProduct(System.Collections.Generic.List{System.Int64},System.Int64)">
             <summary>
             Returns the largest product of numbers that is less than or equal to the upper limit.
@@ -2105,6 +2135,15 @@
             <example>
               'ABCD'.Combinations(2) --> AB AC AD BC BD CD
             </example>
+        </member>
+        <member name="M:Engine.Utility.IterableExtensions.GetPowerSet``1(System.Collections.Generic.List{``0})">
+            <summary>
+            Returns all combinations (preserving order) of the list.
+            Not a true power set, since duplicates are not ignored.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <returns></returns>
         </member>
         <member name="M:Engine.Utility.IterableExtensions.Each``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
