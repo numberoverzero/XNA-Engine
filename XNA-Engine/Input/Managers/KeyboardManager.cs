@@ -17,35 +17,20 @@ namespace Engine.Input.Managers
     /// </summary>
     public class KeyboardManager : InputManager
     {
-        private static readonly List<ModifierKey> modifiers =
-            new List<ModifierKey> {ModifierKey.Alt, ModifierKey.Ctrl, ModifierKey.Shift};
-
-        private readonly DefaultObjDict<ModifierKey, BidirectionalDict<string, KeyBinding>> bindings;
-        private readonly BidirectionalDict<string, KeyBinding> exactBindings;
-        private readonly BidirectionalDict<string, KeyBinding> noModifiers;
+        private readonly BidirectionalDict<string, KeyBinding> _bindings;
         private InputSnapshot _current;
-
-        private List<ModifierKey> _pressedModifiers;
         private InputSnapshot _previous;
-        private FullFileBuffer bindingsFile;
+        private FullFileBuffer _bindingsFile;
 
         /// <summary>
         ///     Constructor
         /// </summary>
         public KeyboardManager()
         {
-            _pressedModifiers = new List<ModifierKey>();
-            ModifierCheckType = ModifierCheckType.Smart;
-            bindings = new DefaultObjDict<ModifierKey, BidirectionalDict<string, KeyBinding>>();
-            exactBindings = new BidirectionalDict<string, KeyBinding>();
-            noModifiers = new BidirectionalDict<string, KeyBinding>();
+            _bindings = new BidirectionalDict<string, KeyBinding>();
             _previous = InputSnapshot.With(Keyboard.GetState());
             _current = InputSnapshot.With(Keyboard.GetState());
         }
-
-        public ModifierCheckType ModifierCheckType { get; set; }
-
-        #region InputManager Members
 
         private int _continuousCheckFrame;
         private int _framesPerContinuousCheck;
@@ -58,78 +43,55 @@ namespace Engine.Input.Managers
 
         public IEnumerable<InputBinding> GetModifiers
         {
-            get { return new List<InputBinding>(modifiers); }
+            get { return new List<InputBinding>(ModifierKey.Values); }
         }
 
         public bool AddBinding(string bindingName, InputBinding binding)
         {
-            var rawBinding = CoerceRawInputBinding(binding, false);
-            if (rawBinding == null) return false;
-            var exactBinding = CoerceRawInputBinding(binding, true);
+            var keyBinding = AsKeyBinding(binding);
+            if (keyBinding == null) return false;
 
-            //Make sure we don't have the binding lingering around in any of the modifiers
+            // Clear existing bindings
             if (ContainsBinding(bindingName)) ClearBinding(bindingName);
 
-            //Strip modifiers off for storage in specific modifiers dict
-
-            noModifiers.Add(exactBinding, bindingName);
-            if (exactBinding.Modifiers.Count >= 0)
-                foreach (var mod in exactBinding.Modifiers)
-                    bindings[(ModifierKey) mod].Add(rawBinding, bindingName);
-
-            //Copy of the binding where we only save proper modifiers
-            exactBindings.Add(bindingName, CoerceRawInputBinding(binding, true));
+            _bindings.Add(bindingName, keyBinding);
 
             return true;
         }
 
         public void RemoveBinding(string bindingName, InputBinding binding)
         {
+            // KeyboardManager has a 1:1 name:binding relationship, so remove and clear are identical
             ClearBinding(bindingName);
         }
 
         public bool ContainsBinding(string bindingName)
         {
-            return exactBindings.Contains(bindingName);
+            return _bindings.Contains(bindingName);
         }
 
         public bool ContainsBinding(InputBinding binding)
         {
-            var cbinding = CoerceRawInputBinding(binding, true);
-            return cbinding != null && exactBindings.Contains(cbinding);
+            var keyBinding = AsKeyBinding(binding);
+            return keyBinding != null && _bindings.Contains(keyBinding);
         }
 
         public void ClearBinding(string bindingName)
         {
-            //We can ignore the actual binding, since we have a 1:1 requirement, and just use the name.
-            foreach (var mod in modifiers) bindings[mod].Remove(bindingName);
-            exactBindings.Remove(bindingName);
-            noModifiers.Remove(bindingName);
+            _bindings.Remove(bindingName);
         }
 
         public void ClearAllBindings()
         {
-            foreach (var mod in modifiers) bindings[mod].Clear();
-            exactBindings.Clear();
-            noModifiers.Clear();
+            _bindings.Clear();
         }
 
         public bool IsActive(string bindingName, FrameState state)
         {
             if (!ContainsBinding(bindingName)) return false;
-
+            var binding = _bindings[bindingName]; 
             var snapshot = state == FrameState.Current ? _current : _previous;
-            Func<string, InputSnapshot, bool> isActive = null;
-            switch (ModifierCheckType)
-            {
-                case ModifierCheckType.Strict:
-                    isActive = IsStrictActive;
-                    break;
-                case ModifierCheckType.Smart:
-                    isActive = IsSmartActive;
-                    break;
-            }
-            return isActive != null && isActive(bindingName, snapshot);
+            return binding.IsActive(snapshot) && ModifierKey.Values.All(modifier => binding.Modifiers.Contains(modifier) == modifier.IsActive(snapshot));
         }
 
         public int FramesPerContinuousCheck
@@ -165,77 +127,39 @@ namespace Engine.Input.Managers
         {
             //Max 1 binding, if any
             return ContainsBinding(bindingName)
-                       ? new List<InputBinding> {exactBindings[bindingName]}
+                       ? new List<InputBinding> {_bindings[bindingName]}
                        : new List<InputBinding>();
         }
 
         public List<string> BindingsUsing(InputBinding binding)
         {
             var bindingsUsing = new List<string>();
-            var cbinding = exactBindings[CoerceRawInputBinding(binding, true)];
+            var keyBinding = AsKeyBinding(binding);
+            if (keyBinding == null) return null;
+
+            var cbinding = _bindings[AsKeyBinding(binding)];
             if (cbinding != null) bindingsUsing.Add(cbinding);
             return bindingsUsing;
         }
 
         public void Update()
         {
-            if (_current.KeyboardState.HasValue)
-                _previous = InputSnapshot.With(_current.KeyboardState.Value);
+            _previous = InputSnapshot.With(_current.KeyboardState);
             _current = InputSnapshot.With(Keyboard.GetState());
-
-            // Update pressed modifiers
-            _pressedModifiers = modifiers.Where(mod => mod.IsActive(_current)).ToList();
-
             ContinuousCheckFrame++;
         }
-
-        #endregion
 
         /// <summary>
         ///     Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings
         /// </summary>
-        private static KeyBinding CoerceRawInputBinding(InputBinding binding, bool includeModifiers)
+        private static KeyBinding AsKeyBinding(InputBinding binding)
         {
             var keyBinding = binding as KeyBinding;
             if (keyBinding == null) return null;
             var coercedBinding = new KeyBinding(keyBinding.Key);
-            if (!includeModifiers) return coercedBinding;
-            foreach (var mod in modifiers.Where(mod => binding.Modifiers.Contains(mod)))
+            foreach (var mod in ModifierKey.Values.Where(mod => binding.Modifiers.Contains(mod)))
                 coercedBinding.Modifiers.Add(mod);
             return coercedBinding;
-        }
-
-        private bool IsStrictActive(string bindingName, InputSnapshot snapshot)
-        {
-            return noModifiers[bindingName].IsActive(snapshot) &&
-                   modifiers.All(mod => _pressedModifiers.Contains(mod) == bindings[mod].Contains(bindingName));
-        }
-
-        private bool IsSmartActive(string bindingName, InputSnapshot snapshot)
-        {
-            // Quick check exact conditions met
-            if (IsStrictActive(bindingName, snapshot)) return true;
-
-            var binding = exactBindings[bindingName];
-            var baseBinding = new KeyBinding(binding.Key);
-
-            // The key can't be pressed if any of its required modifiers aren't also pressed.
-            if (binding.Modifiers.Any(mod => !_pressedModifiers.Contains(mod))) return false;
-
-            // We're now at a point where at least the modifiers necessary to trigger the binding are active.
-            // We want to make sure that the additional modifiers pressed couldn't be interpreted as OTHER bindings we know.
-            // For example - we are looking at a binding for Shift + Space, and we want to know if Ctrl + Shift + Space could mean Shift + Space.
-            // For that to be the case, we would need to know that there was no binding for Space that also used Ctrl. 
-            // If there is, a binding for Space that uses Ctrl, then Ctrl + Shift + Space is ambiguous and we can't say that Shift + Space is pressed.
-
-            // Generate a list of pressed modifiers which the binding doesn't care about.
-            var significantModifiers = new List<ModifierKey>(_pressedModifiers);
-            foreach (var mod in binding.Modifiers)
-                significantModifiers.Remove((ModifierKey) mod);
-
-            bool noSignificantModifiersTrackBaseBinding =
-                !significantModifiers.Any(mod => bindings[mod].Contains(baseBinding));
-            return noSignificantModifiersTrackBaseBinding && noModifiers[bindingName].IsActive(snapshot);
         }
 
         public void LoadBindings(string filename)
@@ -243,33 +167,33 @@ namespace Engine.Input.Managers
             ClearAllBindings();
             foreach (var line in new StreamReader(filename).ReadLines())
             {
-                string bindingName = null;
+                string bindingName;
                 var key = DeserializeBinding(line, out bindingName);
                 if (key != null) AddBinding(bindingName, key);
             }
-            bindingsFile = new FullFileBuffer(filename);
+            _bindingsFile = new FullFileBuffer(filename);
         }
 
         public void SaveBindings(string filename)
         {
-            if (bindingsFile == null)
-                bindingsFile = new FullFileBuffer(filename);
+            if (_bindingsFile == null)
+                _bindingsFile = new FullFileBuffer(filename);
             else
-                bindingsFile.Filename = filename;
+                _bindingsFile.Filename = filename;
 
             const string pattern = "^{0}";
-            foreach (var bindingName in exactBindings.GetValuesType1())
+            foreach (var bindingName in _bindings.GetValuesType1())
             {
                 var binding = SerializeBiding(bindingName);
 
                 //Replace existing line instead of duplicating declaration
-                var lineno = bindingsFile.LineMatching(pattern.format(bindingName));
+                var lineno = _bindingsFile.LineMatching(pattern.format(bindingName));
                 if (lineno < 0)
-                    bindingsFile.Append(binding);
+                    _bindingsFile.Append(binding);
                 else
-                    bindingsFile.WriteLine(binding, lineno);
+                    _bindingsFile.WriteLine(binding, lineno);
             }
-            bindingsFile.SaveToFile();
+            _bindingsFile.SaveToFile();
         }
 
         private string SerializeBiding(string bindingName)
@@ -277,7 +201,7 @@ namespace Engine.Input.Managers
             if (!ContainsBinding(bindingName)) return null;
             var sb = new StringBuilder();
             sb.Append(bindingName);
-            var binding = exactBindings[bindingName];
+            var binding = _bindings[bindingName];
             sb.Append(" {0}".format(binding.Key));
             foreach (var mod in binding.Modifiers) sb.Append(" {0}".format(mod));
             return sb.ToString();
