@@ -18,7 +18,7 @@ namespace Engine.Input.Managers
     public class KeyboardManager : InputManager
     {
         private readonly BidirectionalDict<string, KeyBinding> _bindings;
-        private Dictionary<string, int> _repeatingBindingHistory; 
+        private readonly Dictionary<string, int> _repeatingBindingHistory; 
         private InputSnapshot _current;
         private InputSnapshot _previous;
         private FullFileBuffer _bindingsFile;
@@ -34,15 +34,6 @@ namespace Engine.Input.Managers
             _previous = InputSnapshot.With(Keyboard.GetState());
             _current = InputSnapshot.With(Keyboard.GetState());
             _repeatingBindingHistory = new Dictionary<string, int>();
-        }
-
-        private int _continuousCheckFrame;
-        private int _framesPerKeyRepeat;
-
-        protected int ContinuousCheckFrame
-        {
-            get { return _continuousCheckFrame; }
-            set { _continuousCheckFrame = Basics.Mod(value, FramesPerKeyRepeat); }
         }
 
         public IEnumerable<InputBinding> GetModifiers
@@ -96,16 +87,6 @@ namespace Engine.Input.Managers
             var binding = _bindings[bindingName]; 
             var snapshot = state == FrameState.Current ? _current : _previous;
             return binding.IsActive(snapshot) && ModifierKey.Values.All(modifier => binding.Modifiers.Contains(modifier) == modifier.IsActive(snapshot));
-        }
-
-        public int FramesPerKeyRepeat
-        {
-            get { return _framesPerKeyRepeat; }
-            set
-            {
-                _framesPerKeyRepeat = value;
-                ContinuousCheckFrame = 0;
-            }
         }
 
         public bool IsRepeating(string bindingName, FrameState state, int minFramesToRepeat)

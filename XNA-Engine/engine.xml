@@ -1383,6 +1383,132 @@
             <param name="filename"> </param>
             <param name="frequency"> </param>
         </member>
+        <member name="T:Engine.Input.Managers.KeyboardManager">
+            <summary>
+                Only supports keyboard input, only supports one binding per name.
+                So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
+            </summary>
+        </member>
+        <member name="T:Engine.Input.Managers.InputManager">
+            <summary>
+                Allows input querying and offers hooks for event-driven keyboard input
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.AddBinding(System.String,Engine.Input.InputBinding)">
+            <summary>
+                Add a binding that can be checked for state (Pressed, Released, Active)
+            </summary>
+            <param name="bindingName"> The string used to query the binding state </param>
+            <param name="binding"> The binding to associate with the bindingName </param>
+            <returns> true if the binding was added </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.RemoveBinding(System.String,Engine.Input.InputBinding)">
+            <summary>
+                Remove a binding from the InputManager.  Removes the exact binding from the relation.
+                This can be used when you don't know the binding's index in its list of bindings.
+            </summary>
+            <param name="bindingName"> The string used to query the binding state </param>
+            <param name="binding"> The binding to remove from the association with the bindingName </param>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.ContainsBinding(System.String)">
+            <summary>
+                Check if the manager has a binding associated with a bindingName
+            </summary>
+            <param name="bindingName"> The name of the binding to check for </param>
+            <returns> True if there are bindings associated with the bindingName</returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.ContainsBinding(Engine.Input.InputBinding)">
+            <summary>
+                Check if the manager has a specific binding
+            </summary>
+            <param name="binding"> The binding to check for </param>
+            <returns> True if the binding exists </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.ClearBinding(System.String)">
+            <summary>
+                Clears all bindings associated with the given bindingName
+            </summary>
+            <param name="bindingName"> The name of the binding to clear </param>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.ClearAllBindings">
+            <summary>
+                Clears all bindings
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.IsActive(System.String,Engine.Input.FrameState)">
+            <summary>
+                Checks if any of the bindings associated with the bindingNamein a given FrameState is active.
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <param name="state"> The FrameState in which to check for activity </param>
+            <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.IsRepeating(System.String,Engine.Input.FrameState,System.Int32)">
+            <summary>
+                Same as IsActive, but remembers which frame this function last returned true for.
+                If (CurrentFrame - minFramesToRepeat) is less than LastRepeatingFrame then the function will
+                return false.
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <param name="state"> The FrameState in which to check for activity </param>
+            <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.IsPressed(System.String)">
+            <summary>
+                Checks if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <returns> True if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous). </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.IsReleased(System.String)">
+            <summary>
+                Checks if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous).
+            </summary>
+            <param name="bindingName"> The name of the binding to query for active state </param>
+            <returns> True if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous). </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.GetCurrentBindings(System.String)">
+            <summary>
+                Gets the list of bindings associated with a particular bindingName
+            </summary>
+            <param name="bindingName"> The bindingName associated with the list of Bindings </param>
+            <returns> Returns a copy of the Bindings associated with the bindingName </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.BindingsUsing(Engine.Input.InputBinding)">
+            <summary>
+                Used to get a list of strings that map to the given binding.
+                This is useful when you want to unbind a key from current bindings and remap to a new binding:
+                You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
+            </summary>
+            <param name="binding"> The binding to search for in the InputManager </param>
+            <returns> A list of the bindingNames that track the given binding as a possible input </returns>
+        </member>
+        <member name="M:Engine.Input.Managers.InputManager.Update">
+            <summary>
+                Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
+            </summary>
+            <remarks>
+                This should be called at the end of your update loop, so that game logic
+                uses latest values.
+                Calling update at the beginning of the update loop will clear current buffers (if any) which
+                means you will not be able to read the most recent input.
+            </remarks>
+        </member>
+        <member name="P:Engine.Input.Managers.InputManager.GetModifiers">
+            <summary>
+                All the modifiers currently being tracked.
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.KeyboardManager.#ctor">
+            <summary>
+                Constructor
+            </summary>
+        </member>
+        <member name="M:Engine.Input.Managers.KeyboardManager.AsKeyBinding(Engine.Input.InputBinding)">
+            <summary>
+                Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings
+            </summary>
+        </member>
         <member name="T:Engine.Events.GameObjectEvents.GameObjectCreatedEvent">
             <summary>
             Event when a GameObject is created
@@ -1687,13 +1813,7 @@
             The minimum value for a thumbstick (not necessarily magnitude) to register as 'pushed'
             </summary>
         </member>
-        <member name="F:Engine.Input.InputSettings.ModifierCheckType">
-            <summary>
-              How a binding's modifiers are validated against the manager state.
-              See <see cref="F:Engine.Input.InputSettings.ModifierCheckType"/> for more info.
-            </summary>
-        </member>
-        <member name="M:Engine.Input.InputSettings.#ctor(System.Single,System.Single,Engine.Input.ModifierCheckType)">
+        <member name="M:Engine.Input.InputSettings.#ctor(System.Single,System.Single)">
             <summary>
             Construct a set of Input Settings describing certain thresholds and limits that must be met for
             some bindings to be considered "active"
@@ -1701,7 +1821,6 @@
             <param name="triggerThreshold">The minimum value a trigger must have to be considered pulled/depressed (active)</param>
             <param name="thumbstickThreshold">The minimum value a thumbstick must be moved to be considered active 
             (some bindings may require this amount in a single direction)</param>
-            <param name="modifierCheckType">How modifiers are checked</param>
         </member>
         <member name="M:Engine.Input.InputSettings.#ctor(Engine.Input.InputSettings)">
             <summary>
@@ -3702,116 +3821,6 @@
             <param name="rotation"> Rotation in radians about the center </param>
             <param name="lineWidth"> Width in pixels of the line </param>
         </member>
-        <member name="T:Engine.Input.Managers.InputManager">
-            <summary>
-                Allows input querying and offers hooks for event-driven keyboard input
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.AddBinding(System.String,Engine.Input.InputBinding)">
-            <summary>
-                Add a binding that can be checked for state (Pressed, Released, Active)
-            </summary>
-            <param name="bindingName"> The string used to query the binding state </param>
-            <param name="binding"> The binding to associate with the bindingName </param>
-            <returns> true if the binding was added </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.RemoveBinding(System.String,Engine.Input.InputBinding)">
-            <summary>
-                Remove a binding from the InputManager.  Removes the exact binding from the relation.
-                This can be used when you don't know the binding's index in its list of bindings.
-            </summary>
-            <param name="bindingName"> The string used to query the binding state </param>
-            <param name="binding"> The binding to remove from the association with the bindingName </param>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.ContainsBinding(System.String)">
-            <summary>
-                Check if the manager has a binding associated with a bindingName
-            </summary>
-            <param name="bindingName"> The name of the binding to check for </param>
-            <returns> True if there are bindings associated with the bindingName</returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.ContainsBinding(Engine.Input.InputBinding)">
-            <summary>
-                Check if the manager has a specific binding
-            </summary>
-            <param name="binding"> The binding to check for </param>
-            <returns> True if the binding exists </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.ClearBinding(System.String)">
-            <summary>
-                Clears all bindings associated with the given bindingName
-            </summary>
-            <param name="bindingName"> The name of the binding to clear </param>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.ClearAllBindings">
-            <summary>
-                Clears all bindings
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.IsActive(System.String,Engine.Input.FrameState)">
-            <summary>
-                Checks if any of the bindings associated with the bindingNamein a given FrameState is active.
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <param name="state"> The FrameState in which to check for activity </param>
-            <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.IsRepeating(System.String,Engine.Input.FrameState,System.Int32)">
-            <summary>
-                Same as IsActive, but remembers which frame this function last returned true for.
-                If (CurrentFrame - minFramesToRepeat) is less than LastRepeatingFrame then the function will
-                return false.
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <param name="state"> The FrameState in which to check for activity </param>
-            <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.IsPressed(System.String)">
-            <summary>
-                Checks if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <returns> True if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous). </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.IsReleased(System.String)">
-            <summary>
-                Checks if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous).
-            </summary>
-            <param name="bindingName"> The name of the binding to query for active state </param>
-            <returns> True if any of the bindings associated with the bindingName was released in the current FrameState (and not in the previous). </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.GetCurrentBindings(System.String)">
-            <summary>
-                Gets the list of bindings associated with a particular bindingName
-            </summary>
-            <param name="bindingName"> The bindingName associated with the list of Bindings </param>
-            <returns> Returns a copy of the Bindings associated with the bindingName </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.BindingsUsing(Engine.Input.InputBinding)">
-            <summary>
-                Used to get a list of strings that map to the given binding.
-                This is useful when you want to unbind a key from current bindings and remap to a new binding:
-                You can present a dialog such as "{key} is currently mapped to {List of Bindings using {key}}.  Are you sure you want to remap {key} to {New binding}?"
-            </summary>
-            <param name="binding"> The binding to search for in the InputManager </param>
-            <returns> A list of the bindingNames that track the given binding as a possible input </returns>
-        </member>
-        <member name="M:Engine.Input.Managers.InputManager.Update">
-            <summary>
-                Reads the latest state of the keyboard, mouse, and gamepad. (If polling is enabled for these devices)
-            </summary>
-            <remarks>
-                This should be called at the end of your update loop, so that game logic
-                uses latest values.
-                Calling update at the beginning of the update loop will clear current buffers (if any) which
-                means you will not be able to read the most recent input.
-            </remarks>
-        </member>
-        <member name="P:Engine.Input.Managers.InputManager.GetModifiers">
-            <summary>
-                All the modifiers currently being tracked.
-            </summary>
-        </member>
         <member name="T:Engine.Utility.InvokeExtensions">
             <summary>
             Extensions related to Invocation
@@ -3831,44 +3840,9 @@
             Used to specify the left or right mouse button
             </summary>
         </member>
-        <member name="F:Engine.Input.MouseButton.None">
-            <summary>
-            No mouse button
-            </summary>
-        </member>
-        <member name="F:Engine.Input.MouseButton.Left">
-            <summary>
-            Left mouse button
-            </summary>
-        </member>
-        <member name="F:Engine.Input.MouseButton.Right">
-            <summary>
-            Right mouse button
-            </summary>
-        </member>
-        <member name="F:Engine.Input.MouseButton.Middle">
-            <summary>
-            Middle click (not scroll up/down)
-            </summary>
-        </member>
         <member name="T:Engine.Input.Trigger">
             <summary>
             Used to specify the left or right trigger
-            </summary>
-        </member>
-        <member name="F:Engine.Input.Trigger.None">
-            <summary>
-            No trigger
-            </summary>
-        </member>
-        <member name="F:Engine.Input.Trigger.Left">
-            <summary>
-            Left trigger (as viewed from top)
-            </summary>
-        </member>
-        <member name="F:Engine.Input.Trigger.Right">
-            <summary>
-            Right trigger (as viewed from top)
             </summary>
         </member>
         <member name="T:Engine.Input.Thumbstick">
@@ -3876,49 +3850,9 @@
             Used to specify the left or right thumbstick
             </summary>
         </member>
-        <member name="F:Engine.Input.Thumbstick.None">
-            <summary>
-            No thumbstick
-            </summary>
-        </member>
-        <member name="F:Engine.Input.Thumbstick.Left">
-            <summary>
-            Left thumbstick (as viewed from top)
-            </summary>
-        </member>
-        <member name="F:Engine.Input.Thumbstick.Right">
-            <summary>
-            Right thumbstick (as viewed from top)
-            </summary>
-        </member>
         <member name="T:Engine.Input.ThumbstickDirection">
             <summary>
             Used to specify the direction of a thumbstick "press" (=1)
-            </summary>
-        </member>
-        <member name="F:Engine.Input.ThumbstickDirection.None">
-            <summary>
-            No direction
-            </summary>
-        </member>
-        <member name="F:Engine.Input.ThumbstickDirection.Up">
-            <summary>
-            Controller up
-            </summary>
-        </member>
-        <member name="F:Engine.Input.ThumbstickDirection.Down">
-            <summary>
-            Controller down
-            </summary>
-        </member>
-        <member name="F:Engine.Input.ThumbstickDirection.Left">
-            <summary>
-            Controller left
-            </summary>
-        </member>
-        <member name="F:Engine.Input.ThumbstickDirection.Right">
-            <summary>
-            Controller right
             </summary>
         </member>
         <member name="T:Engine.Input.FrameState">
@@ -3935,42 +3869,6 @@
         <member name="F:Engine.Input.FrameState.Current">
             <summary>
             The frame that logic is being run in right now (or graphics are being rendered in, depending on context)
-            </summary>
-        </member>
-        <member name="T:Engine.Input.ModifierCheckType">
-            <summary>
-            How a manager interpolates binding checks (if at all)
-            </summary>
-        </member>
-        <member name="F:Engine.Input.ModifierCheckType.Strict">
-            <summary>
-            The exact modifiers specified by the binding must be active.  No other modifiers may be active.
-            </summary>
-        </member>
-        <member name="F:Engine.Input.ModifierCheckType.Smart">
-            <summary>
-            Binding A with modifiers x, y will be counted active (even if modifier z is active) so long as there is no other binding B with modifiers x, y, and z.
-            </summary>
-            <example>
-            Jump is bound to space bar.  Fireball is 1, Fire nova is Shift + 1.
-            In strict mode, Shift + Space would not jump because there are active modifiers not in the jump binidng (space w/o mods)
-            In smart mode, there are no bindings with Shift + Space, so it falls back to the base binding, Jump.
-            </example>
-        </member>
-        <member name="T:Engine.Input.Managers.KeyboardManager">
-            <summary>
-                Only supports keyboard input, only supports one binding per name.
-                So the binding "jump" cannot be assigned to both Keys.Up and Keys.Space
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.KeyboardManager.#ctor">
-            <summary>
-                Constructor
-            </summary>
-        </member>
-        <member name="M:Engine.Input.Managers.KeyboardManager.AsKeyBinding(Engine.Input.InputBinding)">
-            <summary>
-                Ensures only Ctrl/Alt/Shift modifiers are listed, returns null for non-Key InputBindings
             </summary>
         </member>
     </members>
