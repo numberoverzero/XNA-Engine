@@ -8,13 +8,6 @@ namespace Engine.Input.Managers
     public interface InputManager
     {
         /// <summary>
-        ///     How many frames elapse between each check for a "continuous" action.
-        ///     The inverse of this would be repeat rate - the number of times
-        ///     the button triggers when held down.
-        /// </summary>
-        int FramesPerContinuousCheck { get; set; }
-
-        /// <summary>
         ///     All the modifiers currently being tracked.
         /// </summary>
         IEnumerable<InputBinding> GetModifiers { get; }
@@ -69,13 +62,14 @@ namespace Engine.Input.Managers
         bool IsActive(string bindingName, FrameState state);
 
         /// <summary>
-        ///     Checks if any of the bindings associated with the bindingNamein a given FrameState is active,
-        ///     as determined by the "FramesPerContinuousCheck" variable.
+        ///     Same as IsActive, but remembers which frame this function last returned true for.
+        ///     If (CurrentFrame - minFramesToRepeat) is less than LastRepeatingFrame then the function will
+        ///     return false.
         /// </summary>
         /// <param name="bindingName"> The name of the binding to query for active state </param>
         /// <param name="state"> The FrameState in which to check for activity </param>
         /// <returns> True if any of the bindings associated with the bindingName in a given FrameState is active. </returns>
-        bool IsContinuousActive(string bindingName, FrameState state);
+        bool IsRepeating(string bindingName, FrameState state, int minFramesToRepeat);
 
         /// <summary>
         ///     Checks if any of the bindings associated with the bindingName was pressed in the current FrameState (and not in the previous).

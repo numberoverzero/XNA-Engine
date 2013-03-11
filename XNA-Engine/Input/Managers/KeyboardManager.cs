@@ -18,27 +18,31 @@ namespace Engine.Input.Managers
     public class KeyboardManager : InputManager
     {
         private readonly BidirectionalDict<string, KeyBinding> _bindings;
+        private Dictionary<string, int> _repeatingBindingHistory; 
         private InputSnapshot _current;
         private InputSnapshot _previous;
         private FullFileBuffer _bindingsFile;
+        private int _frame;
 
         /// <summary>
         ///     Constructor
         /// </summary>
         public KeyboardManager()
         {
+            _frame = 0;
             _bindings = new BidirectionalDict<string, KeyBinding>();
             _previous = InputSnapshot.With(Keyboard.GetState());
             _current = InputSnapshot.With(Keyboard.GetState());
+            _repeatingBindingHistory = new Dictionary<string, int>();
         }
 
         private int _continuousCheckFrame;
-        private int _framesPerContinuousCheck;
+        private int _framesPerKeyRepeat;
 
         protected int ContinuousCheckFrame
         {
             get { return _continuousCheckFrame; }
-            set { _continuousCheckFrame = Basics.Mod(value, FramesPerContinuousCheck); }
+            set { _continuousCheckFrame = Basics.Mod(value, FramesPerKeyRepeat); }
         }
 
         public IEnumerable<InputBinding> GetModifiers
@@ -94,21 +98,33 @@ namespace Engine.Input.Managers
             return binding.IsActive(snapshot) && ModifierKey.Values.All(modifier => binding.Modifiers.Contains(modifier) == modifier.IsActive(snapshot));
         }
 
-        public int FramesPerContinuousCheck
+        public int FramesPerKeyRepeat
         {
-            get { return _framesPerContinuousCheck; }
+            get { return _framesPerKeyRepeat; }
             set
             {
-                _framesPerContinuousCheck = value;
+                _framesPerKeyRepeat = value;
                 ContinuousCheckFrame = 0;
             }
         }
 
-        public bool IsContinuousActive(string bindingName, FrameState state)
+        public bool IsRepeating(string bindingName, FrameState state, int minFramesToRepeat)
         {
             var offset = state == FrameState.Current ? 0 : -1;
-            var actualCheck = Basics.Mod(ContinuousCheckFrame + offset, FramesPerContinuousCheck);
-            return actualCheck == 0 && IsActive(bindingName, state);
+            var isActive = IsActive(bindingName, state);
+            var lastSeenFrame = _repeatingBindingHistory.GetValueOrDefault(bindingName, -1);
+            
+            if (lastSeenFrame < 0 && isActive)
+            {
+                    _repeatingBindingHistory[bindingName] = _frame + offset;
+                    return true;
+            }
+            if (_frame + offset >= lastSeenFrame + minFramesToRepeat && isActive)
+            {
+                    _repeatingBindingHistory[bindingName] = _frame + offset;
+                    return true;
+            }
+            return false;
         }
 
         public bool IsPressed(string bindingName)
@@ -146,7 +162,7 @@ namespace Engine.Input.Managers
         {
             _previous = InputSnapshot.With(_current.KeyboardState);
             _current = InputSnapshot.With(Keyboard.GetState());
-            ContinuousCheckFrame++;
+            _frame++;
         }
 
         /// <summary>
