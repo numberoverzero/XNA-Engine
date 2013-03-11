@@ -10,7 +10,7 @@ namespace Engine.Mathematics
     {
         /// <summary>
         ///     <para>Returns a stream of factors of a number in increasing magnitude,</para>
-        ///     <para>such that Factors[i] &lt; Factors[i+1]</para>
+        ///     <para>such that Factors[i] &lt;= Factors[i+1]</para>
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
@@ -27,6 +27,7 @@ namespace Engine.Mathematics
                 f = 1;
             }
         }
+
 
         public static long LargestProduct(List<long> numbers, long upperLimit)
         {
