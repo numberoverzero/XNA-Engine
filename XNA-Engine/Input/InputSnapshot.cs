@@ -62,7 +62,7 @@ namespace Engine.Input
         /// <summary>
         ///   Snapshot a set of input device states
         /// </summary>
-        public static InputSnapshot With(KeyboardState keyboardState)
+        public static InputSnapshot With(KeyboardState? keyboardState)
         {
             return new InputSnapshot(keyboardState, null, null, null);
         }
@@ -70,7 +70,7 @@ namespace Engine.Input
         /// <summary>
         ///   Snapshot a set of input device states
         /// </summary>
-        public static InputSnapshot With(GamePadState gamePadState)
+        public static InputSnapshot With(GamePadState? gamePadState)
         {
             return new InputSnapshot(null, gamePadState, null, null);
         }
@@ -78,7 +78,7 @@ namespace Engine.Input
         /// <summary>
         ///   Snapshot a set of input device states
         /// </summary>
-        public static InputSnapshot With(MouseState mouseState)
+        public static InputSnapshot With(MouseState? mouseState)
         {
             return new InputSnapshot(null, null, mouseState, null);
         }
